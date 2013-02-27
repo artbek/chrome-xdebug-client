@@ -1,0 +1,64 @@
+html, body {
+	overflow: auto;
+}
+
+nav {
+	background: #664466;
+	color: #eeeeee;
+	left: 0px;
+	padding: 1%;
+	position: fixed;
+	top: 0px;
+	width: 100%
+}
+
+.nav-button,
+.nav-button-right {
+	cursor: pointer;
+	font-family: sans-serif;
+	font-size: 12px;
+}
+
+.nav-button-right {
+	float: right;
+	margin-right: 10px;
+}
+
+div {
+	border: 0;
+	margin: 0;
+	padding: 0;
+}
+
+#codeview {
+	background: #f3f3f3;
+	float: left;
+	font-family: 'mono';
+	font-size: 11px;
+	line-height: 16px;
+	margin-top: 30px;
+}
+
+.line-wrapper {
+	float: left;
+	width: 100%;
+}
+
+.active-line {
+	background: #ff9966;
+}
+
+
+.lineno {
+	background: #eeeeee;
+	float: left;
+	margin-right: 1%;
+	padding-right: 1%;
+	text-align: right;
+	width: 4%;
+}
+
+.codeline {
+	float: right;
+	width: 94%;
+}

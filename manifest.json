@@ -1,0 +1,23 @@
+{
+	"manifest_version": 2,
+	"minimum_chrome_version": "23",
+	"name": "Xdebug Client",
+	"description": "Xdebug Client",
+	"version": "0.2",
+	"offline_enabled": true,
+	"app": {
+		"background": {
+			"scripts": ["js/background.js"]
+		}
+	},
+	"permissions": [
+		"storage",
+		{"socket": ["tcp-listen::9000"]},
+		"<all_urls>"
+	],
+	"icons": {
+		"16": "img/icon_16.png",
+		"48": "img/icon_48.png",
+		"128": "img/icon_128.png"
+	}
+}
