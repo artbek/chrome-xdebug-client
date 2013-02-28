@@ -26,6 +26,8 @@ $(function() {
 	});
 
 	$("body").on('parse-xml', function(event, data) {
+		if (data.command == "feature_set") return;
+
 		var xml_document = $.parseXML(data.xml);
 		var filename = $(xml_document).find('response').children().attr("filename");
 		var lineno = $(xml_document).find('response').children().attr("lineno");
@@ -47,7 +49,7 @@ $(function() {
 						html += '<div class="line-wrapper">';
 					}
 					html +=	'<span class="lineno">' + (l + 1) + '</span>';
-					html += '<span class="codeline">' + lines[l] + '</span>';
+					html += '<span class="codeline"><pre>' + lines[l] + '</pre></span>';
 					html += '</div>';
 					$("#codeview").append(html);
 				}

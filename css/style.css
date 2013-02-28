@@ -4,6 +4,7 @@ html, body {
 
 nav {
 	background: #664466;
+	box-shadow: 0px 10px 25px #888888;
 	color: #eeeeee;
 	left: 0px;
 	padding: 1%;
@@ -46,6 +47,7 @@ div {
 
 .active-line {
 	background: #ff9966;
+	box-shadow: 0px 3px 8px #aaaaaa;
 }
 
 
@@ -62,3 +64,10 @@ div {
 	float: right;
 	width: 94%;
 }
+
+.codeline pre {
+	margin: 0;
+	word-wrap: break-word;
+	white-space: pre-wrap;
+}
+
