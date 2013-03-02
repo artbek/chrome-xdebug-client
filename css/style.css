@@ -1,5 +1,13 @@
 html, body {
+	margin: 0;
 	overflow: auto;
+	padding: 0;
+}
+
+input {
+	border: 0px;
+	margin: 0px;
+	padding: 2px;
 }
 
 nav {
@@ -7,10 +15,10 @@ nav {
 	box-shadow: 0px 10px 25px #888888;
 	color: #eeeeee;
 	left: 0px;
-	padding: 1%;
+	padding: 8px 1%;
 	position: fixed;
 	top: 0px;
-	width: 100%
+	width: 98%
 }
 
 .nav-button,
@@ -22,22 +30,21 @@ nav {
 
 .nav-button-right {
 	float: right;
-	margin-right: 10px;
 }
 
 div {
-	border: 0;
-	margin: 0;
-	padding: 0;
+	border: 0px;
+	margin: 0px;
+	padding: 0px;
 }
 
 #codeview {
 	background: #f3f3f3;
 	float: left;
-	font-family: 'mono';
+	font-family: monospace;
 	font-size: 11px;
 	line-height: 16px;
-	margin-top: 30px;
+	margin-top: 40px;
 }
 
 .line-wrapper {
@@ -66,8 +73,34 @@ div {
 }
 
 .codeline pre {
-	margin: 0;
+	margin: 0px;
 	word-wrap: break-word;
 	white-space: pre-wrap;
+}
+
+#eval {
+	background: #222222;
+	border-top: 1px solid #cccccc;
+	bottom: 0px;
+	box-shadow: 0px -10px 25px #888888;
+	color: #eeeeee;
+	left: 0px;
+	position: fixed;
+	width: 100%
+}
+
+#eval input {
+	border-bottom: 1px solid #333333;
+}
+
+#eval input,
+#eval-content {
+	background: #222222;
+	color: #ffffff;
+	margin: 0px;
+	padding: 1%;
+	font-size: 12px;
+	font-family: monospace;
+	width: 98%;
 }
 
