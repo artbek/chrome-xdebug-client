@@ -80,6 +80,11 @@ $(function() {
 						html += '</div>';
 						$("#codeview").append(html);
 					}
+
+					// scrool to view
+					document.getElementsByClassName("active-line")[0].scrollIntoView();
+					var currentScroll = $("body").scrollTop();
+					$("body").scrollTop(currentScroll - 100);
 				},
 				error: function(data) {
 					$("#codeview").html("");
