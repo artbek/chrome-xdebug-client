@@ -1,34 +1,48 @@
 $(function() {
 
-	// SSETTINGS
+	// SETTINGS
 
 	var source_script = '';
 	chrome.storage.local.get('source_script', function(data) {
 		console.log(data);
 		source_script = data.source_script;
 	});
+	var isProcessing = false;
 
 
 	// HANDLE EVENTS
 
+	// nav
+
 	$("#stepinto").on("click", function() {
-		$("body").trigger("xdebug-stepinto");
+		run(function() {
+			$("body").trigger("xdebug-stepinto");
+		});
 	});
 
 	$("#stepover").on("click", function() {
-		$("body").trigger("xdebug-stepover");
+		run(function() {
+			$("body").trigger("xdebug-stepover");
+		});
 	});
 
 	$("#run").on("click", function() {
-		$("body").trigger("xdebug-run");
+		run(function() {
+			$("body").trigger("xdebug-run");
+		});
 	});
 
 	$("#stop").on("click", function() {
-		$("body").trigger("xdebug-stop");
+		run(function() {
+			$("body").trigger("xdebug-stop");
+		});
 	});
 
 	$("#settings").on("click", function() {
 	});
+
+
+	// console
 
 	$("#eval-form").on("submit", function(e) {
 		e.preventDefault();
@@ -38,6 +52,9 @@ $(function() {
 			expression: expression
 		});
 	});
+
+
+	// xdebug result
 
 	$("body").on('parse-xml', function(event, data) {
 		var xml_document = $.parseXML(data.xml);
@@ -81,10 +98,7 @@ $(function() {
 						$("#codeview").append(html);
 					}
 
-					// scrool to view
-					document.getElementsByClassName("active-line")[0].scrollIntoView();
-					var currentScroll = $("body").scrollTop();
-					$("body").scrollTop(currentScroll - 100);
+					scrollToView();
 				},
 				error: function(data) {
 					$("#codeview").html("");
@@ -92,7 +106,9 @@ $(function() {
 					$("#codeview").append("<p><strong>" + filename + ":" + lineno + "</strong></p>");
 					console.error("Couldn't get source!");
 				},
-				complete: function() { }
+				complete: function() {
+					isProcessing = false;
+				}
 			});
 
 		}
@@ -125,6 +141,26 @@ $(function() {
 		}
 
 		return output;
+	}
+
+
+	function run(callback) {
+		if (isProcessing) {
+			return;
+		} else {
+			isProcessing = true;
+			callback();
+		}
+	}
+
+
+	function scrollToView() {
+		var elements = document.getElementsByClassName("active-line")
+		if (elements[0]) {
+			elements[0].scrollIntoView();
+			var currentScroll = $("body").scrollTop();
+			$("body").scrollTop(currentScroll - 100);
+		}
 	}
 
 });
