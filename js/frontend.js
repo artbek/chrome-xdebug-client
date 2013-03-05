@@ -54,6 +54,9 @@ $(function() {
 	});
 
 
+	var filename = '';
+	var lineno = 0;
+
 	// xdebug result
 
 	$("body").on('parse-xml', function(event, data) {
@@ -72,10 +75,42 @@ $(function() {
 			}
 			break;
 
-		default:
-			var filename = $(xml_document).find('response').children().attr("filename");
-			var lineno = $(xml_document).find('response').children().attr("lineno");
+		case "source":
+			var data = $(xml_document).find("response").text();
+			data = atob(data);
 
+			var b = Math.max((lineno - 10), 1);
+			var offset = lineno - b;
+
+			var lines = data.split('\n');
+			$("#codeview").html("");
+			for (var line = 0; line < lines.length; line++) {
+				var html = "";
+				if (line == offset) {
+					html += '<div class="line-wrapper active-line">';
+				} else {
+					html += '<div class="line-wrapper">';
+				}
+				html +=	'<span class="lineno">' + (b + line) + '</span>';
+				html += '<span class="codeline"><pre>' + lines[line] + '</pre></span>';
+				html += '</div>';
+				$("#codeview").append(html);
+			}
+
+			scrollToView();
+			isProcessing = false;
+			break;
+
+		default:
+			filename = $(xml_document).find('response').children().attr("filename");
+			lineno = $(xml_document).find('response').children().attr("lineno");
+			console.log("File: " + filename + ":" + lineno);
+
+			$("body").trigger("xdebug-source", {
+				lineno: lineno
+			});
+
+			/*
 			$.ajax({
 				url: source_script,
 				type: 'GET',
@@ -110,6 +145,7 @@ $(function() {
 					isProcessing = false;
 				}
 			});
+			*/
 
 		}
 

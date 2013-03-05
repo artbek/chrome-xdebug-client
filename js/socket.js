@@ -54,6 +54,14 @@ $(function() {
 		send_command("eval", "-- " + data.expression);
 	});
 
+	$("body").on("xdebug-source", function(event, data) {
+		var lineno = parseInt(data.lineno);
+		var b = Math.max((lineno - 10), 1);
+		var e = lineno + 10;
+		send_command("source", "-b " + b + " -e " + e);
+	});
+
+
 
 	// MAIN ACTION
 
@@ -76,7 +84,7 @@ $(function() {
 					var str = ab2str(readInfo.data).split("\0");
 
 					console.log("Length: " + str[0]);
-					console.log(str[1]);
+					//console.log(str[1]);
 					//console.log(str);
 
 					$('body').trigger('parse-xml', {
