@@ -11,7 +11,7 @@ $(function() {
 		//console.log("Create Info:"); console.log(createInfo);
 		listeningSocketId = createInfo.socketId;
 
-		chrome.socket.listen(createInfo.socketId, '127.0.0.1', 9000, function(result) {
+		chrome.socket.listen(createInfo.socketId, '192.168.1.113', 9000, function(result) {
 			//console.log("Listen result: "); console.log(result);
 		});
 
@@ -33,11 +33,11 @@ $(function() {
 
 	// HANDLE EVENTS
 
-	$('body').on("xdebug-stepover", function() {
+	$('body').on("xdebug-step_over", function() {
 		send_command("step_over");
 	});
 
-	$('body').on("xdebug-stepinto", function() {
+	$('body').on("xdebug-step_into", function() {
 		send_command("step_into");
 	});
 
@@ -55,10 +55,11 @@ $(function() {
 	});
 
 	$("body").on("xdebug-source", function(event, data) {
+		var filename = data.filename;
 		var lineno = parseInt(data.lineno);
-		var b = Math.max((lineno - 10), 1);
-		var e = lineno + 10;
-		send_command("source", "-b " + b + " -e " + e);
+		var begin = Math.max((lineno - 10), 1);
+		var end = lineno + 10;
+		send_command("source", "-b " + begin + " -e " + end + " -f " + filename);
 	});
 
 
@@ -84,7 +85,7 @@ $(function() {
 					var str = ab2str(readInfo.data).split("\0");
 
 					console.log("Length: " + str[0]);
-					//console.log(str[1]);
+					console.log(str[1]);
 					//console.log(str);
 
 					$('body').trigger('parse-xml', {

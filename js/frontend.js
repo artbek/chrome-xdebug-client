@@ -16,13 +16,13 @@ $(function() {
 
 	$("#stepinto").on("click", function() {
 		run(function() {
-			$("body").trigger("xdebug-stepinto");
+			$("body").trigger("xdebug-step_into");
 		});
 	});
 
 	$("#stepover").on("click", function() {
 		run(function() {
-			$("body").trigger("xdebug-stepover");
+			$("body").trigger("xdebug-step_over");
 		});
 	});
 
@@ -75,6 +75,7 @@ $(function() {
 			}
 			break;
 
+		// used when getting source from xdebug
 		case "source":
 			var data = $(xml_document).find("response").text();
 			data = atob(data);
@@ -92,7 +93,7 @@ $(function() {
 					html += '<div class="line-wrapper">';
 				}
 				html +=	'<span class="lineno">' + (b + line) + '</span>';
-				html += '<span class="codeline"><pre>' + lines[line] + '</pre></span>';
+				html += '<span class="codeline"><pre>' + htmlEntities(lines[l]) + '</pre></span>';
 				html += '</div>';
 				$("#codeview").append(html);
 			}
@@ -106,11 +107,20 @@ $(function() {
 			lineno = $(xml_document).find('response').children().attr("lineno");
 			console.log("File: " + filename + ":" + lineno);
 
+			if (filename === undefined) {
+				isProcessing = false;
+				run(function() {
+					$("body").trigger("xdebug-" + data.command);
+				});
+				break;
+			}
+
+/*
 			$("body").trigger("xdebug-source", {
+				filename: filename,
 				lineno: lineno
 			});
-
-			/*
+			*/
 			$.ajax({
 				url: source_script,
 				type: 'GET',
@@ -128,7 +138,7 @@ $(function() {
 							html += '<div class="line-wrapper">';
 						}
 						html +=	'<span class="lineno">' + (l + 1) + '</span>';
-						html += '<span class="codeline"><pre>' + lines[l] + '</pre></span>';
+						html += '<span class="codeline"><pre>' + htmlEntities(lines[l]) + '</pre></span>';
 						html += '</div>';
 						$("#codeview").append(html);
 					}
@@ -145,14 +155,17 @@ $(function() {
 					isProcessing = false;
 				}
 			});
-			*/
-
 		}
 
 	});
 
 
 	// HELPERS
+
+	function htmlEntities(s) {
+		return $("<div/>").text(s).html();
+	}
+
 
 	function format(property) {
 		var output = '';

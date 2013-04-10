@@ -15,5 +15,5 @@ function onLaunched(launchData) {
 chrome.app.runtime.onLaunched.addListener(onLaunched);
 
 
-chrome.storage.local.set({'source_script': 'http://localhost/source.php'});
+chrome.storage.local.set({'source_script': 'http://bart.local/source.php'});
 
