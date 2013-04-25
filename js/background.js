@@ -7,7 +7,7 @@
 function onLaunched(launchData) {
   chrome.app.window.create('main.html', {
     width: 600,
-    height: 400,
+    height: 600,
 	type: 'panel'
   });
 }

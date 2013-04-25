@@ -65,7 +65,6 @@ $(function() {
 
 
 	// MAIN ACTION
-
 	function send_command(command, options) {
 		var request = "";
 

@@ -109,9 +109,11 @@ $(function() {
 
 			if (filename === undefined) {
 				isProcessing = false;
-				run(function() {
-					$("body").trigger("xdebug-" + data.command);
-				});
+				if (data.command != 'run') {
+					run(function() {
+						$("body").trigger("xdebug-" + data.command);
+					});
+				}
 				break;
 			}
 
@@ -204,11 +206,16 @@ $(function() {
 
 
 	function scrollToView() {
-		var elements = document.getElementsByClassName("active-line")
-		if (elements[0]) {
-			elements[0].scrollIntoView();
-			var currentScroll = $("body").scrollTop();
-			$("body").scrollTop(currentScroll - 100);
+		var margin = 100;
+		var scrollTop = $(window).scrollTop();
+		var offset = $(".active-line").offset().top;
+		if (offset < (scrollTop + margin) || offset > (scrollTop + $(window).height() - (2 * margin))) {
+			var elements = document.getElementsByClassName("active-line")
+			if (elements[0]) {
+				elements[0].scrollIntoView();
+				var currentScroll = $("body").scrollTop();
+				$("body").scrollTop(currentScroll - margin);
+			}
 		}
 	}
 

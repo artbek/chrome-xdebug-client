@@ -78,6 +78,22 @@ div {
 	white-space: pre-wrap;
 }
 
+
+#stack {
+	border: 1px solid #999999;
+	border-right: 0px;
+	position: fixed;
+	background: #ffffff;
+	padding: 5px;
+	right: 0;
+	top: 50px;
+}
+
+	#stack .filename {
+		font-family: monospace;
+		font-size: 11px;
+	}
+
 #eval {
 	background: #222222;
 	border-top: 1px solid #cccccc;
