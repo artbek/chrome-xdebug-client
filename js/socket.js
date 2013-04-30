@@ -62,6 +62,10 @@ $(function() {
 		send_command("source", "-b " + begin + " -e " + end + " -f " + filename);
 	});
 
+	$("body").on("xdebug-stack_get", function() {
+		send_command("stack_get");
+	});
+
 
 
 	// MAIN ACTION

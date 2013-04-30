@@ -54,6 +54,19 @@ $(function() {
 	});
 
 
+	// stack
+
+	$("#stack").on("click", function() {
+		var currentRight = parseInt($("#stack").css('right').replace('px', ''));
+		if (currentRight < 0) {
+			$("#stack").animate({right: '-450px'}, 500);
+		} else {
+			$("#stack").animate({right: '0'}, 500);
+		}
+	});
+
+
+
 	var filename = '';
 	var lineno = 0;
 
@@ -101,6 +114,23 @@ $(function() {
 			scrollToView();
 			isProcessing = false;
 			break;
+
+
+		case "stack_get":
+			var stack_trace = [];
+			$(xml_document).find('response').children().each(function() {
+				stack_trace.push($(this).attr("filename") + ":" + $(this).attr("lineno"));
+			});
+
+			var stack_trace_html = "";
+			for (var i = 0; i < stack_trace.length; i++) {
+				stack_trace_html += '<div class="filename">' + stack_trace[i] + '</div>';
+			}
+			$("#stack").html(stack_trace_html);
+
+			isProcessing = false;
+			break;
+
 
 		default:
 			filename = $(xml_document).find('response').children().attr("filename");
@@ -155,6 +185,9 @@ $(function() {
 				},
 				complete: function() {
 					isProcessing = false;
+					run(function() {
+						$("body").trigger("xdebug-stack_get");
+					});
 				}
 			});
 		}
