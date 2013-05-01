@@ -38,6 +38,12 @@ $(function() {
 		});
 	});
 
+	$("#listen").on("click", function() {
+		run(function() {
+			$("body").trigger("xdebug-listen");
+		});
+	});
+
 	$("#settings").on("click", function() {
 	});
 
@@ -59,9 +65,12 @@ $(function() {
 	$("#stack").on("click", function() {
 		var currentRight = parseInt($("#stack").css('right').replace('px', ''));
 		if (currentRight < 0) {
-			$("#stack").animate({right: '-450px'}, 500);
+			$("#stack").animate({right: '0'}, 300);
 		} else {
-			$("#stack").animate({right: '0'}, 500);
+			var width = $(this).width() - 15;
+			if (width > 0) {
+				$("#stack").animate({right: '-' + width}, 300);
+			}
 		}
 	});
 
@@ -78,6 +87,8 @@ $(function() {
 		switch (data.command) {
 
 		case "feature_set":
+			isProcessing = false;
+			updateButtons();
 			break;
 
 		case "eval":
@@ -115,7 +126,6 @@ $(function() {
 			isProcessing = false;
 			break;
 
-
 		case "stack_get":
 			var stack_trace = [];
 			$(xml_document).find('response').children().each(function() {
@@ -124,13 +134,21 @@ $(function() {
 
 			var stack_trace_html = "";
 			for (var i = 0; i < stack_trace.length; i++) {
-				stack_trace_html += '<div class="filename">' + stack_trace[i] + '</div>';
+				if (i == 0) {
+					stack_trace_html += '<div class="filename"><b>' + stack_trace[i] + '</b></div>';
+				} else {
+					stack_trace_html += '<div class="filename">' + stack_trace[i] + '</div>';
+				}
 			}
 			$("#stack").html(stack_trace_html);
 
 			isProcessing = false;
 			break;
 
+		case "stop":
+			isProcessing = false;
+			updateButtons();
+			break;
 
 		default:
 			filename = $(xml_document).find('response').children().attr("filename");
@@ -250,6 +268,13 @@ $(function() {
 				$("body").scrollTop(currentScroll - margin);
 			}
 		}
+	}
+
+
+	function updateButtons() {
+		// show/hide  buttons
+		$("body").trigger("xdebug-socket_live");
+
 	}
 
 });
