@@ -81,6 +81,23 @@ $(function() {
 
 	// xdebug result
 
+	$("body").on('socket_status', function(event, data) {
+		switch (data.status) {
+
+		case "live":
+			$("#listen").fadeTo(100, 0.2).text("Running...");
+			$("#stop").fadeTo(100, 1.0);
+			break;
+
+		case "dead":
+			$("#listen").fadeTo(100, 1.0).text("Listen");
+			$("#stop").fadeTo(100, 0.2);
+			break;
+
+		}
+	});
+
+
 	$("body").on('parse-xml', function(event, data) {
 		var xml_document = $.parseXML(data.xml);
 
@@ -88,7 +105,6 @@ $(function() {
 
 		case "feature_set":
 			isProcessing = false;
-			updateButtons();
 			break;
 
 		case "eval":
@@ -147,7 +163,6 @@ $(function() {
 
 		case "stop":
 			isProcessing = false;
-			updateButtons();
 			break;
 
 		default:
@@ -270,11 +285,5 @@ $(function() {
 		}
 	}
 
-
-	function updateButtons() {
-		// show/hide  buttons
-		$("body").trigger("xdebug-socket_live");
-
-	}
 
 });

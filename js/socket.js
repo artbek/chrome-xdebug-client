@@ -6,7 +6,10 @@ $(function() {
 
 
 	// CONECT WITH XDEBUG SERVER
-	listen_and_connect();
+
+	$(window).load(function() {
+		$('body').trigger('socket_status', {status: 'dead'});
+	});
 
 	function listen_and_connect() {
 		chrome.socket.create('tcp', function(createInfo) {
@@ -24,7 +27,10 @@ $(function() {
 				chrome.socket.read(acceptInfo.socketId, function(readInfo) {
 					console.log("Read Info 1:");
 					console.log(ab2str(readInfo.data));
-					send_command("feature_set", "-n max_depth -v 3");
+					send_command("feature_set", "-n max_depth -v 3", function() {
+						send_command("step_into");
+						$('body').trigger('socket_status', {status: 'live'});
+					});
 				});
 
 				// destroy the inisial stocket
@@ -37,9 +43,10 @@ $(function() {
 	// HANDLE EVENTS
 
 	$('body').on("xdebug-listen", function() {
-		chrome.socket.destroy(socketId);
-		chrome.socket.destroy(listeningSocketId);
+		if (socketId) chrome.socket.destroy(socketId);
+		if (listeningSocketId) chrome.socket.destroy(listeningSocketId);
 		listen_and_connect();
+		$('body').trigger('socket_status', {status: 'live'});
 	});
 
 	$('body').on("xdebug-step_over", function() {
@@ -61,6 +68,7 @@ $(function() {
 		});
 		chrome.socket.destroy(socketId);
 		chrome.socket.destroy(listeningSocketId);
+		$('body').trigger('socket_status', {status: 'dead'});
 	});
 
 	$("body").on("xdebug-eval", function(event, data) {
@@ -79,16 +87,11 @@ $(function() {
 		send_command("stack_get");
 	});
 
-	$("body").on("xdebug-socket_live", function() {
-		if (socketId) {
-			$('body').trigger('socket_live');
-		}
-	});
 
 
 	// MAIN ACTION
 
-	function send_command(command, options) {
+	function send_command(command, options, callback) {
 		var request = "";
 
 		request += addTransactionId(command);
@@ -114,6 +117,8 @@ $(function() {
 						command: command,
 						xml: str[1]
 					});
+
+					if (callback) callback();
 				});
 			}, 200);
 
