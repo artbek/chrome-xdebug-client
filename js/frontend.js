@@ -48,38 +48,43 @@ $(function() {
 	});
 
 
-	// console
+	// STACK & CONSOLE ANIMATIONS
 
 	$("#eval-form").on("submit", function(e) {
 		e.preventDefault();
 		var expression = $("input[name=eval-expression]").val();
+		expression = "var_export(" + expression + ", true)";
 		expression = btoa(expression);
 		$("body").trigger("xdebug-eval", {
 			expression: expression
 		});
 	});
 
+	// don't hide eval console when trying to type
+	$("#eval-form").on("click", function(e) {
+		e.stopPropagation();
+	});
 
-	// stack
-
-	$("#stack").on("click", function() {
-		var currentRight = parseInt($("#stack").css('right').replace('px', ''));
+	// hide/show on click
+	$("#stack, #eval").on("click", function() {
+		var currentRight = parseInt($(this).css('right').replace('px', ''));
 		if (currentRight < 0) {
-			$("#stack").animate({right: '0'}, 300);
+			$(this).animate({right: '0'}, 300);
 		} else {
 			var width = $(this).width() - 15;
 			if (width > 0) {
-				$("#stack").animate({right: '-' + width}, 300);
+				$(this).animate({right: '-' + width}, 300);
 			}
 		}
 	});
 
+	$(window).on("load", function() {
+		$("#stack, #eval").trigger("click");
+	});
 
 
-	var filename = '';
-	var lineno = 0;
 
-	// xdebug result
+	// XDEBUG RESULT
 
 	$("body").on('socket_status', function(event, data) {
 		switch (data.status) {
@@ -97,6 +102,9 @@ $(function() {
 		}
 	});
 
+
+	var filename = '';
+	var lineno = 0;
 
 	$("body").on('parse-xml', function(event, data) {
 		var xml_document = $.parseXML(data.xml);
@@ -120,7 +128,7 @@ $(function() {
 			var data = $(xml_document).find("response").text();
 			data = atob(data);
 
-			var b = Math.max((lineno - 10), 1);
+			var b = Math.max((lineno - 30), 1);
 			var offset = lineno - b;
 
 			var lines = data.split('\n');
@@ -133,13 +141,16 @@ $(function() {
 					html += '<div class="line-wrapper">';
 				}
 				html +=	'<span class="lineno">' + (b + line) + '</span>';
-				html += '<span class="codeline"><pre>' + htmlEntities(lines[l]) + '</pre></span>';
+				html += '<span class="codeline"><pre>' + htmlEntities(lines[line]) + '</pre></span>';
 				html += '</div>';
 				$("#codeview").append(html);
 			}
 
 			scrollToView();
 			isProcessing = false;
+			run(function() {
+				$("body").trigger("xdebug-stack_get");
+			});
 			break;
 
 		case "stack_get":
@@ -180,12 +191,12 @@ $(function() {
 				break;
 			}
 
-/*
 			$("body").trigger("xdebug-source", {
 				filename: filename,
 				lineno: lineno
 			});
-			*/
+
+			/*
 			$.ajax({
 				url: source_script,
 				type: 'GET',
@@ -223,6 +234,7 @@ $(function() {
 					});
 				}
 			});
+			*/
 		}
 
 	});

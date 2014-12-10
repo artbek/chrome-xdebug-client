@@ -4,6 +4,9 @@
  * found in the LICENSE file.
  **/
 
+chrome.storage.local.set({'source_script': 'http://bart.local/source.php'});
+chrome.storage.local.set({'listening_ip': '192.168.56.1'});
+
 function onLaunched(launchData) {
   chrome.app.window.create('main.html', {
     width: 600,
@@ -15,5 +18,4 @@ function onLaunched(launchData) {
 chrome.app.runtime.onLaunched.addListener(onLaunched);
 
 
-chrome.storage.local.set({'source_script': 'http://bart.local/source.php'});
 

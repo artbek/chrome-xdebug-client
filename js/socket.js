@@ -3,6 +3,13 @@ $(function() {
 	var listeningSocketId = '';
 	var socketId = '';
 	var transactionId = 0;
+	var listeningIP = '';
+
+
+	chrome.storage.local.get('listening_ip', function(data) {
+		listeningIP = data.listening_ip;
+		console.log("Listening on: " + listeningIP);
+	});
 
 
 	// CONECT WITH XDEBUG SERVER
@@ -16,7 +23,7 @@ $(function() {
 			//console.log("Create Info:"); console.log(createInfo);
 			listeningSocketId = createInfo.socketId;
 
-			chrome.socket.listen(createInfo.socketId, '192.168.1.113', 9000, function(result) {
+			chrome.socket.listen(createInfo.socketId, listeningIP, 9000, function(result) {
 				//console.log("Listen result: "); console.log(result);
 			});
 
@@ -78,8 +85,8 @@ $(function() {
 	$("body").on("xdebug-source", function(event, data) {
 		var filename = data.filename;
 		var lineno = parseInt(data.lineno);
-		var begin = Math.max((lineno - 10), 1);
-		var end = lineno + 10;
+		var begin = Math.max((lineno - 30), 1);
+		var end = lineno + 30;
 		send_command("source", "-b " + begin + " -e " + end + " -f " + filename);
 	});
 

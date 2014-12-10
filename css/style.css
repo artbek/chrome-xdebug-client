@@ -99,12 +99,13 @@ div {
 #eval {
 	background: #222222;
 	border-top: 1px solid #cccccc;
-	bottom: 0px;
+	border-left: 10px solid #cccccc;
+	bottom: 30px;
 	box-shadow: 0px -10px 25px #888888;
 	color: #eeeeee;
-	left: 0px;
+	right: 0px;
 	position: fixed;
-	width: 100%
+	width: 90%
 }
 
 #eval input {
