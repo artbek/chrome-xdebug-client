@@ -107,6 +107,8 @@ $(function() {
 	var lineno = 0;
 
 	$("body").on('parse-xml', function(event, data) {
+		hideLoading();
+
 		var xml_document = $.parseXML(data.xml);
 
 		switch (data.command) {
@@ -176,6 +178,14 @@ $(function() {
 			isProcessing = false;
 			break;
 
+		case "run":
+			if ($(xml_document).find("response").attr("status") == 'stopping') {
+				isProcessing = false;
+				$("#stop").trigger("click");
+				break;
+			}
+			// if not stopping process 'default:' case
+
 		default:
 			filename = $(xml_document).find('response').children().attr("filename");
 			lineno = $(xml_document).find('response').children().attr("lineno");
@@ -191,12 +201,14 @@ $(function() {
 				break;
 			}
 
+/*
 			$("body").trigger("xdebug-source", {
 				filename: filename,
 				lineno: lineno
 			});
+			*/
 
-			/*
+
 			$.ajax({
 				url: source_script,
 				type: 'GET',
@@ -234,7 +246,7 @@ $(function() {
 					});
 				}
 			});
-			*/
+
 		}
 
 	});
@@ -277,6 +289,7 @@ $(function() {
 		if (isProcessing) {
 			return;
 		} else {
+			showLoading();
 			isProcessing = true;
 			callback();
 		}
@@ -297,5 +310,14 @@ $(function() {
 		}
 	}
 
+
+	function showLoading() {
+		$("#loading").show();
+	}
+
+
+	function hideLoading() {
+		$("#loading").hide();
+	}
 
 });

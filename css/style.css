@@ -123,3 +123,18 @@ div {
 	width: 98%;
 }
 
+#eval-content {
+	max-height: 400px;
+	overflow: auto;
+}
+
+#loading {
+	background: #f3f3f3;
+	border: 4px solid #cccccc;
+	display: none;
+	left: 40%;
+	padding: 5%;
+	position: fixed;
+	top: 45%;
+}
+

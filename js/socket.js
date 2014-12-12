@@ -35,8 +35,10 @@ $(function() {
 					console.log("Read Info 1:");
 					console.log(ab2str(readInfo.data));
 					send_command("feature_set", "-n max_depth -v 3", function() {
-						send_command("step_into");
-						$('body').trigger('socket_status', {status: 'live'});
+						send_command("feature_set", "-n max_data -v 10000", function() {
+							send_command("step_into");
+							$('body').trigger('socket_status', {status: 'live'});
+						});
 					});
 				});
 
