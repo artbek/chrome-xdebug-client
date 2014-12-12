@@ -62,6 +62,10 @@ $(function() {
 		send_command("step_over");
 	});
 
+	$('body').on("xdebug-step_out", function() {
+		send_command("step_out");
+	});
+
 	$('body').on("xdebug-step_into", function() {
 		send_command("step_into");
 	});

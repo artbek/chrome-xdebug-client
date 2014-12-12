@@ -26,6 +26,12 @@ $(function() {
 		});
 	});
 
+	$("#stepout").on("click", function() {
+		run(function() {
+			$("body").trigger("xdebug-step_out");
+		});
+	});
+
 	$("#run").on("click", function() {
 		run(function() {
 			$("body").trigger("xdebug-run");
