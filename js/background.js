@@ -4,8 +4,6 @@
  * found in the LICENSE file.
  **/
 
-chrome.storage.local.set({'source_script': 'http://magento.dev/source.php'});
-chrome.storage.local.set({'listening_ip': '192.168.56.1'});
 
 function onLaunched(launchData) {
   chrome.app.window.create('main.html', {

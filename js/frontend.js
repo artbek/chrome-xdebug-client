@@ -4,7 +4,6 @@ $(function() {
 
 	var source_script = '';
 	chrome.storage.local.get('source_script', function(data) {
-		console.log(data);
 		source_script = data.source_script;
 	});
 	var isProcessing = false;
@@ -50,7 +49,25 @@ $(function() {
 		});
 	});
 
-	$("#settings").on("click", function() {
+	$("#settings-popup").on("click", function() {
+		chrome.storage.local.get('listening_ip', function(data) {
+			$("[name=settings__listening_ip]").val(data.listening_ip);
+		});
+		chrome.storage.local.get('source_script', function(data) {
+			$("[name=settings__source_script]").val(data.source_script);
+		});
+		$("#settings").toggle();
+	});
+
+	$("#settings-save").on("click", function() {
+		var listening_ip_val = $("[name=settings__listening_ip]").val();
+		var source_script_val = $("[name=settings__source_script]").val();
+
+		chrome.storage.local.set({'source_script': source_script_val});
+		chrome.storage.local.set({'listening_ip': listening_ip_val});
+		chrome.runtime.reload(); // reload app
+
+		$("#settings").hide();
 	});
 
 
@@ -87,7 +104,6 @@ $(function() {
 	$(window).on("load", function() {
 		$("#stack, #eval").trigger("click");
 	});
-
 
 
 	// XDEBUG RESULT
@@ -214,12 +230,14 @@ $(function() {
 			});
 			*/
 
-
 			$.ajax({
 				url: source_script,
 				type: 'GET',
 				data: {
 					path: filename
+				},
+				beforeSend: function() {
+					console.log("Getting source from: " + source_script);
 				},
 				success: function(data) {
 					var lines = data.split('\n');

@@ -138,3 +138,8 @@ div {
 	top: 45%;
 }
 
+#settings {
+	display: none;
+	margin-top: 10px;
+}
+

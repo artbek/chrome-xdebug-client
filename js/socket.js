@@ -3,12 +3,10 @@ $(function() {
 	var listeningSocketId = '';
 	var socketId = '';
 	var transactionId = 0;
+
 	var listeningIP = '';
-
-
 	chrome.storage.local.get('listening_ip', function(data) {
 		listeningIP = data.listening_ip;
-		console.log("Listening on: " + listeningIP);
 	});
 
 
@@ -23,6 +21,7 @@ $(function() {
 			//console.log("Create Info:"); console.log(createInfo);
 			listeningSocketId = createInfo.socketId;
 
+			console.log("Listening on: " + listeningIP);
 			chrome.socket.listen(createInfo.socketId, listeningIP, 9000, function(result) {
 				//console.log("Listen result: "); console.log(result);
 			});
