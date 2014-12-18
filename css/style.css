@@ -67,6 +67,10 @@ div {
 	width: 4%;
 }
 
+.lineno.breakpoint {
+	background: #ff8888;
+}
+
 .codeline {
 	float: right;
 	width: 94%;

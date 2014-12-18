@@ -100,6 +100,14 @@ $(function() {
 		send_command("stack_get");
 	});
 
+	$("body").on("xdebug-breakpoint_set", function(event, data) {
+		send_command("breakpoint_set", "-t line -n " + data.lineno);
+	});
+
+	$("body").on("xdebug-breakpoint_remove", function(event, data) {
+		send_command("breakpoint_remove", "-d " + data.breakpoint_id);
+	});
+
 
 
 	// MAIN ACTION
@@ -128,6 +136,7 @@ $(function() {
 
 					$('body').trigger('parse-xml', {
 						command: command,
+						options: options,
 						xml: str[1]
 					});
 

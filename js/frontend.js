@@ -7,6 +7,10 @@ $(function() {
 		source_script = data.source_script;
 	});
 	var isProcessing = false;
+	var breakpoints = [];
+
+	var filename = '';
+	var lineno = 0;
 
 
 	/* NAV */
@@ -44,6 +48,23 @@ $(function() {
 		run(function() {
 			$("body").trigger("xdebug-listen");
 		});
+	});
+
+	$("body").on("click", ".lineno", function() {
+		var self = $(this);
+		if (self.hasClass("breakpoint")) {
+			run(function() {
+				$("body").trigger("xdebug-breakpoint_remove", {
+					breakpoint_id: self.data("breakpoint_id")
+				});
+			});
+		} else {
+			run(function() {
+				$("body").trigger("xdebug-breakpoint_set", {
+					lineno: self.data("lineno")
+				});
+			});
+		}
 	});
 
 
@@ -118,13 +139,12 @@ $(function() {
 		case "dead":
 			$("#listen").fadeTo(100, 1.0).text("Listen");
 			$("#stop").fadeTo(100, 0.2);
+			breakpoints = [];
 			break;
 
 		}
 	});
 
-	var filename = '';
-	var lineno = 0;
 
 	$("body").on('parse-xml', function(event, data) {
 		hideLoading();
@@ -198,13 +218,34 @@ $(function() {
 			isProcessing = false;
 			break;
 
+		case "breakpoint_set":
+			isProcessing = false;
+			var breakpoint_id = $(xml_document).find("response").attr("id");
+			var breakpoint_lineno = data.options.split(" ").pop();
+			if (! breakpoints[filename]) breakpoints[filename] = [];
+			breakpoints[filename][breakpoint_lineno] = breakpoint_id;
+			highlightBreakpoints();
+			break;
+
+		case "breakpoint_remove":
+			isProcessing = false;
+			var breakpoint_id = data.options.split(" ").pop();
+			for (var breakpoint_lineno in breakpoints[filename]) {
+				if (breakpoints[filename][breakpoint_lineno] == breakpoint_id) {
+					breakpoints[filename].splice(breakpoint_lineno, 1);
+					break;
+				}
+			}
+			highlightBreakpoints();
+			break;
+
 		case "run":
 			if ($(xml_document).find("response").attr("status") == 'stopping') {
 				isProcessing = false;
 				$("#stop").trigger("click");
 				break;
 			}
-			// if not stopping process 'default:' case
+			// if not stopping go ahead and process 'default:' case
 
 		default:
 			filename = $(xml_document).find('response').children().attr("filename");
@@ -247,12 +288,13 @@ $(function() {
 						} else {
 							html += '<div class="line-wrapper">';
 						}
-						html +=	'<span class="lineno">' + (l + 1) + '</span>';
+						html +=	'<span class="lineno" data-lineno="' + (l + 1) + '">' + (l + 1) + '</span>';
 						html += '<span class="codeline"><pre>' + htmlEntities(lines[l]) + '</pre></span>';
 						html += '</div>';
 						$("#codeview").append(html);
 					}
 
+					highlightBreakpoints();
 					scrollToView();
 				},
 				error: function(data) {
@@ -314,6 +356,16 @@ $(function() {
 			showLoading();
 			isProcessing = true;
 			callback();
+		}
+	}
+
+
+	function highlightBreakpoints() {
+		$(".lineno.breakpoint").removeClass("breakpoint");
+		for (var id in breakpoints[filename]) {
+			$(".lineno[data-lineno='" + id + "']")
+				.addClass("breakpoint")
+				.data("breakpoint_id", breakpoints[filename][id]);
 		}
 	}
 
