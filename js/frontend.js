@@ -1,6 +1,6 @@
 $(function() {
 
-	// SETTINGS
+	/* SETUP */
 
 	var source_script = '';
 	chrome.storage.local.get('source_script', function(data) {
@@ -9,9 +9,7 @@ $(function() {
 	var isProcessing = false;
 
 
-	// HANDLE EVENTS
-
-	// nav
+	/* NAV */
 
 	$("#stepinto").on("click", function() {
 		run(function() {
@@ -48,6 +46,9 @@ $(function() {
 		});
 	});
 
+
+	/* STACK & CONSOLE */
+
 	$("#settings-popup").on("click", function() {
 		chrome.storage.local.get('listening_ip', function(data) {
 			$("[name=settings__listening_ip]").val(data.listening_ip);
@@ -70,8 +71,6 @@ $(function() {
 	});
 
 
-	// STACK & CONSOLE ANIMATIONS
-
 	$("#eval-form").on("submit", function(e) {
 		e.preventDefault();
 		var expression = $("input[name=eval-expression]").val();
@@ -82,12 +81,13 @@ $(function() {
 		});
 	});
 
-	// don't hide eval console when trying to type
-	$("#eval-form").on("click", function(e) {
+
+	// don't hide eval console when trying to type or select
+	$("#eval-form, #stack-filenames, #eval-content").on("click", function(e) {
 		e.stopPropagation();
 	});
 
-	// hide/show on click
+
 	$("#stack, #eval").on("click", function() {
 		var currentRight = parseInt($(this).css('right').replace('px', ''));
 		if (currentRight < 0) {
@@ -105,7 +105,7 @@ $(function() {
 	});
 
 
-	// XDEBUG RESULT
+	/* XDEBUG CALLBACKS */
 
 	$("body").on('socket_status', function(event, data) {
 		switch (data.status) {
@@ -122,7 +122,6 @@ $(function() {
 
 		}
 	});
-
 
 	var filename = '';
 	var lineno = 0;
@@ -190,7 +189,7 @@ $(function() {
 					stack_trace_html += '<div class="filename">' + stack_trace[i] + '</div>';
 				}
 			}
-			$("#stack").html(stack_trace_html);
+			$("#stack-filenames").html(stack_trace_html);
 
 			isProcessing = false;
 			break;
@@ -275,7 +274,7 @@ $(function() {
 	});
 
 
-	// HELPERS
+	/* HELPERS */
 
 	function htmlEntities(s) {
 		return $("<div/>").text(s).html();

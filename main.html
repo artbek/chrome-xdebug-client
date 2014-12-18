@@ -26,12 +26,14 @@
 			<button id="settings-save">Save</button>
 		</div>
 	</nav>
-	<div id="codeview"></div>
+	<div id="codeview" contenteditable="true"></div>
 
-	<div id="stack">
-		<div class="filename">aaaa</div>
-		<div class="filename">bbb</div>
-		<div class="filename">ccc</div>
+	<div id="stack" contenteditable="true">
+		<div id="stack-filenames">
+			<div class="filename">aaaa</div>
+			<div class="filename">bbb</div>
+			<div class="filename">ccc</div>
+		</div>
 	</div>
 
 	<div id="eval">
@@ -39,7 +41,7 @@
 			<input type="text" name="eval-expression" />
 			<input type="submit" id="eval-submit" value="Submit" style="display: none" />
 		</form>
-		<pre id="eval-content"></pre>
+		<pre id="eval-content" contenteditable="true"></pre>
 	</div>
 
 	<div id="loading">
