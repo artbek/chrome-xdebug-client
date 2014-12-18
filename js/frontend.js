@@ -399,14 +399,23 @@ $(function() {
 	function scrollToView() {
 		var margin = 100;
 		var scrollTop = $(window).scrollTop();
-		var offset = $(".active-line").offset().top;
-		if (offset < (scrollTop + margin) || offset > (scrollTop + $(window).height() - (2 * margin))) {
-			var elements = document.getElementsByClassName("active-line")
-			if (elements[0]) {
-				elements[0].scrollIntoView();
-				var currentScroll = $("body").scrollTop();
-				$("body").scrollTop(currentScroll - margin);
-			}
+		var elements = document.getElementsByClassName("active-line");
+
+		if (elements[0]) {
+			var active_line = elements[0];
+		} else {
+			return;
+		}
+
+		if (
+				// hiden 'above' the screen
+				$(active_line).offset().top < (scrollTop + margin) ||
+				// hiden 'below' the screen
+				$(active_line).offset().top > (scrollTop + $(window).height() - margin)
+		) {
+			active_line.scrollIntoView(false);
+			var currentScroll = $("body").scrollTop();
+			$("body").scrollTop(currentScroll + $(window).height() / 2);
 		}
 	}
 
