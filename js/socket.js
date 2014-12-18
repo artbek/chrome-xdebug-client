@@ -78,8 +78,9 @@ $(function() {
 			command: "stop",
 			xml: ''
 		});
-		chrome.socket.destroy(socketId);
-		chrome.socket.destroy(listeningSocketId);
+
+		socketId && chrome.socket.destroy(socketId);
+		listeningSocketId && chrome.socket.destroy(listeningSocketId);
 		$('body').trigger('socket_status', {status: 'dead'});
 	});
 

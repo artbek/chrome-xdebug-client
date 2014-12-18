@@ -38,9 +38,8 @@ $(function() {
 	});
 
 	$("#stop").on("click", function() {
-		run(function() {
-			$("body").trigger("xdebug-stop");
-		});
+		// 'Stop' action should ignore 'isProcessing' flag.
+		$("body").trigger("xdebug-stop");
 	});
 
 	$("#listen").on("click", function() {
