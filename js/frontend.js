@@ -10,6 +10,7 @@ $(function() {
 	var breakpoints = [];
 
 	var filename = '';
+	var filename_currently_loaded = '';
 	var lineno = 0;
 
 
@@ -147,6 +148,7 @@ $(function() {
 
 
 	$("body").on('parse-xml', function(event, data) {
+
 		hideLoading();
 
 		var xml_document = $.parseXML(data.xml);
@@ -262,12 +264,25 @@ $(function() {
 				break;
 			}
 
-/*
-			$("body").trigger("xdebug-source", {
-				filename: filename,
-				lineno: lineno
-			});
-			*/
+			refreshSourceView();
+
+		}
+
+	});
+
+
+	/* HELPERS */
+
+	function refreshSourceView() {
+
+		if (filename_currently_loaded == filename) {
+
+			isProcessing = false;
+			$(".line-wrapper.active-line").removeClass("active-line");
+			$(".lineno[data-lineno=" + lineno + "]").closest(".line-wrapper").addClass("active-line");
+			scrollToView();
+
+		} else {
 
 			$.ajax({
 				url: source_script,
@@ -275,12 +290,15 @@ $(function() {
 				data: {
 					path: filename
 				},
+
 				beforeSend: function() {
 					console.log("Getting source from: " + source_script);
 				},
+
 				success: function(data) {
 					var lines = data.split('\n');
 					$("#codeview").html("");
+
 					for (var l = 0; l < lines.length; l++) {
 						var html = "";
 						if (l == (lineno - 1)) {
@@ -296,27 +314,35 @@ $(function() {
 
 					highlightBreakpoints();
 					scrollToView();
+					filename_currently_loaded = filename;
 				},
+
 				error: function(data) {
 					$("#codeview").html("");
 					$("#codeview").append("<p>Couldn't get source:</p>");
 					$("#codeview").append("<p><strong>" + filename + ":" + lineno + "</strong></p>");
 					console.error("Couldn't get source!");
 				},
+
 				complete: function() {
 					isProcessing = false;
 					run(function() {
 						$("body").trigger("xdebug-stack_get");
 					});
 				}
+
 			});
 
 		}
 
-	});
+		/*
+		 $("body").trigger("xdebug-source", {
+		 filename: filename,
+		 lineno: lineno
+		 });
+	 */
+	}
 
-
-	/* HELPERS */
 
 	function htmlEntities(s) {
 		return $("<div/>").text(s).html();
