@@ -132,7 +132,12 @@ $(function() {
 
 					console.log("Length: " + str[0]);
 					console.log(str[1]);
-					//console.log(str);
+
+					if (! str[0]) {
+						console.log("(FAILSAFE) stopping...");
+						$("body").trigger("xdebug-stop");
+						return;
+					}
 
 					$('body').trigger('parse-xml', {
 						command: command,

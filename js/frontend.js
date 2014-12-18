@@ -153,7 +153,7 @@ $(function() {
 
 		var xml_document = $.parseXML(data.xml);
 
-		switch (data.command) {
+		switch (data.command) { /* SWITCH - START */
 
 		case "feature_set":
 			isProcessing = false;
@@ -241,32 +241,19 @@ $(function() {
 			highlightBreakpoints();
 			break;
 
-		case "run":
+		default:
 			if ($(xml_document).find("response").attr("status") == 'stopping') {
 				isProcessing = false;
-				$("#stop").trigger("click");
-				break;
-			}
-			// if not stopping go ahead and process 'default:' case
-
-		default:
-			filename = $(xml_document).find('response').children().attr("filename");
-			lineno = $(xml_document).find('response').children().attr("lineno");
-			console.log("File: " + filename + ":" + lineno);
-
-			if (filename === undefined) {
+				$("body").trigger("xdebug-stop");
+			} else {
+				filename = $(xml_document).find('response').children().attr("filename");
+				lineno = $(xml_document).find('response').children().attr("lineno");
+				console.log("File: " + filename + ":" + lineno);
+				if (filename) refreshSourceView();
 				isProcessing = false;
-				if (data.command != 'run') {
-					run(function() {
-						$("body").trigger("xdebug-" + data.command);
-					});
-				}
-				break;
 			}
 
-			refreshSourceView();
-
-		}
+		} /* SWITCH - END */
 
 	});
 
