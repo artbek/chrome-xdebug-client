@@ -412,9 +412,9 @@ $(function() {
 		}
 
 		if (
-				// hiden 'above' the screen
+				// hidden 'above' the screen
 				$(active_line).offset().top < (scrollTop + margin) ||
-				// hiden 'below' the screen
+				// hidden 'below' the screen
 				$(active_line).offset().top > (scrollTop + $(window).height() - margin)
 		) {
 			active_line.scrollIntoView(false);
