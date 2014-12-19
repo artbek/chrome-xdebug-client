@@ -109,21 +109,23 @@ $(function() {
 		e.stopPropagation();
 	});
 
-
 	$("#stack, #eval").on("click", function() {
-		var currentRight = parseInt($(this).css('right').replace('px', ''));
-		if (currentRight < 0) {
-			$(this).animate({right: '0'}, 300);
+		if ($(this).hasClass("popup-is-open")) {
+			$(this).removeClass("popup-is-open");
 		} else {
-			var width = $(this).width() - 15;
-			if (width > 0) {
-				$(this).animate({right: '-' + width}, 300);
-			}
+			$(this).addClass("popup-is-open");
 		}
+
+		$("body").trigger("refresh-popups");
 	});
 
-	$(window).on("load", function() {
-		$("#stack, #eval").trigger("click");
+	$("body").on("refresh-popups", function() {
+		refreshPopup("#stack");
+		refreshPopup("#eval");
+	});
+
+	$(window).on("load resize", function() {
+		$("body").trigger("refresh-popups");
 	});
 
 
@@ -301,6 +303,7 @@ $(function() {
 
 					highlightBreakpoints();
 					scrollToView();
+					$("body").trigger("refresh-popups");
 					filename_currently_loaded = filename;
 				},
 
@@ -328,6 +331,20 @@ $(function() {
 		 lineno: lineno
 		 });
 	 */
+	}
+
+
+	function refreshPopup(popup) {
+		var $popup = $(popup);
+		var bodyWidth = $("body").width();
+		var offset = 20;
+
+		if ($popup.hasClass("popup-is-open")) {
+			$popup.animate({left: '0' + offset, width: bodyWidth - offset}, 300);
+		} else {
+			var padding = parseInt($popup.css("padding-left").replace("px", ""));
+			$popup.animate({left: (bodyWidth - padding), width: bodyWidth - offset}, 300);
+		}
 	}
 
 
