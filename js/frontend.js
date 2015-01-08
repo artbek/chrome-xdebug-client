@@ -7,7 +7,7 @@ $(function() {
 		source_script = data.source_script;
 	});
 	var isProcessing = false;
-	var breakpoints = [];
+	var breakpoints = {};
 
 	var filename = '';
 	var filename_currently_loaded = '';
@@ -56,13 +56,14 @@ $(function() {
 		if (self.hasClass("breakpoint")) {
 			run(function() {
 				$("body").trigger("xdebug-breakpoint_remove", {
-					breakpoint_id: self.data("breakpoint_id")
+					breakpoint_id: self.data("breakpoint_id").substring(1) // remove first letter
 				});
 			});
 		} else {
 			run(function() {
 				$("body").trigger("xdebug-breakpoint_set", {
-					lineno: self.data("lineno")
+					lineno: self.data("lineno"),
+					filename: filename_currently_loaded
 				});
 			});
 		}
@@ -142,7 +143,7 @@ $(function() {
 		case "dead":
 			$("#listen").fadeTo(100, 1.0).text("Listen");
 			$("#stop").fadeTo(100, 0.2);
-			breakpoints = [];
+			breakpoints = {};
 			break;
 
 		}
@@ -226,20 +227,17 @@ $(function() {
 			isProcessing = false;
 			var breakpoint_id = $(xml_document).find("response").attr("id");
 			var breakpoint_lineno = data.options.split(" ").pop();
-			if (! breakpoints[filename]) breakpoints[filename] = [];
-			breakpoints[filename][breakpoint_lineno] = breakpoint_id;
+			breakpoints["b" + breakpoint_id] = {
+				filename: filename_currently_loaded,
+				lineno: breakpoint_lineno
+			};
 			highlightBreakpoints();
 			break;
 
 		case "breakpoint_remove":
 			isProcessing = false;
 			var breakpoint_id = data.options.split(" ").pop();
-			for (var breakpoint_lineno in breakpoints[filename]) {
-				if (breakpoints[filename][breakpoint_lineno] == breakpoint_id) {
-					breakpoints[filename].splice(breakpoint_lineno, 1);
-					break;
-				}
-			}
+			delete breakpoints["b" + breakpoint_id];
 			highlightBreakpoints();
 			break;
 
@@ -392,10 +390,14 @@ $(function() {
 
 	function highlightBreakpoints() {
 		$(".lineno.breakpoint").removeClass("breakpoint");
-		for (var id in breakpoints[filename]) {
-			$(".lineno[data-lineno='" + id + "']")
-				.addClass("breakpoint")
-				.data("breakpoint_id", breakpoints[filename][id]);
+		for (var id in breakpoints) {
+			if (breakpoints.hasOwnProperty(id)) {
+				if (breakpoints[id].filename == filename_currently_loaded) {
+					$(".lineno[data-lineno='" + breakpoints[id].lineno + "']")
+						.addClass("breakpoint")
+						.data("breakpoint_id", id);
+				}
+			}
 		}
 	}
 

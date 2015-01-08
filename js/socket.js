@@ -101,7 +101,7 @@ $(function() {
 	});
 
 	$("body").on("xdebug-breakpoint_set", function(event, data) {
-		send_command("breakpoint_set", "-t line -n " + data.lineno);
+		send_command("breakpoint_set", "-t line -f " + data.filename + " -n " + data.lineno);
 	});
 
 	$("body").on("xdebug-breakpoint_remove", function(event, data) {
