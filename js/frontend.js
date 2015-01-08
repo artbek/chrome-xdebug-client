@@ -187,13 +187,18 @@ $(function() {
 				} else {
 					html += '<div class="line-wrapper">';
 				}
-				html +=	'<span class="lineno">' + (b + line) + '</span>';
+				var html_lineno = b + line
+				html +=	'<span class="lineno" data-lineno="' + html_lineno + '">' + html_lineno + '</span>';
 				html += '<span class="codeline"><pre>' + htmlEntities(lines[line]) + '</pre></span>';
 				html += '</div>';
 				$("#codeview").append(html);
 			}
 
+			filename_currently_loaded = filename;
+			highlightBreakpoints();
 			scrollToView();
+			$("body").trigger("refresh-popups");
+
 			isProcessing = false;
 			run(function() {
 				$("body").trigger("xdebug-stack_get");
@@ -271,64 +276,70 @@ $(function() {
 
 		} else {
 
-			$.ajax({
-				url: source_script,
-				type: 'GET',
-				data: {
-					path: filename
-				},
+			if (isValidUrl(source_script)) {
 
-				beforeSend: function() {
-					console.log("Getting source from: " + source_script);
-				},
+				$.ajax({
+					url: source_script,
+					type: 'GET',
+					data: {
+						path: filename
+					},
 
-				success: function(data) {
-					var lines = data.split('\n');
-					$("#codeview").html("");
+					beforeSend: function() {
+						console.log("Getting source from: " + source_script);
+					},
 
-					for (var l = 0; l < lines.length; l++) {
-						var html = "";
-						if (l == (lineno - 1)) {
-							html += '<div class="line-wrapper active-line">';
-						} else {
-							html += '<div class="line-wrapper">';
+					success: function(data) {
+						var lines = data.split('\n');
+						$("#codeview").html("");
+
+						for (var l = 0; l < lines.length; l++) {
+							var html = "";
+							if (l == (lineno - 1)) {
+								html += '<div class="line-wrapper active-line">';
+							} else {
+								html += '<div class="line-wrapper">';
+							}
+							var html_lineno = l + 1;
+							html +=	'<span class="lineno" data-lineno="' + html_lineno + '">' + html_lineno + '</span>';
+							html += '<span class="codeline"><pre>' + htmlEntities(lines[l]) + '</pre></span>';
+							html += '</div>';
+							$("#codeview").append(html);
 						}
-						html +=	'<span class="lineno" data-lineno="' + (l + 1) + '">' + (l + 1) + '</span>';
-						html += '<span class="codeline"><pre>' + htmlEntities(lines[l]) + '</pre></span>';
-						html += '</div>';
-						$("#codeview").append(html);
+
+						filename_currently_loaded = filename;
+						highlightBreakpoints();
+						scrollToView();
+						$("body").trigger("refresh-popups");
+					},
+
+					error: function(data) {
+						$("#codeview").html("");
+						$("#codeview").append("<p>Couldn't get source:</p>");
+						$("#codeview").append("<p><strong>" + filename + ":" + lineno + "</strong></p>");
+						console.error("Couldn't get source!");
+					},
+
+					complete: function() {
+						isProcessing = false;
+						run(function() {
+							$("body").trigger("xdebug-stack_get");
+						});
 					}
 
-					highlightBreakpoints();
-					scrollToView();
-					$("body").trigger("refresh-popups");
-					filename_currently_loaded = filename;
-				},
+				});
 
-				error: function(data) {
-					$("#codeview").html("");
-					$("#codeview").append("<p>Couldn't get source:</p>");
-					$("#codeview").append("<p><strong>" + filename + ":" + lineno + "</strong></p>");
-					console.error("Couldn't get source!");
-				},
+			} else {
 
-				complete: function() {
-					isProcessing = false;
-					run(function() {
-						$("body").trigger("xdebug-stack_get");
-					});
-				}
+				$("body").trigger("xdebug-source", {
+					filename: filename,
+					lineno: lineno
+				});
 
-			});
+			}
 
 		}
 
-		/*
-		 $("body").trigger("xdebug-source", {
-		 filename: filename,
-		 lineno: lineno
-		 });
-	 */
 	}
 
 
@@ -348,6 +359,11 @@ $(function() {
 
 	function htmlEntities(s) {
 		return $("<div/>").text(s).html();
+	}
+
+
+	function isValidUrl(url) {
+		return url.match(/^http[s]?:\/\/.+/);
 	}
 
 
