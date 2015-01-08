@@ -78,6 +78,7 @@ div {
 
 .codeline pre {
 	margin: 0px;
+	tab-size: 4;
 	word-wrap: break-word;
 	white-space: pre-wrap;
 }
