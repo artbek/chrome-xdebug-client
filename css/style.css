@@ -21,6 +21,11 @@ nav {
 	width: 98%
 }
 
+#find-in-source {
+	margin-right: 20px;
+	width: 100px;
+}
+
 .nav-button,
 .nav-button-right {
 	cursor: pointer;
@@ -76,12 +81,21 @@ div {
 	width: 94%;
 }
 
-.codeline pre {
-	margin: 0px;
-	tab-size: 4;
-	word-wrap: break-word;
-	white-space: pre-wrap;
-}
+	.codeline pre {
+		margin: 0px;
+		tab-size: 4;
+		word-wrap: break-word;
+		white-space: pre-wrap;
+	}
+
+		.codeline pre em {
+			background: #E6FF00;
+			font-style: normal;
+		}
+
+		.codeline pre em.active {
+			font-weight: bold;
+		}
 
 
 #stack {

@@ -69,6 +69,46 @@ $(function() {
 		}
 	});
 
+	jQuery.expr[":"].containsi = jQuery.expr.createPseudo(function(arg) {
+		return function(elem) {
+			return jQuery(elem).text().toUpperCase().indexOf(arg.toUpperCase()) >= 0;
+		};
+	});
+
+	$("#find-in-source").on("keyup", function(e) {
+		var search_string = $(this).val();
+		var elements = $(".codeline pre:containsi(" + search_string + ")");
+
+		// clear all highlighted search results
+		$(".codeline pre").each(function() {
+			$(this).html($(this).text());
+		});
+
+		// highlight search results
+		elements.each(function() {
+			var r = new RegExp("(" + search_string + ")", "gi");
+			$(this).html($(this).text().replace(r, "<em>$1</em>"));
+		});
+
+		// don't reset if <ENTER> pressed
+		if (e.keyCode != 13) {
+			$(this).data("search-result-index", 0);
+		}
+
+		var search_result_index = $(this).data("search-result-index");
+
+		// scroll to view and emphasize
+		scrollToView(elements.get(search_result_index));
+		$(elements.get(search_result_index)).find("em").addClass("active");
+
+		// rotate index
+		search_result_index++;
+		if (search_result_index >= elements.length) {
+			search_result_index = 0;
+		}
+		$(this).data("search-result-index", search_result_index);
+	});
+
 
 	/* STACK & CONSOLE */
 
@@ -418,16 +458,20 @@ $(function() {
 	}
 
 
-	function scrollToView() {
+	// active_line - native DOM element (not jQuery object)
+	function scrollToView(active_line) {
 		var margin = 100;
 		var scrollTop = $(window).scrollTop();
-		var elements = document.getElementsByClassName("active-line");
 
-		if (elements[0]) {
-			var active_line = elements[0];
-		} else {
-			return;
+		if (! active_line) {
+			var elements = document.getElementsByClassName("active-line");
+			if (elements[0]) {
+				active_line = elements[0];
+			}
 		}
+
+		// do nothing if element not found
+		if (! active_line) return;
 
 		if (
 				// hidden 'above' the screen
