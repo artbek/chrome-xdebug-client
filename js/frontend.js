@@ -17,36 +17,36 @@ $(function() {
 	/* NAV */
 
 	$("#stepinto").on("click", function() {
-		run(function() {
+		isInactive($(this)) || run(function() {
 			$("body").trigger("xdebug-step_into");
 		});
 	});
 
 	$("#stepover").on("click", function() {
-		run(function() {
+		isInactive($(this)) || run(function() {
 			$("body").trigger("xdebug-step_over");
 		});
 	});
 
 	$("#stepout").on("click", function() {
-		run(function() {
+		isInactive($(this)) || run(function() {
 			$("body").trigger("xdebug-step_out");
 		});
 	});
 
 	$("#run").on("click", function() {
-		run(function() {
+		isInactive($(this)) || run(function() {
 			$("body").trigger("xdebug-run");
 		});
 	});
 
 	$("#stop").on("click", function() {
 		// 'Stop' action should ignore 'isProcessing' flag.
-		$("body").trigger("xdebug-stop");
+		isInactive($(this)) || $("body").trigger("xdebug-stop");
 	});
 
 	$("#listen").on("click", function() {
-		run(function() {
+		isInactive($(this)) || run(function() {
 			$("body").trigger("xdebug-listen");
 		});
 	});
@@ -173,20 +173,30 @@ $(function() {
 	/* XDEBUG CALLBACKS */
 
 	$("body").on('socket_status', function(event, data) {
+
+		$("input").removeClass("error");
+		$(".nav-button").removeClass("inactive");
+
 		switch (data.status) {
+			case "live":
+				$("#listen").addClass("inactive");
+				$("#listen").text("Running....");
+				break;
 
-		case "live":
-			$("#listen").fadeTo(100, 0.2).text("Running...");
-			$("#stop").fadeTo(100, 1.0);
-			break;
+			case "dead":
+				$("#stop").addClass("inactive");
+				$("#listen").text("Listen");
+				breakpoints = {};
+				break;
 
-		case "dead":
-			$("#listen").fadeTo(100, 1.0).text("Listen");
-			$("#stop").fadeTo(100, 0.2);
-			breakpoints = {};
-			break;
-
+			case "ip_error":
+				$(".nav-button").addClass("inactive");
+				$("input[name=settings__listening_ip]").addClass("error");
+				$("#settings-popup").addClass("error");
+				breakpoints = {};
+				break;
 		}
+
 	});
 
 
@@ -483,6 +493,11 @@ $(function() {
 			var currentScroll = $("body").scrollTop();
 			$("body").scrollTop(currentScroll + $(window).height() / 2);
 		}
+	}
+
+
+	function isInactive($obj) {
+		return $obj.hasClass("inactive");
 	}
 
 

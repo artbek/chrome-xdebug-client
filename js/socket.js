@@ -5,16 +5,23 @@ $(function() {
 	var transactionId = 0;
 
 	var listeningIP = '';
-	chrome.storage.local.get('listening_ip', function(data) {
-		listeningIP = data.listening_ip;
-	});
 
 
 	// CONECT WITH XDEBUG SERVER
 
 	$(window).load(function() {
-		$('body').trigger('socket_status', {status: 'dead'});
+		var status = 'dead';
+		chrome.storage.local.get('listening_ip', function(data) {
+			listeningIP = data.listening_ip;
+			if (! isValidIP()) { status = 'ip_error'; }
+			$('body').trigger('socket_status', {status: status});
+		});
 	});
+
+	function isValidIP() {
+		return listeningIP.match(/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/);
+	}
+
 
 	function listen_and_connect() {
 		chrome.socket.create('tcp', function(createInfo) {
