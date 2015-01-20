@@ -100,7 +100,8 @@ $(function() {
 		var lineno = parseInt(data.lineno);
 		var begin = Math.max((lineno - 30), 1);
 		var end = lineno + 30;
-		send_command("source", "-b " + begin + " -e " + end + " -f " + filename);
+		//send_command("source", "-b " + begin + " -e " + end + " -f " + filename);
+		send_command("source", "-f " + filename);
 	});
 
 	$("body").on("xdebug-stack_get", function() {

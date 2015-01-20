@@ -225,29 +225,7 @@ $(function() {
 			var data = $(xml_document).find("response").text();
 			data = atob(data);
 
-			var b = Math.max((lineno - 30), 1);
-			var offset = lineno - b;
-
-			var lines = data.split('\n');
-			$("#codeview").html("");
-			for (var line = 0; line < lines.length; line++) {
-				var html = "";
-				if (line == offset) {
-					html += '<div class="line-wrapper active-line">';
-				} else {
-					html += '<div class="line-wrapper">';
-				}
-				var html_lineno = b + line
-				html +=	'<span class="lineno" data-lineno="' + html_lineno + '">' + html_lineno + '</span>';
-				html += '<span class="codeline"><pre>' + htmlEntities(lines[line]) + '</pre></span>';
-				html += '</div>';
-				$("#codeview").append(html);
-			}
-
-			filename_currently_loaded = filename;
-			highlightBreakpoints();
-			scrollToView();
-			$("body").trigger("refresh-popups");
+			buildSourceCodeView(data);
 
 			isProcessing = false;
 			run(function() {
@@ -340,27 +318,7 @@ $(function() {
 					},
 
 					success: function(data) {
-						var lines = data.split('\n');
-						$("#codeview").html("");
-
-						for (var l = 0; l < lines.length; l++) {
-							var html = "";
-							if (l == (lineno - 1)) {
-								html += '<div class="line-wrapper active-line">';
-							} else {
-								html += '<div class="line-wrapper">';
-							}
-							var html_lineno = l + 1;
-							html +=	'<span class="lineno" data-lineno="' + html_lineno + '">' + html_lineno + '</span>';
-							html += '<span class="codeline"><pre>' + htmlEntities(lines[l]) + '</pre></span>';
-							html += '</div>';
-							$("#codeview").append(html);
-						}
-
-						filename_currently_loaded = filename;
-						highlightBreakpoints();
-						scrollToView();
-						$("body").trigger("refresh-popups");
+						buildSourceCodeView(data);
 					},
 
 					error: function(data) {
@@ -390,6 +348,31 @@ $(function() {
 
 		}
 
+	}
+
+
+	function buildSourceCodeView(data) {
+		var lines = data.split('\n');
+		$("#codeview").html("");
+
+		for (var l = 0; l < lines.length; l++) {
+			var html = "";
+			if (l == (lineno - 1)) {
+				html += '<div class="line-wrapper active-line">';
+			} else {
+				html += '<div class="line-wrapper">';
+			}
+			var html_lineno = l + 1;
+			html +=	'<span class="lineno" data-lineno="' + html_lineno + '">' + html_lineno + '</span>';
+			html += '<span class="codeline"><pre>' + htmlEntities(lines[l]) + '</pre></span>';
+			html += '</div>';
+			$("#codeview").append(html);
+		}
+
+		filename_currently_loaded = filename;
+		highlightBreakpoints();
+		scrollToView();
+		$("body").trigger("refresh-popups");
 	}
 
 
