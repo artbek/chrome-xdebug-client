@@ -399,10 +399,10 @@ $(function() {
 		var offset = 20;
 
 		if ($popup.hasClass("popup-is-open")) {
-			$popup.animate({left: '0' + offset, width: bodyWidth - offset}, 300);
+			$popup.stop(true, false).animate({left: '0' + offset, width: bodyWidth - offset}, 300);
 		} else {
 			var padding = parseInt($popup.css("padding-left").replace("px", ""));
-			$popup.animate({left: (bodyWidth - padding), width: bodyWidth - offset}, 300);
+			$popup.stop(true, false).animate({left: (bodyWidth - padding), width: bodyWidth - offset}, 300);
 		}
 	}
 
