@@ -481,7 +481,11 @@ $(function() {
 		) {
 			active_line.scrollIntoView(false);
 			var currentScroll = $("body").scrollTop();
-			$("body").scrollTop(currentScroll + $(window).height() / 2);
+
+			var scroll_to_point = currentScroll + $(window).height() / 2;
+			if ($(active_line).offset().top > scroll_to_point) {
+				$("body").scrollTop(scroll_to_point);
+			}
 		}
 	}
 
