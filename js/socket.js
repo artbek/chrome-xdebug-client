@@ -98,10 +98,9 @@ $(function() {
 	$("body").on("xdebug-source", function(event, data) {
 		var filename = data.filename;
 		var lineno = parseInt(data.lineno);
-		var begin = Math.max((lineno - 30), 1);
-		var end = lineno + 30;
-		//send_command("source", "-b " + begin + " -e " + end + " -f " + filename);
-		send_command("source", "-f " + filename);
+		var begin = Math.max((lineno - data.linesCount), 1);
+		var end = lineno + data.linesCount;
+		send_command("source", "-b " + begin + " -e " + end + " -f " + filename);
 	});
 
 	$("body").on("xdebug-stack_get", function() {

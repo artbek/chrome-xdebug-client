@@ -6,6 +6,7 @@ $(function() {
 	chrome.storage.local.get('source_script', function(data) {
 		source_script = data.source_script;
 	});
+	var linesCount = 50;
 	var isProcessing = false;
 	var breakpoints = {};
 
@@ -222,10 +223,12 @@ $(function() {
 
 		// used when getting source from xdebug
 		case "source":
-			var data = $(xml_document).find("response").text();
-			data = atob(data);
+			var offset = parseInt(data.options.split(" ")[1]) - 1;
 
-			buildSourceCodeView(data);
+			var sourceCode = $(xml_document).find("response").text();
+			sourceCode = atob(sourceCode);
+
+			buildSourceCodeView(sourceCode, offset);
 
 			isProcessing = false;
 			run(function() {
@@ -295,16 +298,16 @@ $(function() {
 
 	function refreshSourceView() {
 
-		if (filename_currently_loaded == filename) {
+		if (isValidUrl(source_script)) {
 
-			isProcessing = false;
-			$(".line-wrapper.active-line").removeClass("active-line");
-			$(".lineno[data-lineno=" + lineno + "]").closest(".line-wrapper").addClass("active-line");
-			scrollToView();
+			if (filename_currently_loaded == filename) {
 
-		} else {
+				isProcessing = false;
+				$(".line-wrapper.active-line").removeClass("active-line");
+				$(".lineno[data-lineno=" + lineno + "]").closest(".line-wrapper").addClass("active-line");
+				scrollToView();
 
-			if (isValidUrl(source_script)) {
+			} else {
 
 				$.ajax({
 					url: source_script,
@@ -337,32 +340,36 @@ $(function() {
 
 				});
 
-			} else {
-
-				$("body").trigger("xdebug-source", {
-					filename: filename,
-					lineno: lineno
-				});
-
 			}
+
+		} else {
+
+			$("body").trigger("xdebug-source", {
+				filename: filename,
+				lineno: lineno,
+				linesCount: linesCount
+			});
 
 		}
 
 	}
 
 
-	function buildSourceCodeView(data) {
+	function buildSourceCodeView(data, offset) {
 		var lines = data.split('\n');
 		$("#codeview").html("");
 
+		if (! offset) offset = 0;
+
 		for (var l = 0; l < lines.length; l++) {
 			var html = "";
-			if (l == (lineno - 1)) {
+			var currentLineNo = l + offset;
+			if (currentLineNo == (lineno - 1)) {
 				html += '<div class="line-wrapper active-line">';
 			} else {
 				html += '<div class="line-wrapper">';
 			}
-			var html_lineno = l + 1;
+			var html_lineno = currentLineNo + 1;
 			html +=	'<span class="lineno" data-lineno="' + html_lineno + '">' + html_lineno + '</span>';
 			html += '<span class="codeline"><pre>' + htmlEntities(lines[l]) + '</pre></span>';
 			html += '</div>';
