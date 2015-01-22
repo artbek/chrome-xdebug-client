@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * It should be accesible like this:
+ * http://artbek.co.uk/source.php?path=/var/www/mysourcecode/file.php
+ */
+
 $allowed = array(
 	'192.168.1.113'
 );

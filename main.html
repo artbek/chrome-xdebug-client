@@ -20,21 +20,65 @@
 		<span id="listen" class="nav-button">Listen</span> |
 		<span id="break-on-return" class="nav-button">Break on return</span>
 
-		<span id="settings-popup" class="nav-button-right">Settings</span>
+		<span id="settings-popup" class="nav-button-right">Settings/Help</span>
 		<input type="text" id="find-in-source" class="nav-button-right" placeholder="search" />
 
 		<div id="settings">
-			Listening IP: <input type="text" name="settings__listening_ip" />
+
 			<br />
-			Source URL: <input type="text" name="settings__source_script" />
-			<button id="settings-save">Save</button>
+
+			<label>Listening IP:</label>
+			<input type="text" name="settings__listening_ip" style="width: 8em" />
+			(xdebug will try to establish connection with this IP)
+
+			<br />
+			<br />
+
+			Native xdebug source retrieving can be slow and is limited to a certain number of lines in this app.
+			<br />
+			It is recommened to use your own service to retrieve source code, e.g. <a href="https://github.com/artbek/chrome-xdebug-client/blob/master/php/source.php" target="_blank">source.php</a>
+			<br />
+			<label>Source URL:</label>
+			<input type="text" name="settings__source_script" style="width: 18em" />
+
+			<br />
+			<br />
+
+			<button id="settings-save">Save Settings</button>
+
+			<br />
+			<br />
+
+			<strong>How to get started:</strong>
+			<br />
+
+			1. Make sure you have supplied a reachable <strong>Listening IP</strong> above.
+			<br />
+			2. Press <strong>Listen</strong>.
+			<br />
+			3. Run your code, e.g.:
+			<code>
+				http://artbek.co.uk?<strong>XDEBUG_SESSION_START=xxx</strong> (the <strong>xxx</strong> value doesn't matter)
+			</code>
+
+			<code>
+				export <strong>XDEBUG_CONFIG="idekey=xxx remote_host=123.123.123.123"</strong>
+				<br />
+				php myscript.php
+			</code>
+
+			<br />
+			<a href="https://github.com/artbek/chrome-xdebug-client" target="_blank">GitHub</a>
+			<br />
+
 		</div>
+
 	</nav>
 	<div id="codeview" contenteditable="true"></div>
 
 	<div id="stack" contenteditable="true">
 		<div id="stack-filenames">
-			<div class="filename">aaaa</div>
+			<div class="filename">aaa</div>
 			<div class="filename">bbb</div>
 			<div class="filename">ccc</div>
 		</div>

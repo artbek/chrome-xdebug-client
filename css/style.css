@@ -1,18 +1,34 @@
 html, body {
 	font-size: 12px;
+	line-height: 1.5em;
 	margin: 0;
 	overflow: auto;
 	padding: 0;
 }
 
+label {
+	color: #ffffff;
+	font-weight: bold;
+}
+
 input {
 	border: 0px;
-	margin: 0px;
+	font-size: 1em;
+	margin: 1px;
 	padding: 2px;
 }
 
 input.error {
 	background-color: #ff3333;
+}
+
+code {
+	display: block;
+	background: #eeeeee;
+	padding: 0.6em;
+	color: #333333;
+	margin: 0.6em;
+	border: 1px solid #111111;
 }
 
 nav {
@@ -24,6 +40,11 @@ nav {
 	position: fixed;
 	top: 0px;
 	width: 98%
+}
+
+nav a {
+	color: #ffffff;
+	text-decoration: underline;
 }
 
 #find-in-source {
@@ -57,7 +78,6 @@ div {
 	float: left;
 	font-family: monospace;
 	font-size: 1em;
-	line-height: 1.5em;
 	margin-top: 40px;
 }
 

@@ -48,7 +48,7 @@ $(function() {
 					});
 				});
 
-				// destroy the inisial stocket
+				// destroy the initial stocket
 				chrome.socket.destroy(listeningSocketId);
 			});
 		});
