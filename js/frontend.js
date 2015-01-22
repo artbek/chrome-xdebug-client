@@ -52,6 +52,12 @@ $(function() {
 		});
 	});
 
+	$("#break-on-return").on("click", function() {
+		isInactive($(this)) || run(function() {
+			$("body").trigger("xdebug-breakpoint_set-return");
+		});
+	});
+
 	$("body").on("click", ".lineno", function() {
 		var self = $(this);
 		if (self.hasClass("breakpoint")) {
@@ -64,6 +70,7 @@ $(function() {
 			run(function() {
 				$("body").trigger("xdebug-breakpoint_set", {
 					lineno: self.data("lineno"),
+					type: "line",
 					filename: filename_currently_loaded
 				});
 			});
@@ -263,11 +270,15 @@ $(function() {
 			isProcessing = false;
 			var breakpoint_id = $(xml_document).find("response").attr("id");
 			var breakpoint_lineno = data.options.split(" ").pop();
-			breakpoints["b" + breakpoint_id] = {
-				filename: filename_currently_loaded,
-				lineno: breakpoint_lineno
-			};
-			highlightBreakpoints();
+
+			if (parseInt(breakpoint_lineno)) {
+				breakpoints["b" + breakpoint_id] = {
+					filename: filename_currently_loaded,
+					lineno: breakpoint_lineno
+				};
+				highlightBreakpoints();
+			}
+
 			break;
 
 		case "breakpoint_remove":
@@ -292,6 +303,21 @@ $(function() {
 		} /* SWITCH - END */
 
 	});
+
+
+	$("body").on("alert-message", function(e, data) {
+		e.stopPropagation();
+		hideLoading();
+		isProcessing = false;
+		$("#alert-message").text(data.message);
+		$("#alert-message").show();
+	});
+
+	$("body").on("click", function() {
+		$("#alert-message").text("");
+		$("#alert-message").hide();
+	});
+
 
 
 	/* HELPERS */

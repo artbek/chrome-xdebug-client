@@ -111,6 +111,22 @@ $(function() {
 		send_command("breakpoint_set", "-t line -f " + data.filename + " -n " + data.lineno);
 	});
 
+	$("body").on("xdebug-breakpoint_set-return", function(event, data) {
+		send_command("eval", "-- " + btoa("json_encode(reset(debug_backtrace()))"), function(str) {
+			var property = $($.parseXML(str[1])).find("property");
+			var object = JSON.parse(atob(property.text()));
+
+			if (object.function != "unknown") {
+				if (object.class) { function_name = object.class + "::" + object.function; }
+				send_command("breakpoint_set", "-t return -m " + function_name, function() {
+					alertMessage("Breakpoint will trigger on function return.");
+				});
+			} else {
+				alertMessage("Couldn't determine function name - not setting return breakpoint.");
+			}
+		});
+	});
+
 	$("body").on("xdebug-breakpoint_remove", function(event, data) {
 		send_command("breakpoint_remove", "-d " + data.breakpoint_id);
 	});
@@ -146,21 +162,35 @@ $(function() {
 						return;
 					}
 
-					$('body').trigger('parse-xml', {
-						command: command,
-						options: options,
-						xml: str[1]
-					});
+					if (callback) {
 
-					if (callback) callback();
+						callback(str);
+
+					} else {
+
+						// default callback
+						$('body').trigger('parse-xml', {
+							command: command,
+							options: options,
+							xml: str[1]
+						});
+
+					}
+
 				});
-			}, 200);
+			}, 500);
 
 		});
 	}
 
 
 	// HELPERS
+
+	function alertMessage(message) {
+		$("body").trigger("alert-message", {
+			message: message
+		});
+	}
 
 	function addTransactionId(str) {
 		transactionId++;
