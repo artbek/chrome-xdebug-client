@@ -1,9 +1,9 @@
 {
 	"manifest_version": 2,
-	"minimum_chrome_version": "23",
-	"name": "Xdebug Client",
+	"minimum_chrome_version": "24",
+	"name": "Xdebug",
 	"description": "Xdebug Client",
-	"version": "1.0",
+	"version": "1.1",
 	"offline_enabled": true,
 	"app": {
 		"background": {
