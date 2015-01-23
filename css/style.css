@@ -160,11 +160,11 @@ div {
 	right: 0px;
 	padding: 0px 0px 0px 20px;
 	position: fixed;
-	width: 90%
 }
 
 #eval input {
 	border-bottom: 1px solid #333333;
+	width: 98%;
 }
 
 #eval input,
@@ -173,10 +173,9 @@ div {
 	color: #ffffff;
 	cursor: default;
 	margin: 0px;
-	padding: 6px;
+	padding: 1%;
 	font-size: 1em;
 	font-family: monospace;
-	width: 98%;
 }
 
 #eval-content {

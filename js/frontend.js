@@ -390,8 +390,10 @@ $(function() {
 		var bodyWidth = $("body").width();
 		var offset = 20;
 
+		var widthOffset = offset + $(popup).prop('scrollWidth') - $(popup).width();
+
 		if ($popup.hasClass("popup-is-open")) {
-			$popup.stop(true, false).animate({left: '0' + offset, width: bodyWidth - offset}, 300);
+			$popup.stop(true, false).animate({left: '0' + offset, width: bodyWidth - widthOffset}, 300);
 		} else {
 			var padding = parseInt($popup.css("padding-left").replace("px", ""));
 			$popup.stop(true, false).animate({left: (bodyWidth - padding), width: bodyWidth - offset}, 300);
