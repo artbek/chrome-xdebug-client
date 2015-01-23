@@ -164,6 +164,7 @@ $(function() {
 	/* STACK & CONSOLE */
 
 	$("#eval-form").on("submit", function(e) {
+		$("#eval-content").text("...");
 		e.preventDefault();
 		var expression = $("input[name=eval-expression]").val();
 		expression = "var_export(" + expression + ", true)";
