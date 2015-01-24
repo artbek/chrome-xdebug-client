@@ -48,6 +48,7 @@ $(function() {
 
 	$("#listen").on("click", function() {
 		isInactive($(this)) || run(function() {
+			clearCodeView();
 			$("body").trigger("xdebug-listen");
 		});
 	});
@@ -188,12 +189,12 @@ $(function() {
 		switch (data.status) {
 			case "live":
 				$("#listen").addClass("inactive");
-				$("#listen").text("Running....");
+				$("#listen").text("RUNNING...");
 				break;
 
 			case "dead":
 				$("#stop").addClass("inactive");
-				$("#listen").text("Listen");
+				$("#listen").text("LISTEN");
 				breakpoints = {};
 				break;
 
@@ -235,7 +236,7 @@ $(function() {
 			var sourceCode = $(xml_document).find("response").text();
 			sourceCode = atob(sourceCode);
 
-			buildSourceCodeView(sourceCode, offset);
+			populateCodeView(sourceCode, offset);
 
 			isProcessing = false;
 			run(function() {
@@ -347,11 +348,11 @@ $(function() {
 					},
 
 					success: function(data) {
-						buildSourceCodeView(data);
+						populateCodeView(data);
 					},
 
 					error: function(data) {
-						$("#codeview").html("");
+						clearCodeView();
 						$("#codeview").append("<p>Couldn't get source:</p>");
 						$("#codeview").append("<p><strong>" + filename + ":" + lineno + "</strong></p>");
 						console.error("Couldn't get source!");
@@ -381,9 +382,9 @@ $(function() {
 	}
 
 
-	function buildSourceCodeView(data, offset) {
+	function populateCodeView(data, offset) {
 		var lines = data.split('\n');
-		$("#codeview").html("");
+		clearCodeView();
 
 		if (! offset) offset = 0;
 
@@ -406,6 +407,11 @@ $(function() {
 		highlightBreakpoints();
 		scrollToView();
 		$("body").trigger("refresh-popups");
+	}
+
+
+	function clearCodeView() {
+		$("#codeview").html("");
 	}
 
 
