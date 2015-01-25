@@ -19,7 +19,7 @@ var Config = (function() {
 			set: function(value) {
 				this.valid = true;
 				this.value = value;
-				if (! parseInt(value)) {
+				if (! helpers.isValidPort(value)) {
 					this.valid = false;
 				}
 			},
@@ -44,6 +44,10 @@ var Config = (function() {
 	var helpers = {
 		isValidUrl: function(url) {
 			return url.match(/^http[s]?:\/\/.+/);
+		},
+
+		isValidPort: function(port) {
+			return port.match(/^\d{1,5}$/);
 		},
 
 		isValidIP: function(ip) {

@@ -5,8 +5,10 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<title>Xdebug</title>
 	<link rel="stylesheet" type="text/css" href="css/style.css">
+	<script type="text/javascript" src="js/global.js"></script>
 	<script type="text/javascript" src="js/config.js"></script>
 	<script type="text/javascript" src="js/jquery-1.9.1.min.js"></script>
+	<script type="text/javascript" src="js/alert.js"></script>
 	<script type="text/javascript" src="js/socket.js"></script>
 	<script type="text/javascript" src="js/frontend.js"></script>
 </head>
@@ -21,7 +23,7 @@
 		<span id="stop" class="nav-button">Stop</span> |
 		<span id="listen" class="nav-button"></span>
 
-		<span id="settings-popup" class="nav-button-right">Settings/Help</span>
+		<span id="settings-popup-button" class="nav-button-right">Settings/Help</span>
 		<input type="text" id="find-in-source" class="nav-button-right" placeholder="search" />
 
 		<form id="settings">
@@ -100,11 +102,11 @@
 		<pre id="eval-content" contenteditable="true"></pre>
 	</div>
 
-	<div id="loading">
-		Working...
+	<div id="alert">
+		<div class="close-button">x</div>
+		<span class="alert-message"></span>
 	</div>
 
-	<div id="alert-message"></div>
 </body>
 
 </html>

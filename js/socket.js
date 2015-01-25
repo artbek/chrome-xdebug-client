@@ -18,7 +18,8 @@ $(function() {
 			//console.log("Create Info:"); console.log(createInfo);
 			listeningSocketId = createInfo.socketId;
 
-			console.log("Listening on: " + ip + ":" + port);
+			Alert.busy("Listening on: " + ip + ":" + port);
+			//console.log("Listening on: " + ip + ":" + port);
 			chrome.socket.listen(listeningSocketId, ip, port, function(result) {
 				//console.log("Listen result: "); console.log(result);
 			});
@@ -109,10 +110,10 @@ $(function() {
 			if (object.function != "unknown") {
 				if (object.class) { function_name = object.class + "::" + object.function; }
 				send_command("breakpoint_set", "-t return -m " + function_name, function() {
-					alertMessage("Breakpoint will trigger on function return.");
+					Alert.info("Breakpoint will trigger on function return.");
 				});
 			} else {
-				alertMessage("Couldn't determine function name - not setting return breakpoint.");
+				Alert.warn("Couldn't determine function name - no breakpoint set!");
 			}
 		});
 	});
@@ -175,12 +176,6 @@ $(function() {
 
 
 	// HELPERS
-
-	function alertMessage(message) {
-		$("body").trigger("alert-message", {
-			message: message
-		});
-	}
 
 	function addTransactionId(str) {
 		transactionId++;

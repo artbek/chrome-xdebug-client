@@ -1,7 +1,6 @@
 $(function() {
 
 	var linesCount = 50;
-	var isProcessing = false;
 	var breakpoints = {};
 
 	var filename = '';
@@ -19,14 +18,31 @@ $(function() {
 			enableNav(false);
 			for (i in configErrors) {
 				$("#settings input[name=" + configErrors[i] + "]").addClass("error");
-				$("#settings-popup").addClass("error");
+				$("#settings-popup-button").addClass("error");
 			}
+		} else {
+			$('body').trigger('socket_status', {status: 'dead'});
 		}
-
-		$('body').trigger('socket_status', {status: 'dead'});
 	});
 
-	$("#settings-popup").on("click", function() {
+	$("body").on('socket_status', function(event, data) {
+		switch (data.status) {
+			case "live":
+				enableNav(true);
+				$("#listen").addClass("inactive");
+				$("#listen").text("RUNNING...");
+				break;
+
+			case "dead":
+				enableNav(false);
+				$("#listen").removeClass("inactive");
+				$("#listen").text("LISTEN");
+				breakpoints = {};
+				break;
+		}
+	});
+
+	$("#settings-popup-button").on("click", function() {
 		var configValues = Config.get();
 		for (var prop in configValues) {
 			$("#settings [name=" + prop + "]").val(configValues[prop]);
@@ -184,134 +200,92 @@ $(function() {
 
 	/* XDEBUG CALLBACKS */
 
-	$("body").on('socket_status', function(event, data) {
-		switch (data.status) {
-			case "live":
-				$("#stop").removeClass("inactive");
-				$("#listen").addClass("inactive");
-				$("#listen").text("RUNNING...");
-				break;
-
-			case "dead":
-				$("#stop").addClass("inactive");
-				$("#listen").removeClass("inactive");
-				$("#listen").text("LISTEN");
-				breakpoints = {};
-				break;
-		}
-	});
-
-
 	$("body").on('parse-xml', function(event, data) {
 
-		hideLoading();
-
 		var xml_document = $.parseXML(data.xml);
+		Alert.hide();
 
 		switch (data.command) { /* SWITCH - START */
 
-		case "feature_set":
-			isProcessing = false;
-			break;
+			case "feature_set":
+				break;
 
-		case "eval":
-			var property = $(xml_document).find("property");
-			if (property) {
-				property = format(property);
-				$("#eval-content").text(property);
-			}
-			break;
-
-		// used when getting source from xdebug
-		case "source":
-			var offset = parseInt(data.options.split(" ")[1]) - 1;
-
-			var sourceCode = $(xml_document).find("response").text();
-			sourceCode = atob(sourceCode);
-
-			populateCodeView(sourceCode, offset);
-
-			isProcessing = false;
-			run(function() {
-				$("body").trigger("xdebug-stack_get");
-			});
-			break;
-
-		case "stack_get":
-			var stack_trace = [];
-			$(xml_document).find('response').children().each(function() {
-				stack_trace.push($(this).attr("filename") + ":" + $(this).attr("lineno"));
-			});
-
-			var stack_trace_html = "";
-			for (var i = 0; i < stack_trace.length; i++) {
-				if (i == 0) {
-					stack_trace_html += '<div class="filename"><b>' + stack_trace[i] + '</b></div>';
-				} else {
-					stack_trace_html += '<div class="filename">' + stack_trace[i] + '</div>';
+			case "eval":
+				var property = $(xml_document).find("property");
+				if (property) {
+					property = format(property);
+					$("#eval-content").text(property);
 				}
-			}
-			$("#stack-filenames").html(stack_trace_html);
+				break;
 
-			isProcessing = false;
-			break;
+			// used when getting source from xdebug
+			case "source":
+				var offset = parseInt(data.options.split(" ")[1]) - 1;
 
-		case "stop":
-			isProcessing = false;
-			break;
+				var sourceCode = $(xml_document).find("response").text();
+				sourceCode = atob(sourceCode);
 
-		case "breakpoint_set":
-			isProcessing = false;
-			var breakpoint_id = $(xml_document).find("response").attr("id");
-			var breakpoint_lineno = data.options.split(" ").pop();
+				populateCodeView(sourceCode, offset);
 
-			if (parseInt(breakpoint_lineno)) {
-				breakpoints["b" + breakpoint_id] = {
-					filename: filename_currently_loaded,
-					lineno: breakpoint_lineno
-				};
+				run(function() {
+					$("body").trigger("xdebug-stack_get");
+				});
+				break;
+
+			case "stack_get":
+				var stack_trace = [];
+				$(xml_document).find('response').children().each(function() {
+					stack_trace.push($(this).attr("filename") + ":" + $(this).attr("lineno"));
+				});
+
+				var stack_trace_html = "";
+				for (var i = 0; i < stack_trace.length; i++) {
+					if (i == 0) {
+						stack_trace_html += '<div class="filename"><b>' + stack_trace[i] + '</b></div>';
+					} else {
+						stack_trace_html += '<div class="filename">' + stack_trace[i] + '</div>';
+					}
+				}
+				$("#stack-filenames").html(stack_trace_html);
+
+				break;
+
+			case "stop":
+				break;
+
+			case "breakpoint_set":
+				var breakpoint_id = $(xml_document).find("response").attr("id");
+				var breakpoint_lineno = data.options.split(" ").pop();
+
+				if (parseInt(breakpoint_lineno)) {
+					breakpoints["b" + breakpoint_id] = {
+						filename: filename_currently_loaded,
+						lineno: breakpoint_lineno
+					};
+					highlightBreakpoints();
+				}
+
+				break;
+
+			case "breakpoint_remove":
+				var breakpoint_id = data.options.split(" ").pop();
+				delete breakpoints["b" + breakpoint_id];
 				highlightBreakpoints();
-			}
+				break;
 
-			break;
-
-		case "breakpoint_remove":
-			isProcessing = false;
-			var breakpoint_id = data.options.split(" ").pop();
-			delete breakpoints["b" + breakpoint_id];
-			highlightBreakpoints();
-			break;
-
-		default:
-			if ($(xml_document).find("response").attr("status") == 'stopping') {
-				isProcessing = false;
-				$("body").trigger("xdebug-stop");
-			} else {
-				filename = $(xml_document).find('response').children().attr("filename");
-				lineno = $(xml_document).find('response').children().attr("lineno");
-				console.log("File: " + filename + ":" + lineno);
-				if (filename) refreshSourceView();
-				isProcessing = false;
-			}
+			default:
+				if ($(xml_document).find("response").attr("status") == 'stopping') {
+					$("body").trigger("xdebug-stop");
+				} else {
+					filename = $(xml_document).find('response').children().attr("filename");
+					lineno = $(xml_document).find('response').children().attr("lineno");
+					console.log("File: " + filename + ":" + lineno);
+					if (filename) refreshSourceView();
+				}
 
 		} /* SWITCH - END */
 
-	});
 
-
-	/* NOTIFICATIONS */
-
-	$("body").on("alert-message", function(e, data) {
-		e.stopPropagation();
-		hideLoading();
-		isProcessing = false;
-		$("#alert-message").text(data.message);
-		$("#alert-message").show();
-	});
-
-	$("body").on("click", function() {
-		$("#alert-message").text("");
-		$("#alert-message").hide();
 	});
 
 
@@ -324,7 +298,6 @@ $(function() {
 
 			if (filename_currently_loaded == filename) {
 
-				isProcessing = false;
 				$(".line-wrapper.active-line").removeClass("active-line");
 				$(".lineno[data-lineno=" + lineno + "]").closest(".line-wrapper").addClass("active-line");
 				scrollToView();
@@ -354,7 +327,6 @@ $(function() {
 					},
 
 					complete: function() {
-						isProcessing = false;
 						run(function() {
 							$("body").trigger("xdebug-stack_get");
 						});
@@ -366,10 +338,12 @@ $(function() {
 
 		} else {
 
-			$("body").trigger("xdebug-source", {
-				filename: filename,
-				lineno: lineno,
-				linesCount: linesCount
+			run(function() {
+				$("body").trigger("xdebug-source", {
+					filename: filename,
+					lineno: lineno,
+					linesCount: linesCount
+				});
 			});
 
 		}
@@ -457,11 +431,10 @@ $(function() {
 
 
 	function run(callback) {
-		if (isProcessing) {
+		if (Global.isProcessing()) {
 			return;
 		} else {
-			showLoading();
-			isProcessing = true;
+			Alert.busy("Working...");
 			callback();
 		}
 	}
@@ -515,16 +488,6 @@ $(function() {
 
 	function isInactive($obj) {
 		return $obj.hasClass("inactive");
-	}
-
-
-	function showLoading() {
-		$("#loading").show();
-	}
-
-
-	function hideLoading() {
-		$("#loading").hide();
 	}
 
 
