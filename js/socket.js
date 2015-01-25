@@ -4,40 +4,30 @@ $(function() {
 	var socketId = '';
 	var transactionId = 0;
 
-	var listeningIP = '';
+	var ip = null;
+	var port = null;
 
 
 	// CONECT WITH XDEBUG SERVER
 
-	$(window).load(function() {
-		var status = 'dead';
-		chrome.storage.local.get('listening_ip', function(data) {
-			listeningIP = data.listening_ip;
-			if (! isValidIP()) { status = 'ip_error'; }
-			$('body').trigger('socket_status', {status: status});
-		});
-	});
-
-	function isValidIP() {
-		return listeningIP.match(/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/);
-	}
-
-
 	function listen_and_connect() {
+		ip = Config.get("listening_ip");
+		port = parseInt(Config.get("listening_port"));
+
 		chrome.socket.create('tcp', function(createInfo) {
 			//console.log("Create Info:"); console.log(createInfo);
 			listeningSocketId = createInfo.socketId;
 
-			console.log("Listening on: " + listeningIP);
-			chrome.socket.listen(createInfo.socketId, listeningIP, 9000, function(result) {
+			console.log("Listening on: " + ip + ":" + port);
+			chrome.socket.listen(listeningSocketId, ip, port, function(result) {
 				//console.log("Listen result: "); console.log(result);
 			});
 
-			chrome.socket.accept(createInfo.socketId, function(acceptInfo) {
+			chrome.socket.accept(listeningSocketId, function(acceptInfo) {
 				//console.log("Accepted: "); console.log(acceptInfo);
 				socketId = acceptInfo.socketId;
 
-				chrome.socket.read(acceptInfo.socketId, function(readInfo) {
+				chrome.socket.read(socketId, function(readInfo) {
 					console.log("Read Info 1:");
 					console.log(ab2str(readInfo.data));
 					send_command("feature_set", "-n max_depth -v 3", function() {

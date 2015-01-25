@@ -1,11 +1,5 @@
 $(function() {
 
-	/* SETUP */
-
-	var source_script = '';
-	chrome.storage.local.get('source_script', function(data) {
-		source_script = data.source_script;
-	});
 	var linesCount = 50;
 	var isProcessing = false;
 	var breakpoints = {};
@@ -13,6 +7,38 @@ $(function() {
 	var filename = '';
 	var filename_currently_loaded = '';
 	var lineno = 0;
+
+
+	/* SETTINGS */
+
+	$(window).on("load", function() {
+		$("input").removeClass("error");
+
+		configErrors = Config.errors();
+		if (configErrors.length) {
+			enableNav(false);
+			for (i in configErrors) {
+				$("#settings input[name=" + configErrors[i] + "]").addClass("error");
+				$("#settings-popup").addClass("error");
+			}
+		}
+
+		$('body').trigger('socket_status', {status: 'dead'});
+	});
+
+	$("#settings-popup").on("click", function() {
+		var configValues = Config.get();
+		for (var prop in configValues) {
+			$("#settings [name=" + prop + "]").val(configValues[prop]);
+		}
+		$("#settings").toggle();
+	});
+
+	$("#settings-save").on("click", function() {
+		Config.saveFromForm($("#settings").serializeArray());
+		chrome.runtime.reload(); // reload app
+		$("#settings").hide();
+	});
 
 
 	/* NAV */
@@ -121,28 +147,6 @@ $(function() {
 
 	/* STACK & CONSOLE */
 
-	$("#settings-popup").on("click", function() {
-		chrome.storage.local.get('listening_ip', function(data) {
-			$("[name=settings__listening_ip]").val(data.listening_ip);
-		});
-		chrome.storage.local.get('source_script', function(data) {
-			$("[name=settings__source_script]").val(data.source_script);
-		});
-		$("#settings").toggle();
-	});
-
-	$("#settings-save").on("click", function() {
-		var listening_ip_val = $("[name=settings__listening_ip]").val();
-		var source_script_val = $("[name=settings__source_script]").val();
-
-		chrome.storage.local.set({'source_script': source_script_val});
-		chrome.storage.local.set({'listening_ip': listening_ip_val});
-		chrome.runtime.reload(); // reload app
-
-		$("#settings").hide();
-	});
-
-
 	$("#eval-form").on("submit", function(e) {
 		e.preventDefault();
 		var expression = $("input[name=eval-expression]").val();
@@ -152,7 +156,6 @@ $(function() {
 			expression: expression
 		});
 	});
-
 
 	// don't hide eval console when trying to type or select
 	$("#eval-form, #stack-filenames, #eval-content").on("click", function(e) {
@@ -182,30 +185,20 @@ $(function() {
 	/* XDEBUG CALLBACKS */
 
 	$("body").on('socket_status', function(event, data) {
-
-		$("input").removeClass("error");
-		$(".nav-button").removeClass("inactive");
-
 		switch (data.status) {
 			case "live":
+				$("#stop").removeClass("inactive");
 				$("#listen").addClass("inactive");
 				$("#listen").text("RUNNING...");
 				break;
 
 			case "dead":
 				$("#stop").addClass("inactive");
+				$("#listen").removeClass("inactive");
 				$("#listen").text("LISTEN");
 				breakpoints = {};
 				break;
-
-			case "ip_error":
-				$(".nav-button").addClass("inactive");
-				$("input[name=settings__listening_ip]").addClass("error");
-				$("#settings-popup").addClass("error");
-				breakpoints = {};
-				break;
 		}
-
 	});
 
 
@@ -306,6 +299,8 @@ $(function() {
 	});
 
 
+	/* NOTIFICATIONS */
+
 	$("body").on("alert-message", function(e, data) {
 		e.stopPropagation();
 		hideLoading();
@@ -325,7 +320,7 @@ $(function() {
 
 	function refreshSourceView() {
 
-		if (isValidUrl(source_script)) {
+		if (Config.get("source_script")) {
 
 			if (filename_currently_loaded == filename) {
 
@@ -337,14 +332,14 @@ $(function() {
 			} else {
 
 				$.ajax({
-					url: source_script,
+					url: Config.get("source_script"),
 					type: 'GET',
 					data: {
 						path: filename
 					},
 
 					beforeSend: function() {
-						console.log("Getting source from: " + source_script);
+						console.log("Getting source from: " + Config.get("source_script"));
 					},
 
 					success: function(data) {
@@ -433,10 +428,6 @@ $(function() {
 		return $("<div/>").text(s).html();
 	}
 
-
-	function isValidUrl(url) {
-		return url.match(/^http[s]?:\/\/.+/);
-	}
 
 
 	function format(property) {
@@ -534,6 +525,15 @@ $(function() {
 
 	function hideLoading() {
 		$("#loading").hide();
+	}
+
+
+	function enableNav(enabled) {
+		if (enabled) {
+			$(".nav-button").removeClass("inactive");
+		} else {
+			$(".nav-button").addClass("inactive");
+		}
 	}
 
 });

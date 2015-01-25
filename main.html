@@ -5,6 +5,7 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<title>Xdebug</title>
 	<link rel="stylesheet" type="text/css" href="css/style.css">
+	<script type="text/javascript" src="js/config.js"></script>
 	<script type="text/javascript" src="js/jquery-1.9.1.min.js"></script>
 	<script type="text/javascript" src="js/socket.js"></script>
 	<script type="text/javascript" src="js/frontend.js"></script>
@@ -23,13 +24,20 @@
 		<span id="settings-popup" class="nav-button-right">Settings/Help</span>
 		<input type="text" id="find-in-source" class="nav-button-right" placeholder="search" />
 
-		<div id="settings">
+		<form id="settings">
 
 			<br />
 
 			<label>Listening IP:</label>
-			<input type="text" name="settings__listening_ip" style="width: 8em" />
+			<input type="text" name="listening_ip" style="width: 8em" />
 			(xdebug will try to establish connection with this IP)
+
+			<br />
+			<br />
+
+			<label>Listening Port:</label>
+			<input type="text" name="listening_port" style="width: 4em" />
+			(this should match <strong>xdebug.remote_port</strong> in your <strong>php.ini</strong>)
 
 			<br />
 			<br />
@@ -39,7 +47,7 @@
 			It is recommened to use your own service to retrieve source code, e.g. <a href="https://github.com/artbek/chrome-xdebug-client/blob/master/php/source.php" target="_blank">source.php</a>
 			<br />
 			<label>Source URL:</label>
-			<input type="text" name="settings__source_script" style="width: 18em" />
+			<input type="text" name="source_script" style="width: 18em" />
 
 			<br />
 			<br />
@@ -71,7 +79,7 @@
 			<a href="https://github.com/artbek/chrome-xdebug-client" target="_blank">GitHub</a>
 			<br />
 
-		</div>
+		</form>
 
 	</nav>
 	<div id="codeview" contenteditable="true"></div>
