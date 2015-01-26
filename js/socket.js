@@ -1,11 +1,19 @@
 $(function() {
 
-	var listeningSocketId = '';
-	var socketId = '';
+	var serverSocketId = "";
+	var socketId = "";
 	var transactionId = 0;
+	var currentCommandOptions = "";
+	var currentCommandCallback = "";
 
 	var ip = null;
 	var port = null;
+
+	var commandsQueue = [
+		{ command: "feature_set", params: "-n max_depth -v 3" },
+		{ command: "feature_set", params: "-n max_data -v 10000" },
+		{ command: "step_into", params: null },
+	];
 
 
 	// CONECT WITH XDEBUG SERVER
@@ -14,43 +22,144 @@ $(function() {
 		ip = Config.get("listening_ip");
 		port = parseInt(Config.get("listening_port"));
 
-		chrome.socket.create('tcp', function(createInfo) {
+		chrome.sockets.tcpServer.create(function(createInfo) {
 			//console.log("Create Info:"); console.log(createInfo);
-			listeningSocketId = createInfo.socketId;
+			serverSocketId = createInfo.socketId;
 
 			Alert.busy("Listening on: " + ip + ":" + port);
 			//console.log("Listening on: " + ip + ":" + port);
-			chrome.socket.listen(listeningSocketId, ip, port, function(result) {
+			chrome.sockets.tcpServer.listen(serverSocketId, ip, port, function(result) {
 				//console.log("Listen result: "); console.log(result);
 			});
 
-			chrome.socket.accept(listeningSocketId, function(acceptInfo) {
+			chrome.sockets.tcpServer.onAccept.addListener(function(acceptInfo) {
 				//console.log("Accepted: "); console.log(acceptInfo);
-				socketId = acceptInfo.socketId;
+				socketId = acceptInfo.clientSocketId;
 
-				chrome.socket.read(socketId, function(readInfo) {
-					console.log("Read Info 1:");
-					console.log(ab2str(readInfo.data));
-					send_command("feature_set", "-n max_depth -v 3", function() {
-						send_command("feature_set", "-n max_data -v 10000", function() {
-							send_command("step_into");
-							$('body').trigger('socket_status', {status: 'live'});
-						});
-					});
-				});
+				chrome.sockets.tcp.setPaused(socketId, false);
 
-				// destroy the initial stocket
-				chrome.socket.destroy(listeningSocketId);
+				closeSockets(true, false);
 			});
 		});
+
+
+		chrome.sockets.tcp.onReceive.addListener(function(readInfo) {
+
+			//chrome.sockets.tcp.setPaused(socketId, true);
+
+			var split_data = ab2str(readInfo.data).split("\0");
+			var length = split_data[0];
+			var raw_xml = split_data[1];
+
+			if (! length) {
+				console.log("(FAILSAFE) stopping...");
+				$("body").trigger("xdebug-stop");
+				return;
+			}
+
+			if (raw_xml.charAt(0) != "<") return;
+
+			var xml = $.parseXML(raw_xml);
+
+			if ($(xml).find("init").length > 0) {
+
+				console.log("received init response:");
+				console.log(raw_xml);
+
+				// next command
+				var c = commandsQueue.shift();
+				c && send_command(c.command, c.params);
+
+			} else if ($(xml).find("response").length > 0) {
+
+				var received_transaction_id = $(xml).find("response").attr("transaction_id");
+				if (received_transaction_id == transactionId) {
+
+					console.log("received_transaction_id: " + received_transaction_id);
+					console.log(raw_xml);
+
+					if (currentCommandCallback) {
+
+						currentCommandCallback(xml);
+
+					} else {
+
+						var received_command = $(xml).find("response").attr("command");
+						if (received_command) {
+							$('body').trigger('parse-xml', {
+								command: received_command,
+								options: currentCommandOptions,
+								xml: xml
+							});
+						}
+
+					}
+
+					// next command
+					var c = commandsQueue.shift();
+					c && send_command(c.command, c.params);
+				}
+
+			}
+
+		});
+
+	}
+
+
+	function send_command(command, options, callback) {
+		var request = "";
+
+		currentCommandOptions = options;
+		currentCommandCallback = callback;
+
+		request += addTransactionId(command);
+		if (options) {
+			request += " " + options;
+		}
+		request += "\0";
+
+		console.log("Sending: " + request);
+
+		setTimeout(function() {
+			chrome.sockets.tcp.send(socketId, str2ab(request), function(writeInfo) {
+				if (writeInfo.resultCode == 0) { // no error
+					//chrome.sockets.tcp.setPaused(socketId, false);
+				}
+			});
+		}, 200);
+	}
+
+
+	function closeSockets(serverSocket, clientSocket) {
+
+		if (serverSocket) {
+			if (serverSocketId) {
+				chrome.sockets.tcpServer.close(serverSocketId, function() {
+					if (chrome.runtime.lastError) {
+						console.log("Server socket: " + chrome.runtime.lastError.message);
+					}
+				});
+			}
+		}
+
+		if (clientSocket) {
+			if (socketId) {
+				chrome.sockets.tcp.close(socketId, function() {
+					if (chrome.runtime.lastError) {
+						console.log("Client socket: " + chrome.runtime.lastError.message);
+					}
+				});
+			}
+		}
+
 	}
 
 
 	// HANDLE EVENTS
 
 	$('body').on("xdebug-listen", function() {
-		if (socketId) chrome.socket.destroy(socketId);
-		if (listeningSocketId) chrome.socket.destroy(listeningSocketId);
+		closeSockets(true, true);
 		listen_and_connect();
 		$('body').trigger('socket_status', {status: 'live'});
 	});
@@ -77,8 +186,7 @@ $(function() {
 			xml: ''
 		});
 
-		socketId && chrome.socket.destroy(socketId);
-		listeningSocketId && chrome.socket.destroy(listeningSocketId);
+		closeSockets(true, true);
 		$('body').trigger('socket_status', {status: 'dead'});
 	});
 
@@ -104,8 +212,8 @@ $(function() {
 	});
 
 	$("body").on("xdebug-breakpoint_set-return", function(event, data) {
-		send_command("eval", "-- " + btoa("json_encode(reset(debug_backtrace()))"), function(str) {
-			var property = $($.parseXML(str[1])).find("property");
+		send_command("eval", "-- " + btoa("json_encode(reset(debug_backtrace()))"), function(xml) {
+			var property = $(xml).find("property");
 			var object = JSON.parse(atob(property.text()));
 
 			if (object.function != "unknown") {
@@ -125,55 +233,6 @@ $(function() {
 
 
 
-	// MAIN ACTION
-
-	function send_command(command, options, callback) {
-		var request = "";
-
-		request += addTransactionId(command);
-		if (options) {
-			request += " " + options;
-		}
-		request += "\0";
-
-		console.log("Sending: " + request);
-
-		chrome.socket.write(socketId, str2ab(request), function(writeInfo) {
-			//console.log("Write Info:"); console.log(writeInfo);
-
-			setTimeout(function() {
-				chrome.socket.read(socketId, 32768, function(readInfo) {
-					var str = ab2str(readInfo.data).split("\0");
-
-					console.log("Length: " + str[0]);
-					console.log(str[1]);
-
-					if (! str[0]) {
-						console.log("(FAILSAFE) stopping...");
-						$("body").trigger("xdebug-stop");
-						return;
-					}
-
-					if (callback) {
-
-						callback(str);
-
-					} else {
-
-						// default callback
-						$('body').trigger('parse-xml', {
-							command: command,
-							options: options,
-							xml: str[1]
-						});
-
-					}
-
-				});
-			}, 500);
-
-		});
-	}
 
 
 	// HELPERS

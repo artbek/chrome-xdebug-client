@@ -202,7 +202,6 @@ $(function() {
 
 	$("body").on('parse-xml', function(event, data) {
 
-		var xml_document = $.parseXML(data.xml);
 		Alert.hide();
 
 		switch (data.command) { /* SWITCH - START */
@@ -211,7 +210,7 @@ $(function() {
 				break;
 
 			case "eval":
-				var property = $(xml_document).find("property");
+				var property = $(data.xml).find("property");
 				if (property) {
 					property = format(property);
 					$("#eval-content").text(property);
@@ -222,7 +221,7 @@ $(function() {
 			case "source":
 				var offset = parseInt(data.options.split(" ")[1]) - 1;
 
-				var sourceCode = $(xml_document).find("response").text();
+				var sourceCode = $(data.xml).find("response").text();
 				sourceCode = atob(sourceCode);
 
 				populateCodeView(sourceCode, offset);
@@ -234,7 +233,7 @@ $(function() {
 
 			case "stack_get":
 				var stack_trace = [];
-				$(xml_document).find('response').children().each(function() {
+				$(data.xml).find('response').children().each(function() {
 					stack_trace.push($(this).attr("filename") + ":" + $(this).attr("lineno"));
 				});
 
@@ -254,7 +253,7 @@ $(function() {
 				break;
 
 			case "breakpoint_set":
-				var breakpoint_id = $(xml_document).find("response").attr("id");
+				var breakpoint_id = $(data.xml).find("response").attr("id");
 				var breakpoint_lineno = data.options.split(" ").pop();
 
 				if (parseInt(breakpoint_lineno)) {
@@ -274,11 +273,11 @@ $(function() {
 				break;
 
 			default:
-				if ($(xml_document).find("response").attr("status") == 'stopping') {
+				if ($(data.xml).find("response").attr("status") == 'stopping') {
 					$("body").trigger("xdebug-stop");
 				} else {
-					filename = $(xml_document).find('response').children().attr("filename");
-					lineno = $(xml_document).find('response').children().attr("lineno");
+					filename = $(data.xml).find('response').children().attr("filename");
+					lineno = $(data.xml).find('response').children().attr("lineno");
 					console.log("File: " + filename + ":" + lineno);
 					if (filename) refreshSourceView();
 				}
