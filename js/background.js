@@ -15,6 +15,7 @@
 		data.listening_ip || chrome.storage.local.set({"listening_ip": ""});
 		data.listening_port || chrome.storage.local.set({"listening_port": "9000"});
 		data.source_script || chrome.storage.local.set({"source_script": ""});
+		data.lines_count || chrome.storage.local.set({"lines_count": "50"});
 	});
 
 })();

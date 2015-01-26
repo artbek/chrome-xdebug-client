@@ -87,11 +87,12 @@ $(function() {
 	});
 
 	$("body").on("xdebug-source", function(event, data) {
-		var filename = data.filename;
 		var lineno = parseInt(data.lineno);
-		var begin = Math.max((lineno - data.linesCount), 1);
-		var end = lineno + data.linesCount;
-		send_command("source", "-b " + begin + " -e " + end + " -f " + filename);
+		var linesCount = parseInt(Config.get("lines_count"));
+
+		var begin = Math.max((lineno - linesCount), 1);
+		var end = lineno + linesCount;
+		send_command("source", "-b " + begin + " -e " + end + " -f " + data.filename);
 	});
 
 	$("body").on("xdebug-stack_get", function() {

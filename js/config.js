@@ -36,6 +36,18 @@ var Config = (function() {
 				}
 			},
 			valid: true
+		},
+
+		lines_count: {
+			value: "",
+			set: function(value) {
+				this.valid = true;
+				this.value = value;
+				if (! helpers.isValidNumber(value)) {
+					this.valid = false;
+				}
+			},
+			valid: true
 		}
 
 	};
@@ -52,6 +64,10 @@ var Config = (function() {
 
 		isValidIP: function(ip) {
 			return ip.match(/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/);
+		},
+
+		isValidNumber: function(number) {
+			return number.match(/^\d+$/);
 		}
 	}
 

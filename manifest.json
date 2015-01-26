@@ -12,6 +12,7 @@
 	},
 	"permissions": [
 		"storage",
+		"http://*/",
 		{"socket": ["tcp-listen::9000"]}
 	],
 	"icons": {

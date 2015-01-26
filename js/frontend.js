@@ -1,6 +1,5 @@
 $(function() {
 
-	var linesCount = 50;
 	var breakpoints = {};
 
 	var filename = '';
@@ -342,8 +341,7 @@ $(function() {
 			run(function() {
 				$("body").trigger("xdebug-source", {
 					filename: filename,
-					lineno: lineno,
-					linesCount: linesCount
+					lineno: lineno
 				});
 			});
 
