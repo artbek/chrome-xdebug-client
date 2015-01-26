@@ -224,6 +224,7 @@ div {
 #settings {
 	display: none;
 	margin-top: 10px;
+	-webkit-user-select: text;
 }
 
 #settings-popup-button.error {
