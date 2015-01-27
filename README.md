@@ -11,7 +11,7 @@
 
 ### How to get started:
 
-1. Install the app through `chrome://extensions/` in your Chrome browser.
+1. Install the app: <a href="https://chrome.google.com/webstore/detail/xdebug/nhodjblplijafdpjjfhhanfmchplpfgl?hl=en-GB&gl=GB" target="blank">Google Webstore</a> or `chrome://extensions/` and 'Load unpacked extension...' button.
 2. Make sure you have supplied a reachable Listening IP in the app's settings.
 3. Press Listen.
 4. Run your code, e.g.:
