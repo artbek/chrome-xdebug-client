@@ -1,5 +1,7 @@
 # Xdebug Chrome App
 
+<img src="https://github.com/artbek/chrome-xdebug-client/blob/master/img/screenshot.png" />
+
 ### Features:
 
 - stepping through code,
