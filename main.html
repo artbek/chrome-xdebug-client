@@ -44,22 +44,21 @@
 			<br />
 			<br />
 
-			Native xdebug source retrieving can be slow and is limited to a certain number of lines in this app.
-			<br />
-			It is recommened to use your own service to retrieve source code, e.g. <a href="https://github.com/artbek/chrome-xdebug-client/blob/master/php/source.php" target="_blank">source.php</a>
-			<br />
-			<label>Source URL:</label>
-			<input type="text" name="source_script" style="width: 18em" />
-
-			<br />
-			<br />
-
 			Number of source code lines that will be fetched - before and after current line.
 			<br />
 			Used only if no 'Source URL' was specified.
 			<br />
 			<label>Number of lines:</label>
 			<input type="text" name="lines_count" style="width: 3em" />
+
+			<br />
+			<br />
+
+			If the native xdebug source doesn't work as expected try using your own api, e.g.
+			<a href="https://github.com/artbek/chrome-xdebug-client/blob/master/php/source.php" target="_blank">source.php</a>
+			<br />
+			<label>Source URL:</label>
+			<input type="text" name="source_script" style="width: 18em" />
 
 			<br />
 			<br />

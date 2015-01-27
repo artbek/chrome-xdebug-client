@@ -1,19 +1,16 @@
 $(function() {
 
-	var serverSocketId = "";
-	var socketId = "";
+	var ip = null;
+	var port = null;
+
+	var serverSocketId = null;
+	var socketId = null;
+
 	var transactionId = 0;
 	var currentCommandOptions = "";
 	var currentCommandCallback = "";
 
-	var ip = null;
-	var port = null;
-
-	var commandsQueue = [
-		{ command: "feature_set", params: "-n max_depth -v 3" },
-		{ command: "feature_set", params: "-n max_data -v 10000" },
-		{ command: "step_into", params: null },
-	];
+	var initialCommandQueue = [];
 
 
 	// CONECT WITH XDEBUG SERVER
@@ -21,6 +18,12 @@ $(function() {
 	function listen_and_connect() {
 		ip = Config.get("listening_ip");
 		port = parseInt(Config.get("listening_port"));
+
+		initialCommandQueue = [
+			{ command: "feature_set", params: "-n max_depth -v 3" },
+			{ command: "feature_set", params: "-n max_data -v 50000" },
+			{ command: "step_into", params: null },
+		];
 
 		chrome.sockets.tcpServer.create(function(createInfo) {
 			//console.log("Create Info:"); console.log(createInfo);
@@ -36,16 +39,16 @@ $(function() {
 				//console.log("Accepted: "); console.log(acceptInfo);
 				socketId = acceptInfo.clientSocketId;
 
-				chrome.sockets.tcp.setPaused(socketId, false);
+				closeSockets(true, false); // we don't need the server socket anymore
 
-				closeSockets(true, false);
+				chrome.sockets.tcp.update(socketId, { bufferSize: (1024*1024) }, function() {
+					chrome.sockets.tcp.setPaused(socketId, false);
+				});
 			});
 		});
 
 
 		chrome.sockets.tcp.onReceive.addListener(function(readInfo) {
-
-			//chrome.sockets.tcp.setPaused(socketId, true);
 
 			var split_data = ab2str(readInfo.data).split("\0");
 			var length = split_data[0];
@@ -55,9 +58,14 @@ $(function() {
 				console.log("(FAILSAFE) stopping...");
 				$("body").trigger("xdebug-stop");
 				return;
+			} else {
+				console.log("Receiving " + length + " bytes...");
 			}
 
-			if (raw_xml.charAt(0) != "<") return;
+			// hacky check - implementation based on length needed
+			if (raw_xml.charAt(0) != "<") {
+				return;
+			}
 
 			var xml = $.parseXML(raw_xml);
 
@@ -66,8 +74,7 @@ $(function() {
 				console.log("received init response:");
 				console.log(raw_xml);
 
-				// next command
-				var c = commandsQueue.shift();
+				var c = initialCommandQueue.shift(); // next command
 				c && send_command(c.command, c.params);
 
 			} else if ($(xml).find("response").length > 0) {
@@ -95,8 +102,7 @@ $(function() {
 
 					}
 
-					// next command
-					var c = commandsQueue.shift();
+					var c = initialCommandQueue.shift(); // next command
 					c && send_command(c.command, c.params);
 				}
 
@@ -121,36 +127,35 @@ $(function() {
 
 		console.log("Sending: " + request);
 
+		// not sure if the delay is absolutely necessary
 		setTimeout(function() {
 			chrome.sockets.tcp.send(socketId, str2ab(request), function(writeInfo) {
 				if (writeInfo.resultCode == 0) { // no error
 					//chrome.sockets.tcp.setPaused(socketId, false);
 				}
 			});
-		}, 200);
+		}, 100);
 	}
 
 
 	function closeSockets(serverSocket, clientSocket) {
 
-		if (serverSocket) {
-			if (serverSocketId) {
-				chrome.sockets.tcpServer.close(serverSocketId, function() {
-					if (chrome.runtime.lastError) {
-						console.log("Server socket: " + chrome.runtime.lastError.message);
-					}
-				});
-			}
+		if (serverSocket && serverSocketId) {
+			chrome.sockets.tcpServer.close(serverSocketId, function() {
+				serverSocketId = null;
+				if (chrome.runtime.lastError) {
+					console.log("Server socket: " + chrome.runtime.lastError.message);
+				}
+			});
 		}
 
-		if (clientSocket) {
-			if (socketId) {
-				chrome.sockets.tcp.close(socketId, function() {
-					if (chrome.runtime.lastError) {
-						console.log("Client socket: " + chrome.runtime.lastError.message);
-					}
-				});
-			}
+		if (clientSocket && socketId) {
+			chrome.sockets.tcp.close(socketId, function() {
+				socketId = null;
+				if (chrome.runtime.lastError) {
+					console.log("Client socket: " + chrome.runtime.lastError.message);
+				}
+			});
 		}
 
 	}
@@ -159,7 +164,6 @@ $(function() {
 	// HANDLE EVENTS
 
 	$('body').on("xdebug-listen", function() {
-		closeSockets(true, true);
 		listen_and_connect();
 		$('body').trigger('socket_status', {status: 'live'});
 	});
