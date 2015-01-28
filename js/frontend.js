@@ -200,6 +200,12 @@ $(function() {
 
 	/* XDEBUG CALLBACKS */
 
+	$("body").on('receive-error', function() {
+		console.log("Receive Error.");
+		Alert.hide();
+	});
+
+
 	$("body").on('parse-xml', function(event, data) {
 
 		Alert.hide();

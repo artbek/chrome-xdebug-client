@@ -54,7 +54,10 @@ $(function() {
 			var length = split_data[0];
 			var raw_xml = split_data[1];
 
-			if (! length) {
+			if (! parseInt(length)) { // hacky check - implementation based on length needed
+				$("body").trigger("receive-error");
+				return
+			} else if (! length) {
 				console.log("(FAILSAFE) stopping...");
 				$("body").trigger("xdebug-stop");
 				return;
@@ -63,7 +66,7 @@ $(function() {
 			}
 
 			// hacky check - implementation based on length needed
-			if (raw_xml.charAt(0) != "<") {
+			if (raw_xml.charAt(0) != "<" || raw_xml.charAt(raw_xml.length - 1) != ">") {
 				return;
 			}
 
