@@ -13,7 +13,7 @@ $(function() {
 	var initialCommandQueue = [];
 
 
-	/* RESPONSE object */
+	/* RESPONSE object - BEGIN */
 
 	var Response = (function() {
 
@@ -26,11 +26,7 @@ $(function() {
 			process: function(data) {
 				var split_data = ab2str(data).split("\0");
 
-				if (split_data.length == 1) {
-					// remainder of previous reponse
-					partialData += split_data[0];
-
-				} else if (split_data.length >= 2) {
+				if (split_data[0] * 1 == split_data[0]) { // check if numeric
 					// begining of new reponse
 					this.expectedLen = parseInt(split_data[0]);
 					this.partialData = split_data[1];
@@ -38,17 +34,23 @@ $(function() {
 					if (! this.expectedLen) {
 						throw "Expected numeric length.";
 					}
+				} else {
+					// remainder of previous reponse
+					this.partialData += split_data[0];
 				}
-
 			},
 
 			isComplete: function() {
-				if (this.expectedLen == this.partialData.length) {
-					return true;
-				} else {
+				if (this.expectedLen > this.partialData.length) {
 					console.log("Expecting " + this.expectedLen + " bytes...");
 					console.log("Received so far " + this.partialData.length + " bytes.");
 					return false;
+				} else if (this.expectedLen == this.partialData.length) {
+					return true;
+				} else if (this.expectedLen < this.partialData.length) {
+					throw "Received more than expected!";
+				} else {
+					throw "Unexpected values!";
 				}
 			},
 
@@ -61,6 +63,8 @@ $(function() {
 		return publicMethods;
 
 	})();
+
+	/* RESPONSE object - END */
 
 
 	// CONECT WITH XDEBUG SERVER
@@ -112,6 +116,7 @@ $(function() {
 				var xml = Response.getXML();
 			} catch (e) {
 				console.error(e);
+				$("body").trigger('error-on-receive', { message: e });
 				return;
 			}
 
