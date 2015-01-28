@@ -13,6 +13,56 @@ $(function() {
 	var initialCommandQueue = [];
 
 
+	/* RESPONSE object */
+
+	var Response = (function() {
+
+		var expectedLen = null;
+		var partialData = "";
+
+
+		var publicMethods = {
+
+			process: function(data) {
+				var split_data = ab2str(data).split("\0");
+
+				if (split_data.length == 1) {
+					// remainder of previous reponse
+					partialData += split_data[0];
+
+				} else if (split_data.length >= 2) {
+					// begining of new reponse
+					this.expectedLen = parseInt(split_data[0]);
+					this.partialData = split_data[1];
+
+					if (! this.expectedLen) {
+						throw "Expected numeric length.";
+					}
+				}
+
+			},
+
+			isComplete: function() {
+				if (this.expectedLen == this.partialData.length) {
+					return true;
+				} else {
+					console.log("Expecting " + this.expectedLen + " bytes...");
+					console.log("Received so far " + this.partialData.length + " bytes.");
+					return false;
+				}
+			},
+
+			getXML: function() {
+				return $.parseXML(this.partialData);
+			}
+
+		}
+
+		return publicMethods;
+
+	})();
+
+
 	// CONECT WITH XDEBUG SERVER
 
 	function listen_and_connect() {
@@ -30,7 +80,6 @@ $(function() {
 			serverSocketId = createInfo.socketId;
 
 			Alert.busy("Listening on: " + ip + ":" + port);
-			//console.log("Listening on: " + ip + ":" + port);
 			chrome.sockets.tcpServer.listen(serverSocketId, ip, port, function(result) {
 				//console.log("Listen result: "); console.log(result);
 			});
@@ -48,34 +97,29 @@ $(function() {
 		});
 
 
+		chrome.sockets.tcp.onReceiveError.addListener(function(errorInfo) {
+			$("body").trigger('error-on-receive', {
+				message: errorInfo.resultCode
+			});
+		});
+
+
 		chrome.sockets.tcp.onReceive.addListener(function(readInfo) {
 
-			var split_data = ab2str(readInfo.data).split("\0");
-			var length = split_data[0];
-			var raw_xml = split_data[1];
-
-			if (! parseInt(length)) { // hacky check - implementation based on length needed
-				$("body").trigger("receive-error");
-				return
-			} else if (! length) {
-				console.log("(FAILSAFE) stopping...");
-				$("body").trigger("xdebug-stop");
-				return;
-			} else {
-				console.log("Receiving " + length + " bytes...");
-			}
-
-			// hacky check - implementation based on length needed
-			if (raw_xml.charAt(0) != "<" || raw_xml.charAt(raw_xml.length - 1) != ">") {
+			try {
+				Response.process(readInfo.data);
+				if (! Response.isComplete()) return;
+				var xml = Response.getXML();
+			} catch (e) {
+				console.error(e);
 				return;
 			}
 
-			var xml = $.parseXML(raw_xml);
 
 			if ($(xml).find("init").length > 0) {
 
 				console.log("received init response:");
-				console.log(raw_xml);
+				console.log(xml);
 
 				var c = initialCommandQueue.shift(); // next command
 				c && send_command(c.command, c.params);
@@ -86,7 +130,7 @@ $(function() {
 				if (received_transaction_id == transactionId) {
 
 					console.log("received_transaction_id: " + received_transaction_id);
-					console.log(raw_xml);
+					console.log(xml);
 
 					if (currentCommandCallback) {
 
@@ -128,7 +172,7 @@ $(function() {
 		}
 		request += "\0";
 
-		console.log("Sending: " + request);
+		console.log("##### Sending command: " + request);
 
 		// not sure if the delay is absolutely necessary
 		setTimeout(function() {
