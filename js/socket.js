@@ -48,7 +48,8 @@ $(function() {
 				} else if (this.expectedLen == this.partialData.length) {
 					return true;
 				} else if (this.expectedLen < this.partialData.length) {
-					throw "Received more than expected!";
+					console.log("Received more than expected!");
+					return false;
 				} else {
 					throw "Unexpected values!";
 				}
