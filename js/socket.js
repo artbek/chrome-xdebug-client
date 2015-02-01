@@ -274,7 +274,9 @@ $(function() {
 			var object = JSON.parse(atob(property.text()));
 
 			if (object.function != "unknown") {
-				if (object.class) { function_name = object.class + "::" + object.function; }
+				var function_name = "";
+				if (object.class) { function_name += object.class + "::"; }
+				function_name += object.function;
 				send_command("breakpoint_set", "-t return -m " + function_name, function() {
 					Alert.info("Breakpoint will trigger on function return.");
 				});
