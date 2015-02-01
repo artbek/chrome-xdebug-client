@@ -11,18 +11,23 @@
 
 ### How to get started:
 
-1. Install the app: <a href="https://chrome.google.com/webstore/detail/xdebug/nhodjblplijafdpjjfhhanfmchplpfgl?hl=en-GB&gl=GB" target="blank">Google Webstore</a> or `chrome://extensions/` and 'Load unpacked extension...' button.
-2. Make sure you have supplied a reachable Listening IP in the app's settings.
-3. Press Listen.
-4. Run your code, e.g.:
+1. Install the app: <a href="https://chrome.google.com/webstore/detail/xdebug/nhodjblplijafdpjjfhhanfmchplpfgl?hl=en-GB&gl=GB" target="blank">Google Webstore</a> or `chrome://extensions/` with 'Load unpacked extension...' button.
+2. Press Listen.
+3. Run your code, e.g.:
 
 ```
-http://artbek.co.uk?XDEBUG_SESSION_START=xxx (should work without xxx value)
+http://artbek.co.uk?XDEBUG_SESSION_START=xxx (should work without *xxx* value, but use it if you want *XDEBUG_SESSION* cookie to be created)
 ```
 or
 
 ```
-> export XDEBUG_CONFIG="idekey=xxx remote_host=123.123.123.123" (should work without idekey=xxx part)
-> php myscript.php
+> export XDEBUG_CONFIG="remote_host=0.0.0.0" (*remote_host=0.0.0.0* is optional)
+> php myscript_1.php
+> php myscript_2.php
+```
+or
+
+```
+> XDEBUG_CONFIG="" php myscript.php
 ```
 
