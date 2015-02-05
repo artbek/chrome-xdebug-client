@@ -162,10 +162,21 @@ $(function() {
 
 	/* STACK & CONSOLE */
 
+	$("input[name=eval-expression]").on("keyup", function(e) {
+		var KEY_UP = 38;
+		var KEY_DN = 40;
+		if (e.which == KEY_UP) {
+			$(this).val(History.cycle_up());
+		} else if (e.which == KEY_DN) {
+			$(this).val(History.cycle_dn());
+		}
+	});
+
 	$("#eval-form").on("submit", function(e) {
 		$("#eval-content").text("...");
 		e.preventDefault();
 		var expression = $("input[name=eval-expression]").val();
+		History.push(expression);
 		expression = "var_export(" + expression + ", true)";
 		expression = btoa(expression);
 		$("body").trigger("xdebug-eval", {
