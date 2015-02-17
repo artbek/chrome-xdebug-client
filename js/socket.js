@@ -70,31 +70,43 @@ $(function() {
 
 	// CONECT WITH XDEBUG SERVER
 
-	function listen_and_connect() {
-		ip = Config.get("listening_ip");
-		port = parseInt(Config.get("listening_port"));
-
+	function initCommandQueue() {
 		initialCommandQueue = [
 			{ command: "feature_set", params: "-n max_depth -v 3" },
 			{ command: "feature_set", params: "-n max_data -v 50000" },
 			{ command: "step_into", params: null },
 		];
+	}
+
+
+	function showListeningAlert() {
+		if (serverSocketId) {
+			chrome.sockets.tcpServer.getInfo(serverSocketId, function(socketInfo) {
+				Alert.busy("Listening on: " + socketInfo.localAddress + ":" + socketInfo.localPort);
+			});
+		}
+	}
+
+
+	function listen_and_connect() {
+		ip = Config.get("listening_ip");
+		port = parseInt(Config.get("listening_port"));
+
+		initCommandQueue();
 
 		chrome.sockets.tcpServer.create(function(createInfo) {
 			//console.log("Create Info:"); console.log(createInfo);
 			serverSocketId = createInfo.socketId;
 
-			Alert.busy("Listening on: " + ip + ":" + port);
 			chrome.sockets.tcpServer.listen(serverSocketId, ip, port, function(result) {
 				//console.log("Listen result: "); console.log(result);
+				showListeningAlert();
 			});
 
 			chrome.sockets.tcpServer.onAccept.addListener(function(acceptInfo) {
 				//console.log("Accepted: "); console.log(acceptInfo);
+				closeClientSocket(socketId); // close current client socket
 				socketId = acceptInfo.clientSocketId;
-
-				closeSockets(true, false); // we don't need the server socket anymore
-
 				chrome.sockets.tcp.update(socketId, { bufferSize: (1024*1024) }, function() {
 					chrome.sockets.tcp.setPaused(socketId, false);
 				});
@@ -183,6 +195,9 @@ $(function() {
 		// not sure if the delay is absolutely necessary
 		setTimeout(function() {
 			chrome.sockets.tcp.send(socketId, str2ab(request), function(writeInfo) {
+				if (chrome.runtime.lastError) {
+					console.log("Socket SEND error: " + chrome.runtime.lastError.message);
+				}
 				if (writeInfo.resultCode == 0) { // no error
 					//chrome.sockets.tcp.setPaused(socketId, false);
 				}
@@ -191,30 +206,52 @@ $(function() {
 	}
 
 
-	function closeSockets(serverSocket, clientSocket) {
+	function closeAllSockets() {
 
-		if (serverSocket && serverSocketId) {
-			chrome.sockets.tcpServer.close(serverSocketId, function() {
-				serverSocketId = null;
-				if (chrome.runtime.lastError) {
-					console.log("Server socket: " + chrome.runtime.lastError.message);
-				}
-			});
-		}
+		serverSocketId = null;
+		chrome.sockets.tcpServer.getSockets(function(socketInfos) {
+			for (var s = 0; s < socketInfos.length; s++) {
+				chrome.sockets.tcpServer.close(socketInfos[s].socketId, function() {
+					if (chrome.runtime.lastError) {
+						console.log("Server socket: " + chrome.runtime.lastError.message);
+					}
+				});
+			}
+		});
 
-		if (clientSocket && socketId) {
-			chrome.sockets.tcp.close(socketId, function() {
-				socketId = null;
+		socketId = null;
+		chrome.sockets.tcp.getSockets(function(socketInfos) {
+			for (var s = 0; s < socketInfos.length; s++) {
+				chrome.sockets.tcp.close(socketInfos[s].socketId, function() {
+					if (chrome.runtime.lastError) {
+						console.log("Client socket: " + chrome.runtime.lastError.message);
+					}
+				});
+			}
+		});
+
+	}
+
+
+	function closeClientSocket(socketIdToClose) {
+		if (socketIdToClose && socketIdToClose != socketId) {
+			console.log("Closing client socket: " + socketIdToClose);
+			chrome.sockets.tcp.close(socketIdToClose, function() {
 				if (chrome.runtime.lastError) {
 					console.log("Client socket: " + chrome.runtime.lastError.message);
 				}
 			});
 		}
-
 	}
 
 
 	// HANDLE EVENTS
+
+	$('body').on("xdebug-init", function() {
+		initCommandQueue();
+		Alert.hide();
+		showListeningAlert();
+	});
 
 	$('body').on("xdebug-listen", function() {
 		listen_and_connect();
@@ -243,7 +280,7 @@ $(function() {
 			xml: ''
 		});
 
-		closeSockets(true, true);
+		closeAllSockets();
 		$('body').trigger('socket_status', {status: 'dead'});
 	});
 

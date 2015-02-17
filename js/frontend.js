@@ -220,7 +220,7 @@ $(function() {
 
 	$("body").on('error-on-receive', function(event, data) {
 		console.log("[error-on-receive]: " + data.message);
-		Alert.hide();
+		$("body").trigger("xdebug-init");
 	});
 
 
@@ -298,7 +298,7 @@ $(function() {
 
 			default:
 				if ($(data.xml).find("response").attr("status") == 'stopping') {
-					$("body").trigger("xdebug-stop");
+					$("body").trigger("xdebug-init");
 				} else {
 					filename = $(data.xml).find('response').children().attr("filename");
 					lineno = $(data.xml).find('response').children().attr("lineno");
