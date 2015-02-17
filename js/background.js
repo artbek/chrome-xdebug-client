@@ -16,6 +16,7 @@
 		data.listening_port || chrome.storage.local.set({"listening_port": "9000"});
 		data.source_script || chrome.storage.local.set({"source_script": ""});
 		data.lines_count || chrome.storage.local.set({"lines_count": "50"});
+		data.keep_listening || data.keep_listening === 0 || chrome.storage.local.set({"keep_listening": 1});
 	});
 
 })();

@@ -4,6 +4,7 @@ var Config = (function() {
 
 		listening_ip: {
 			value: "",
+			type: "text",
 			set: function(value) {
 				this.valid = true;
 				this.value = value;
@@ -16,6 +17,7 @@ var Config = (function() {
 
 		listening_port: {
 			value: "",
+			type: "text",
 			set: function(value) {
 				this.valid = true;
 				this.value = value;
@@ -28,6 +30,7 @@ var Config = (function() {
 
 		source_script: {
 			value: "",
+			type: "text",
 			set: function(value) {
 				this.valid = true;
 				this.value = value;
@@ -40,6 +43,7 @@ var Config = (function() {
 
 		lines_count: {
 			value: "",
+			type: "text",
 			set: function(value) {
 				this.valid = true;
 				this.value = value;
@@ -54,6 +58,19 @@ var Config = (function() {
 			value: 0,
 			set: function(value) {
 				this.value = value;
+			},
+			valid: true
+		},
+
+		keep_listening: {
+			value: 1,
+			type: "checkbox",
+			set: function(value) {
+				if (parseInt(value)) {
+					this.value = 1;
+				} else {
+					this.value = 0;
+				}
 			},
 			valid: true
 		}
@@ -98,6 +115,18 @@ var Config = (function() {
 
 	var publicMethods = {
 
+		getType: function(key) {
+			if (! key) {
+				var configValues = {};
+				for (var prop in conf) {
+					configValues[prop] = conf[prop].type;
+				}
+				return configValues;
+			} else {
+				return conf[key]["type"];
+			}
+		},
+
 		get: function(key) {
 			if (! key) {
 				var configValues = {};
@@ -125,8 +154,15 @@ var Config = (function() {
 		},
 
 		saveFromForm: function(values) {
-			for (var i in values) {
-				publicMethods.set(values[i].name, values[i].value);
+			for (var prop in conf) {
+				var value = null;
+				for (var i in values) {
+					if (values[i].name == prop) {
+						value = values[i].value;
+						break;
+					}
+				}
+				publicMethods.set(prop, value);
 			}
 		},
 

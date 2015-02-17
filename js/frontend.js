@@ -45,8 +45,13 @@ $(function() {
 
 	$("#settings-popup-button").on("click", function() {
 		var configValues = Config.get();
+		var configTypes = Config.getType();
 		for (var prop in configValues) {
-			$("#settings [name=" + prop + "]").val(configValues[prop]);
+			if (configTypes[prop] == "text") {
+				$("#settings [name=" + prop + "]").val(configValues[prop]);
+			} else if (configTypes[prop] == "checkbox") {
+				$("#settings [name=" + prop + "]").prop("checked", configValues[prop]);
+			}
 		}
 		$("#settings").toggle();
 	});
@@ -220,7 +225,11 @@ $(function() {
 
 	$("body").on('error-on-receive', function(event, data) {
 		console.log("[error-on-receive]: " + data.message);
-		$("body").trigger("xdebug-init");
+		if (Config.get("keep_listening")) {
+			$("body").trigger("xdebug-init");
+		} else {
+			$("body").trigger("xdebug-stop");
+		}
 	});
 
 
@@ -298,7 +307,11 @@ $(function() {
 
 			default:
 				if ($(data.xml).find("response").attr("status") == 'stopping') {
-					$("body").trigger("xdebug-init");
+					if (Config.get("keep_listening")) {
+						$("body").trigger("xdebug-init");
+					} else {
+						$("body").trigger("xdebug-stop");
+					}
 				} else {
 					filename = $(data.xml).find('response').children().attr("filename");
 					lineno = $(data.xml).find('response').children().attr("lineno");
