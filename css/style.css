@@ -48,7 +48,7 @@ nav a {
 }
 
 #find-in-source {
-	margin-right: 20px;
+	margin: 0 20px 0 20px;
 	width: 100px;
 }
 
@@ -194,14 +194,14 @@ div {
 	width: 40%;
 }
 
-#alert .close-button {
+.close-button {
 	display: none;
 	position: absolute;
 	right: 1em;
 	top: 0.5em;
 }
 
-#alert.user-closable .close-button {
+.user-closable .close-button {
 	cursor: pointer;
 	display: block;
 }
@@ -231,3 +231,40 @@ div {
 	color: #ff3333;
 }
 
+#changelog {
+	border: 4px #f3f3f3 solid;
+	display: none;
+	height: 46%;
+	left: 16%;
+	padding: 4%;
+	position: fixed;
+	top: 25%;
+	width: 60%;
+}
+
+#changelog-content {
+	height: 100%;
+	overflow: auto;
+}
+
+#changelog-button.draw-attention {
+	color: #ffff33;
+	font-weight: bold;
+}
+
+#changelog .version {
+	margin-bottom: 2em;
+}
+
+#changelog .version-number {
+	font-size: 1.2em;
+	font-weight: bold;
+}
+
+#changelog .change-title {
+	font-weight: bold;
+	margin-top: 1em;
+}
+
+#changelog .change-description {
+}

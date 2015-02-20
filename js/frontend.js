@@ -22,6 +22,8 @@ $(function() {
 		} else {
 			$('body').trigger('socket_status', {status: 'dead'});
 		}
+
+		ChangeLog.refreshButton();
 	});
 
 	$("body").on('socket_status', function(event, data) {
@@ -55,6 +57,11 @@ $(function() {
 		$("#settings").hide();
 	});
 
+
+
+	$("#changelog-button").on("click", function() {
+		ChangeLog.show();
+	});
 
 	/* NAV */
 

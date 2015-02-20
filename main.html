@@ -11,6 +11,7 @@
 	<script type="text/javascript" src="js/jquery-1.9.1.min.js"></script>
 	<script type="text/javascript" src="js/alert.js"></script>
 	<script type="text/javascript" src="js/socket.js"></script>
+	<script type="text/javascript" src="js/changelog.js"></script>
 	<script type="text/javascript" src="js/frontend.js"></script>
 </head>
 
@@ -26,6 +27,7 @@
 
 		<span id="settings-popup-button" class="nav-button-right">Settings/Help</span>
 		<input type="text" id="find-in-source" class="nav-button-right" placeholder="search" />
+		<span id="changelog-button" class="nav-button-right"></span>
 
 		<form id="settings">
 
@@ -123,6 +125,11 @@
 	<div id="alert">
 		<div class="close-button">x</div>
 		<span class="alert-message"></span>
+	</div>
+
+	<div id="changelog" class="user-closable">
+		<div class="close-button">x</div>
+		<div id="changelog-content"></div>
 	</div>
 
 </body>

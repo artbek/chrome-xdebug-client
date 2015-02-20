@@ -48,6 +48,14 @@ var Config = (function() {
 				}
 			},
 			valid: true
+		},
+
+		last_seen_version: {
+			value: 0,
+			set: function(value) {
+				this.value = value;
+			},
+			valid: true
 		}
 
 	};
