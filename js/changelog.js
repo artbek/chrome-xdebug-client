@@ -8,11 +8,10 @@ var ChangeLog = (function() {
 				[
 					"Persistent listening.",
 					"This is useful when your code spawns new PHP processes e.g. HTTP redirect.",
-					"You can disable the feature in settings."
+					"You can disable persistent listening in settings."
 				],
 				[
 					"Change Log.",
-					"When a new features are added the version number in the nav will change colour.",
 					"You can click on the version number to see the lastest changes."
 				]
 			]
