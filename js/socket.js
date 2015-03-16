@@ -137,7 +137,7 @@ $(function() {
 			if ($(xml).find("init").length > 0) {
 
 				console.log("received init response:");
-				console.log(xml);
+				//console.log(xml);
 
 				var c = initialCommandQueue.shift(); // next command
 				c && send_command(c.command, c.params);
@@ -148,7 +148,7 @@ $(function() {
 				if (received_transaction_id == transactionId) {
 
 					console.log("received_transaction_id: " + received_transaction_id);
-					console.log(xml);
+					//console.log(xml);
 
 					if (currentCommandCallback) {
 
@@ -305,6 +305,10 @@ $(function() {
 		send_command("breakpoint_set", "-t line -f " + data.filename + " -n " + data.lineno);
 	});
 
+	$("body").on("xdebug-breakpoint_list", function(event, data) {
+		send_command("breakpoint_list");
+	});
+
 	$("body").on("xdebug-breakpoint_set-return", function(event, data) {
 		send_command("eval", "-- " + btoa("json_encode(reset(debug_backtrace()))"), function(xml) {
 			var property = $(xml).find("property");
@@ -314,8 +318,10 @@ $(function() {
 				var function_name = "";
 				if (object.class) { function_name += object.class + "::"; }
 				function_name += object.function;
-				send_command("breakpoint_set", "-t return -m " + function_name, function() {
-					Alert.info("Breakpoint will trigger on function return.");
+				send_command("breakpoint_set", "-t return -m " + function_name, function(breakpoint_data) {
+					var breakpoint_id = $(breakpoint_data).find("response").attr("id");
+					Global.addBreakpointToDelete(breakpoint_id);
+					send_command("run");
 				});
 			} else {
 				Alert.warn("Couldn't determine function name - no breakpoint set!");

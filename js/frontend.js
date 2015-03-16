@@ -281,6 +281,15 @@ $(function() {
 				}
 				$("#stack-filenames").html(stack_trace_html);
 
+				if (Global.getBreakpointToDelete()) {
+					run(function() {
+						$("body").trigger("xdebug-breakpoint_remove", {
+							breakpoint_id: Global.getBreakpointToDelete()
+						});
+						Global.clearBreakpointToDelete();
+					});
+				}
+
 				break;
 
 			case "stop":

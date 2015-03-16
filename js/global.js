@@ -1,6 +1,8 @@
 var Global = (function() {
 
 	var isProcessing = false;
+	var breakpointToDelete = false;
+
 
 	var publicMethods = {
 
@@ -14,6 +16,18 @@ var Global = (function() {
 
 		unsetProcessing: function() {
 			isProcessing = false;
+		},
+
+		addBreakpointToDelete: function(breakpointId) {
+			breakpointToDelete = breakpointId;
+		},
+
+		getBreakpointToDelete: function() {
+			return breakpointToDelete;
+		},
+
+		clearBreakpointToDelete: function() {
+			breakpointToDelete = false;
 		}
 
 	}
