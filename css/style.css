@@ -201,6 +201,10 @@ div {
 	top: 0.5em;
 }
 
+.user-closable {
+	cursor: pointer;
+}
+
 .user-closable .close-button {
 	cursor: pointer;
 	display: block;
@@ -232,7 +236,8 @@ div {
 }
 
 #changelog {
-	border: 4px #f3f3f3 solid;
+	background: #f3f3f3;
+	border: 4px #cccccc solid;
 	display: none;
 	height: 46%;
 	left: 16%;
