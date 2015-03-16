@@ -227,6 +227,7 @@ $(function() {
 		console.log("[error-on-receive]: " + data.message);
 		if (Config.get("keep_listening")) {
 			$("body").trigger("xdebug-init");
+			clearBreakpoints();
 		} else {
 			$("body").trigger("xdebug-stop");
 		}
@@ -309,6 +310,7 @@ $(function() {
 				if ($(data.xml).find("response").attr("status") == 'stopping') {
 					if (Config.get("keep_listening")) {
 						$("body").trigger("xdebug-init");
+						clearBreakpoints();
 					} else {
 						$("body").trigger("xdebug-stop");
 					}
@@ -488,6 +490,11 @@ $(function() {
 				}
 			}
 		}
+	}
+
+
+	function clearBreakpoints() {
+		breakpoints = {};
 	}
 
 
