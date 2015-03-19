@@ -59,7 +59,8 @@ var Config = (function() {
 			set: function(value) {
 				this.value = value;
 			},
-			valid: true
+			valid: true,
+			hidden: true
 		},
 
 		keep_listening: {
@@ -97,6 +98,8 @@ var Config = (function() {
 	}
 
 
+	/* INIT CONFIG */
+
 	chrome.storage.local.get(null, function(values) {
 		var formLikeValues = [];
 
@@ -107,7 +110,7 @@ var Config = (function() {
 			});
 		}
 
-		publicMethods.saveFromForm(formLikeValues);
+		publicMethods.saveFromForm(formLikeValues, true);
 	});
 
 
@@ -153,8 +156,9 @@ var Config = (function() {
 			}
 		},
 
-		saveFromForm: function(values) {
+		saveFromForm: function(values, isInit) {
 			for (var prop in conf) {
+				if (! isInit && conf[prop].hidden) continue;
 				var value = null;
 				for (var i in values) {
 					if (values[i].name == prop) {
