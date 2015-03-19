@@ -312,7 +312,11 @@ $(function() {
 	$("body").on("xdebug-breakpoint_set-return", function(event, data) {
 		send_command("eval", "-- " + btoa("json_encode(reset(debug_backtrace()))"), function(xml) {
 			var property = $(xml).find("property");
-			var object = JSON.parse(atob(property.text()));
+
+			var object = null;
+			if (property.attr("encoding") == "base64") {
+				object = JSON.parse(atob(property.text()));
+			}
 
 			if (object.function != "unknown") {
 				var function_name = "";
