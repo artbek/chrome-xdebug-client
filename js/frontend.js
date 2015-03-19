@@ -245,9 +245,12 @@ $(function() {
 
 			case "eval":
 				var property = $(data.xml).find("property");
-				if (property) {
+				if (property.length) {
 					property = format(property);
 					$("#eval-content").text(property);
+				} else {
+					var error_message = $(data.xml).find("error message").text()
+					$("#eval-content").text("OOPSY DAISY... " + error_message);
 				}
 				break;
 
