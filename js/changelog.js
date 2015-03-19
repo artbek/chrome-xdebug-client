@@ -3,7 +3,24 @@ var ChangeLog = (function() {
 	var log = [
 
 		{
-			version: 1.9,
+			version: "2.0",
+			changes: [
+				[
+					"Step Out (func)",
+					"No more annoying popups - works just like 'Step Out' except for the scope of operation."
+				],
+				[
+					"Bug fixes",
+					"Visual line breakpoints not cleared when persistent listening is on.",
+					"More useful messages when couldn't evaluate expression.",
+					"Illegible change log popup.",
+					"Last seen version reset when saving settings."
+				]
+			]
+		},
+
+		{
+			version: "1.9",
 			changes: [
 				[
 					"Persistent listening.",
