@@ -67,6 +67,16 @@ nav a {
 	opacity: 0.2;
 }
 
+#processing-indicator {
+	color: #7aff00;
+	margin-right: 0.8em;
+}
+
+#processing-indicator.busy {
+	color: #ff0000;
+}
+
+
 div {
 	border: 0px;
 	margin: 0px;

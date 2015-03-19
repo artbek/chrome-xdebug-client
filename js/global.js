@@ -12,10 +12,12 @@ var Global = (function() {
 
 		setProcessing: function() {
 			isProcessing = true;
+			$("#processing-indicator").addClass("busy");
 		},
 
 		unsetProcessing: function() {
 			isProcessing = false;
+			$("#processing-indicator").removeClass("busy");
 		},
 
 		addBreakpointToDelete: function(breakpointId) {
