@@ -235,6 +235,15 @@ div {
 	color: #ff3333;
 }
 
+#settings-save {
+	background: #ec5b13;
+	border: 0;
+	color: #ffffff;
+	cursor: pointer;
+	font-weight: bold;
+	padding: 0.5em 1em;
+}
+
 #changelog {
 	background: #f3f3f3;
 	border: 4px #cccccc solid;
