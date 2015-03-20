@@ -104,12 +104,14 @@ $(function() {
 			});
 
 			chrome.sockets.tcpServer.onAccept.addListener(function(acceptInfo) {
-				//console.log("Accepted: "); console.log(acceptInfo);
-				closeClientSocket(socketId); // close current client socket
+				//console.log("$$$$$$$$$$ Accepted: "); console.log(acceptInfo);
+				var oldSocketId = socketId;
 				socketId = acceptInfo.clientSocketId;
-				chrome.sockets.tcp.update(socketId, { bufferSize: (1024*1024) }, function() {
-					chrome.sockets.tcp.setPaused(socketId, false);
-				});
+				closeClientSocket(oldSocketId, function() {
+					chrome.sockets.tcp.update(socketId, { bufferSize: (1024*1024) }, function() {
+						chrome.sockets.tcp.setPaused(socketId, false);
+					});
+				}); // close current client socket
 			});
 		});
 
@@ -211,6 +213,7 @@ $(function() {
 		serverSocketId = null;
 		chrome.sockets.tcpServer.getSockets(function(socketInfos) {
 			for (var s = 0; s < socketInfos.length; s++) {
+				//console.log("$$$$$$$$$$ Closing server socket: " + socketInfos[s].socketId);
 				chrome.sockets.tcpServer.close(socketInfos[s].socketId, function() {
 					if (chrome.runtime.lastError) {
 						console.log("Server socket: " + chrome.runtime.lastError.message);
@@ -222,6 +225,7 @@ $(function() {
 		socketId = null;
 		chrome.sockets.tcp.getSockets(function(socketInfos) {
 			for (var s = 0; s < socketInfos.length; s++) {
+				//console.log("$$$$$$$$$$ Closing client socket: " + socketInfos[s].socketId);
 				chrome.sockets.tcp.close(socketInfos[s].socketId, function() {
 					if (chrome.runtime.lastError) {
 						console.log("Client socket: " + chrome.runtime.lastError.message);
@@ -233,14 +237,18 @@ $(function() {
 	}
 
 
-	function closeClientSocket(socketIdToClose) {
+	function closeClientSocket(socketIdToClose, callback) {
 		if (socketIdToClose && socketIdToClose != socketId) {
-			console.log("Closing client socket: " + socketIdToClose);
+			//console.log("$$$$$$$$$$ Closing client socket: " + socketIdToClose);
 			chrome.sockets.tcp.close(socketIdToClose, function() {
+				//console.log("$$$$$$$$$$ Closed client socket: " + socketIdToClose);
 				if (chrome.runtime.lastError) {
 					console.log("Client socket: " + chrome.runtime.lastError.message);
 				}
+				callback();
 			});
+		} else {
+			callback();
 		}
 	}
 
