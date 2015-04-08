@@ -309,8 +309,28 @@ $(function() {
 		send_command("stack_get");
 	});
 
+	$('body').on("xdebug-breakpoint-list", function() {
+		send_command("breakpoint_list");
+	});
+
 	$("body").on("xdebug-breakpoint_set", function(event, data) {
-		send_command("breakpoint_set", "-t line -f " + data.filename + " -n " + data.lineno);
+		var options = "-t line -f " + Global.fileNameCurrentlyLoaded + " -n " + data.lineno;
+		if (data.hitValue) {
+			options += " -h " + data.hitValue;
+		}
+
+		if (data.operator) {
+			options += " -o " + data.operator;
+			if (data.condition) {
+				options += " -- " + btoa(data.condition);
+			}
+			send_command("breakpoint_remove", "-d " + data.breakpointToDelete, function() {
+				Breakpoints.unset(data.breakpointToDelete);
+				send_command("breakpoint_set", options);
+			});
+		} else {
+			send_command("breakpoint_set", options);
+		}
 	});
 
 	$("body").on("xdebug-breakpoint_list", function(event, data) {
@@ -330,9 +350,7 @@ $(function() {
 				var function_name = "";
 				if (object.class) { function_name += object.class + "::"; }
 				function_name += object.function;
-				send_command("breakpoint_set", "-t return -m " + function_name, function(breakpoint_data) {
-					var breakpoint_id = $(breakpoint_data).find("response").attr("id");
-					Global.addBreakpointToDelete(breakpoint_id);
+				send_command("breakpoint_set", "-t return -r 1 -m " + function_name, function() {
 					send_command("run");
 				});
 			} else {

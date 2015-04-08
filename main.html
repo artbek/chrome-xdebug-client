@@ -10,6 +10,7 @@
 	<script type="text/javascript" src="js/history.js"></script>
 	<script type="text/javascript" src="js/jquery-1.9.1.min.js"></script>
 	<script type="text/javascript" src="js/alert.js"></script>
+	<script type="text/javascript" src="js/breakpoints.js"></script>
 	<script type="text/javascript" src="js/socket.js"></script>
 	<script type="text/javascript" src="js/changelog.js"></script>
 	<script type="text/javascript" src="js/frontend.js"></script>
@@ -129,7 +130,7 @@
 		<pre id="eval-content" contenteditable="true"></pre>
 	</div>
 
-	<div id="alert">
+	<div id="alert" class="popup">
 		<div class="close-button">x</div>
 		<span class="alert-message"></span>
 	</div>
@@ -138,6 +139,50 @@
 		<div class="close-button">x</div>
 		<div id="changelog-content"></div>
 	</div>
+
+	<div id="breakpointOptions" class="popup user-closable">
+		<div class="close-button">x</div>
+		<form id="breakpoint-options-form" class="stop-propagation">
+
+			<label for="breakpoint-condition" class="alert-message">
+				<span class="breakpoint-id"></span>
+				<br />
+				Break on hit count:
+			</label>
+			<br />
+			<input type="radio" value=">=" name="bp-hit-operator" id="bp-hit-operator-1" />
+			<label for="bp-hit-operator-1" class="bp-hit-operator">&gt;=</label>
+			<input type="radio" value="==" name="bp-hit-operator" id="bp-hit-operator-2" />
+			<label for="bp-hit-operator-2" class="bp-hit-operator">==</label>
+			<input type="radio" value="%" name="bp-hit-operator" id="bp-hit-operator-3" />
+			<label for="bp-hit-operator-3" class="bp-hit-operator" title="multiple of">%</label>
+			<input
+				type="text"
+				name="breakpoint-hit-count"
+				id="breakpoint-hit-count"
+				class="stop-propagation"
+				style="width: 30%"
+			/>
+			<br />
+
+			<label for="breakpoint-condition" class="alert-message">
+				Break on expression:
+			</label>
+			<br />
+			<input
+				type="text"
+				name="breakpoint-condition"
+				id="breakpoint-condition"
+				class="stop-propagation input-wide"
+			/>
+			<br />
+			<button id="breakpointSaveCondition" data-id="" class="stop-propagation">
+				Save
+			</button>
+		</form>
+		<button id="breakpointRemove" data-id="" class="stop-propagation">Remove Breakpoint</button>
+	</div>
+
 
 </body>
 

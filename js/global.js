@@ -1,10 +1,18 @@
 var Global = (function() {
 
 	var isProcessing = false;
-	var breakpointToDelete = false;
 
 
 	var publicMethods = {
+
+		run: function(callback) {
+			if (this.isProcessing()) {
+				return;
+			} else {
+				Alert.busy("Working...");
+				callback();
+			}
+		},
 
 		isProcessing: function() {
 			return isProcessing;
@@ -20,16 +28,16 @@ var Global = (function() {
 			$("#processing-indicator").removeClass("busy");
 		},
 
-		addBreakpointToDelete: function(breakpointId) {
-			breakpointToDelete = breakpointId;
-		},
+		fileNameCurrentlyLoaded: '',
 
-		getBreakpointToDelete: function() {
-			return breakpointToDelete;
-		},
+		getOptFromString: function(option, string) {
+			var value = '';
+			var matches = string.match(new RegExp(" -" + option + " ([^\\s]+)"));
+			if (matches && matches[1]) {
+				value = matches[1];
+			}
 
-		clearBreakpointToDelete: function() {
-			breakpointToDelete = false;
+			return value;
 		}
 
 	}

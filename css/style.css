@@ -18,6 +18,10 @@ input {
 	padding: 2px;
 }
 
+.input-wide {
+	width: 90%;
+}
+
 input.error {
 	background-color: #ff3333;
 }
@@ -193,7 +197,7 @@ div {
 	overflow: auto;
 }
 
-#alert {
+.popup {
 	border: 4px solid;
 	display: none;
 	left: 25%;
@@ -222,12 +226,12 @@ div {
 
 #alert.busy {
 	background: #f3f3f3;
-	border-color: #cccccc;
+	border-color: #dddddd;
 }
 
 #alert.info {
 	background: #f3f3f3;
-	border-color: #cccccc;
+	border-color: #dddddd;
 }
 
 #alert.warn {
@@ -292,3 +296,50 @@ div {
 
 #changelog .change-description {
 }
+
+#breakpointOptions {
+	background: #664466;
+	border-color: #ffffff;
+	text-align: left;
+	padding-bottom: 4%;
+}
+
+#breakpointOptions label {
+	color: #ffffff;
+}
+
+#breakpointOptions input {
+	border: 1px solid #bbbbbb;
+	margin: 0.5em 0 1.2em 0;
+}
+
+button {
+	border: 0;
+	color: #ffffff;
+	cursor: pointer;
+	font-weight: bold;
+	padding: 0.5em 1em;
+}
+
+#breakpointSaveCondition {
+	background: #ec5b13;
+}
+
+#breakpointRemove {
+	background: #444444;
+	float: right;
+}
+
+label.bp-hit-operator {
+	cursor: pointer;
+	font-size: 1.5em;
+	margin-right: 0.8em;
+}
+
+.breakpoint-id {
+	color: #cccccc;
+	display: block;
+	text-align: right;
+	width: 100%;
+}
+

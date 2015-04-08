@@ -25,6 +25,7 @@ var Alert = (function() {
 				$("#alert")
 					.hide()
 					.removeClass() // all classes
+					.addClass("popup")
 					.addClass(type)
 					.addClass("user-closable")
 				;

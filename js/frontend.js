@@ -1,9 +1,6 @@
 $(function() {
 
-	var breakpoints = {};
-
 	var filename = '';
-	var filename_currently_loaded = '';
 	var lineno = 0;
 
 
@@ -38,7 +35,7 @@ $(function() {
 				enableNav(false);
 				$("#listen").removeClass("inactive");
 				$("#listen").text("LISTEN");
-				breakpoints = {};
+				Breakpoints.clear();
 				break;
 		}
 	});
@@ -71,25 +68,25 @@ $(function() {
 	/* NAV */
 
 	$("#stepinto").on("click", function() {
-		isInactive($(this)) || run(function() {
+		isInactive($(this)) || Global.run(function() {
 			$("body").trigger("xdebug-step_into");
 		});
 	});
 
 	$("#stepover").on("click", function() {
-		isInactive($(this)) || run(function() {
+		isInactive($(this)) || Global.run(function() {
 			$("body").trigger("xdebug-step_over");
 		});
 	});
 
 	$("#stepout").on("click", function() {
-		isInactive($(this)) || run(function() {
+		isInactive($(this)) || Global.run(function() {
 			$("body").trigger("xdebug-step_out");
 		});
 	});
 
 	$("#run").on("click", function() {
-		isInactive($(this)) || run(function() {
+		isInactive($(this)) || Global.run(function() {
 			$("body").trigger("xdebug-run");
 		});
 	});
@@ -100,36 +97,66 @@ $(function() {
 	});
 
 	$("#listen").on("click", function() {
-		isInactive($(this)) || run(function() {
+		isInactive($(this)) || Global.run(function() {
 			clearCodeView();
 			$("body").trigger("xdebug-listen");
 		});
 	});
 
 	$("#break-on-return").on("click", function() {
-		isInactive($(this)) || run(function() {
+		isInactive($(this)) || Global.run(function() {
 			$("body").trigger("xdebug-breakpoint_set-return");
 		});
 	});
 
+
 	$("body").on("click", ".lineno", function() {
 		var self = $(this);
-		if (self.hasClass("breakpoint")) {
-			run(function() {
-				$("body").trigger("xdebug-breakpoint_remove", {
-					breakpoint_id: self.data("breakpoint_id").substring(1) // remove first letter
-				});
-			});
+		Breakpoints.hideOptions();
+
+		var breakpoint = Breakpoints.getFromLineNo(self.data("lineno"));
+		if (breakpoint) {
+			Breakpoints.showOptions(self.data("lineno"));
 		} else {
-			run(function() {
+			Global.run(function() {
 				$("body").trigger("xdebug-breakpoint_set", {
-					lineno: self.data("lineno"),
-					type: "line",
-					filename: filename_currently_loaded
+					lineno: self.data("lineno")
 				});
 			});
 		}
 	});
+
+	$("#breakpoint-options-form").on("submit", function(e) {
+		e.preventDefault();
+
+		var operator_val = '>=';
+		$('[name="bp-hit-operator"]').each(function() {
+			if ($(this).prop("checked")) {
+				operator_val = $(this).val();
+			}
+		});
+
+		Global.run(function() {
+			$("body").trigger("xdebug-breakpoint_set", {
+				lineno: Breakpoints.options.breakpoint.lineno,
+				condition: $('[name="breakpoint-condition"]').val(),
+				operator: operator_val,
+				hitValue: $('[name="breakpoint-hit-count"]').val(),
+				breakpointToDelete: Breakpoints.options.breakpoint.id
+			});
+			Breakpoints.hideOptions();
+		});
+	});
+
+	$("#breakpointRemove").on("click", function() {
+		Global.run(function() {
+			$("body").trigger("xdebug-breakpoint_remove", {
+				breakpoint_id: Breakpoints.options.breakpoint.id
+			});
+			Breakpoints.hideOptions();
+		});
+	});
+
 
 	jQuery.expr[":"].containsi = jQuery.expr.createPseudo(function(arg) {
 		return function(elem) {
@@ -227,7 +254,7 @@ $(function() {
 		console.log("[error-on-receive]: " + data.message);
 		if (Config.get("keep_listening")) {
 			$("body").trigger("xdebug-init");
-			clearBreakpoints();
+			Breakpoints.clear();
 		} else {
 			$("body").trigger("xdebug-stop");
 		}
@@ -237,6 +264,7 @@ $(function() {
 	$("body").on('parse-xml', function(event, data) {
 
 		Alert.hide();
+		Breakpoints.hideOptions();
 
 		switch (data.command) { /* SWITCH - START */
 
@@ -263,7 +291,7 @@ $(function() {
 
 				populateCodeView(sourceCode, offset);
 
-				run(function() {
+				Global.run(function() {
 					$("body").trigger("xdebug-stack_get");
 				});
 				break;
@@ -284,15 +312,6 @@ $(function() {
 				}
 				$("#stack-filenames").html(stack_trace_html);
 
-				if (Global.getBreakpointToDelete()) {
-					run(function() {
-						$("body").trigger("xdebug-breakpoint_remove", {
-							breakpoint_id: Global.getBreakpointToDelete()
-						});
-						Global.clearBreakpointToDelete();
-					});
-				}
-
 				break;
 
 			case "stop":
@@ -300,29 +319,42 @@ $(function() {
 
 			case "breakpoint_set":
 				var breakpoint_id = $(data.xml).find("response").attr("id");
-				var breakpoint_lineno = data.options.split(" ").pop();
 
-				if (parseInt(breakpoint_lineno)) {
-					breakpoints["b" + breakpoint_id] = {
-						filename: filename_currently_loaded,
-						lineno: breakpoint_lineno
-					};
-					highlightBreakpoints();
+				var bpCondition = '';
+				var matches = data.options.match(/-- (.*)$/);
+				if (matches && matches[1]) {
+					bpCondition = atob(matches[1]);
+				}
+
+				var bpLineNo = Global.getOptFromString("n", data.options);
+				var bpHitValue = Global.getOptFromString("h", data.options);
+				var bpOperator = Global.getOptFromString("o", data.options);
+
+				if (parseInt(bpLineNo)) {
+					Breakpoints.set({
+						id: breakpoint_id,
+						filename: Global.fileNameCurrentlyLoaded,
+						lineno: bpLineNo,
+						condition: bpCondition,
+						hitValue: bpHitValue,
+						operator: bpOperator
+					});
+					Breakpoints.highlight();
 				}
 
 				break;
 
 			case "breakpoint_remove":
 				var breakpoint_id = data.options.split(" ").pop();
-				delete breakpoints["b" + breakpoint_id];
-				highlightBreakpoints();
+				Breakpoints.unset(breakpoint_id);
+				Breakpoints.highlight();
 				break;
 
 			default:
 				if ($(data.xml).find("response").attr("status") == 'stopping') {
 					if (Config.get("keep_listening")) {
 						$("body").trigger("xdebug-init");
-						clearBreakpoints();
+						Breakpoints.clear();
 					} else {
 						$("body").trigger("xdebug-stop");
 					}
@@ -346,7 +378,7 @@ $(function() {
 
 		if (Config.get("source_script")) {
 
-			if (filename_currently_loaded == filename) {
+			if (Global.fileNameCurrentlyLoaded == filename) {
 
 				$(".line-wrapper.active-line").removeClass("active-line");
 				$(".lineno[data-lineno=" + lineno + "]").closest(".line-wrapper").addClass("active-line");
@@ -377,7 +409,7 @@ $(function() {
 					},
 
 					complete: function() {
-						run(function() {
+						Global.run(function() {
 							$("body").trigger("xdebug-stack_get");
 						});
 					}
@@ -388,7 +420,7 @@ $(function() {
 
 		} else {
 
-			run(function() {
+			Global.run(function() {
 				$("body").trigger("xdebug-source", {
 					filename: filename,
 					lineno: lineno
@@ -421,8 +453,8 @@ $(function() {
 			$("#codeview").append(html);
 		}
 
-		filename_currently_loaded = filename;
-		highlightBreakpoints();
+		Global.fileNameCurrentlyLoaded = filename;
+		Breakpoints.highlight();
 		scrollToView();
 		$("body").trigger("refresh-popups");
 	}
@@ -481,34 +513,6 @@ $(function() {
 	}
 
 
-	function run(callback) {
-		if (Global.isProcessing()) {
-			return;
-		} else {
-			Alert.busy("Working...");
-			callback();
-		}
-	}
-
-
-	function highlightBreakpoints() {
-		$(".lineno.breakpoint").removeClass("breakpoint");
-		for (var id in breakpoints) {
-			if (breakpoints.hasOwnProperty(id)) {
-				if (breakpoints[id].filename == filename_currently_loaded) {
-					$(".lineno[data-lineno='" + breakpoints[id].lineno + "']")
-						.addClass("breakpoint")
-						.data("breakpoint_id", id);
-				}
-			}
-		}
-	}
-
-
-	function clearBreakpoints() {
-		breakpoints = {};
-	}
-
 
 	// active_line - native DOM element (not jQuery object)
 	function scrollToView(active_line) {
@@ -554,5 +558,14 @@ $(function() {
 			$(".nav-button").addClass("inactive");
 		}
 	}
+
+
+	$(".popup.user-closable").on("click", function() {
+		$(this).hide();
+	});
+
+	$(".stop-propagation").on("click", function(e) {
+		e.stopPropagation();
+	});
 
 });
