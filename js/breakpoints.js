@@ -64,7 +64,7 @@ var Breakpoints = (function() {
 			$("#breakpoint-condition").val(this.options.breakpoint.condition);
 			$("#breakpoint-condition").trigger("focus");
 			$("#breakpoint-options-form span.breakpoint-id")
-				.text("[" + this.options.breakpoint.id + "]");
+				.text("[Line #" + this.options.breakpoint.lineno + "]");
 			$("[name=bp-hit-operator][value='" + this.options.breakpoint.operator + "']")
 				.prop("checked", true);
 			$("#breakpoint-hit-count").val(this.options.breakpoint.hitValue);
