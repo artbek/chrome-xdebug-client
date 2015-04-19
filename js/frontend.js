@@ -568,4 +568,18 @@ $(function() {
 		e.stopPropagation();
 	});
 
+	var drawAttentionRotated = false;
+	var rotateValues = [180, 359, -180];
+	setInterval(function() {
+		if (drawAttentionRotated) {
+			$(".draw-attention").css("transform", "rotate(0deg)");
+			drawAttentionRotated = false;
+		} else {
+			var rotateValIndex = Math.floor(Math.random() * rotateValues.length);
+			$(".draw-attention").css("transform", "rotate(" + rotateValues[rotateValIndex] + "deg)");
+			drawAttentionRotated = true;
+		}
+	}, 5000);
+
+
 });

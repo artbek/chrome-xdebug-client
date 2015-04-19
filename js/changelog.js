@@ -3,6 +3,16 @@ var ChangeLog = (function() {
 	var log = [
 
 		{
+			version: "2.1",
+			changes: [
+				[
+					"Conditional breakpoints",
+					"Pause code execution when expression evaluates true or/and when set hit count is reached."
+				]
+			]
+		},
+
+		{
 			version: "2.0",
 			changes: [
 				[
@@ -90,6 +100,7 @@ var ChangeLog = (function() {
 
 		refreshButton: function() {
 			$("#changelog-button")
+				.css("transform", "rotate(0deg)")
 				.removeClass("draw-attention")
 				.text("v" + this.getCurrentVersion());
 

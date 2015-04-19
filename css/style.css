@@ -278,6 +278,7 @@ div {
 #changelog-button.draw-attention {
 	color: #ffff33;
 	font-weight: bold;
+	transition: 500ms ease-in-out;
 }
 
 #changelog .version {
