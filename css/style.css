@@ -311,7 +311,13 @@ div {
 
 #breakpointOptions input {
 	border: 1px solid #bbbbbb;
+	font-family: monospace;
 	margin: 0.5em 0 1.2em 0;
+}
+
+#breakpointOptions input[type='radio'] {
+	margin: 0;
+	vertical-align: middle;
 }
 
 button {
@@ -333,7 +339,7 @@ button {
 
 label.bp-hit-operator {
 	cursor: pointer;
-	font-size: 1.5em;
+	font-size: 1.1em;
 	margin-right: 0.8em;
 }
 
