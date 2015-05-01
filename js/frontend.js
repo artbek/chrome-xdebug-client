@@ -36,6 +36,7 @@ $(function() {
 				$("#listen").removeClass("inactive");
 				$("#listen").text("LISTEN");
 				Breakpoints.clear();
+				Global.setWindowTitle();
 				break;
 		}
 	});
@@ -306,6 +307,7 @@ $(function() {
 				for (var i = 0; i < stack_trace.length; i++) {
 					if (i == 0) {
 						stack_trace_html += '<div class="filename"><b>' + stack_trace[i] + '</b></div>';
+						Global.setWindowTitle(stack_trace[i], true);
 					} else {
 						stack_trace_html += '<div class="filename">' + stack_trace[i] + '</div>';
 					}

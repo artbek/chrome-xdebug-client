@@ -38,6 +38,22 @@ var Global = (function() {
 			}
 
 			return value;
+		},
+
+		setWindowTitle: function(string, isFilePath) {
+			var windowTitle = string || chrome.runtime.getManifest().name;
+
+			if (isFilePath) {
+				var appName = chrome.runtime.getManifest().name;
+				var basenameRegEx = new RegExp("/([^/:]+):\\d+$");
+				var baseName = string.match(basenameRegEx);
+				if (baseName) {
+					var dirName = string.substr(0, string.lastIndexOf("/"));
+					windowTitle = baseName[1] + " (" + dirName + ")";
+				}
+			}
+
+			document.title = windowTitle;
 		}
 
 	}

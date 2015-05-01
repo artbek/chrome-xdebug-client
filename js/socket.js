@@ -82,7 +82,9 @@ $(function() {
 	function showListeningAlert() {
 		if (serverSocketId) {
 			chrome.sockets.tcpServer.getInfo(serverSocketId, function(socketInfo) {
-				Alert.busy("Listening on: " + socketInfo.localAddress + ":" + socketInfo.localPort);
+				var msg = "Listening... (" + socketInfo.localAddress + ":" + socketInfo.localPort + ")";
+				Alert.busy(msg);
+				Global.setWindowTitle(msg);
 			});
 		}
 	}
