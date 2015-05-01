@@ -206,9 +206,9 @@ $(function() {
 		var KEY_UP = 38;
 		var KEY_DN = 40;
 		if (e.which == KEY_UP) {
-			$(this).val(History.cycle_up());
+			$(this).val(History.cycleUp($(this).val()));
 		} else if (e.which == KEY_DN) {
-			$(this).val(History.cycle_dn());
+			$(this).val(History.cycleDown());
 		}
 	});
 

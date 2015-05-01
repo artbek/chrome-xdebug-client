@@ -367,8 +367,6 @@ $(function() {
 
 
 
-
-
 	// HELPERS
 
 	function addTransactionId(str) {
