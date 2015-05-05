@@ -13,6 +13,7 @@
 	<script type="text/javascript" src="js/breakpoints.js"></script>
 	<script type="text/javascript" src="js/socket.js"></script>
 	<script type="text/javascript" src="js/changelog.js"></script>
+	<script type="text/javascript" src="js/watches.js"></script>
 	<script type="text/javascript" src="js/frontend.js"></script>
 </head>
 
@@ -114,7 +115,7 @@
 	</nav>
 	<div id="codeview" contenteditable="true"></div>
 
-	<div id="stack" contenteditable="true">
+	<div id="stack" class="slidepopup-left" contenteditable="true">
 		<div id="stack-filenames">
 			<div class="filename">aaa</div>
 			<div class="filename">bbb</div>
@@ -122,12 +123,27 @@
 		</div>
 	</div>
 
-	<div id="eval">
+	<div id="eval" class="slidepopup-right">
 		<form id="eval-form">
 			<input type="text" name="eval-expression" />
 			<input type="submit" id="eval-submit" value="Submit" style="display: none" />
 		</form>
 		<pre id="eval-content" contenteditable="true"></pre>
+	</div>
+
+	<div id="watches" class="slidepopup-right" data-offset="200">
+		<div class="stop-propagation">
+			<form class="watches-line" data-id="0">
+				<input type="text" name="input" class="blurred" placeholder="<expression to watch>" />
+				<pre contenteditable="true" class="output"></pre>
+				<input type="submit" style="display: none" />
+			</form>
+			<form class="watches-line" data-id="1">
+				<input type="text" name="input" class="blurred" placeholder="<expression to watch>" />
+				<pre contenteditable="true" class="output"></pre>
+				<input type="submit" style="display: none" />
+			</form>
+		</div>
 	</div>
 
 	<div id="alert" class="popup">

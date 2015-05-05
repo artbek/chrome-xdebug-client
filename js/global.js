@@ -2,6 +2,31 @@ var Global = (function() {
 
 	var isProcessing = false;
 
+	function _dbgp_format(property) {
+		var output = '';
+
+		var type = property.attr("type");
+
+		switch (type) {
+			case "string":
+				output = atob(property.text());
+				break;
+
+			case "int":
+			case "float":
+				output = property.text();
+				break;
+
+			case "array":
+			case "object":
+			default:
+				output = property.attr("type");
+				break;
+		}
+
+		return output;
+	}
+
 
 	var publicMethods = {
 
@@ -54,6 +79,20 @@ var Global = (function() {
 			}
 
 			document.title = windowTitle;
+		},
+
+		dbgpFormat: function(xml) {
+			var formatted = '';
+			var property = $(xml).find("property");
+
+			if (property.length) {
+				formatted = _dbgp_format(property);
+			} else {
+				var error_message = $(xml).find("error message").text()
+				formatted = "OOPSY DAISY... " + error_message;
+			}
+
+			return formatted;
 		}
 
 	}

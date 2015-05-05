@@ -298,6 +298,27 @@ $(function() {
 		send_command("eval", "-- " + data.expression);
 	});
 
+	$("body").on("xdebug-eval-watches", function(event) {
+		var watches = Watches.getAll();
+		var currentWatch;
+
+		function getNextWatch(xml) {
+			if (xml) {
+				Watches.update(currentWatch.id, Global.dbgpFormat(xml));
+			}
+			currentWatch = watches.pop();
+			if (currentWatch) {
+				send_command("eval", "-- " + btoa(currentWatch.expression), function(xml) {
+					getNextWatch(xml);
+				});
+			} else {
+				Watches.display();
+			}
+		}
+
+		getNextWatch();
+	});
+
 	$("body").on("xdebug-source", function(event, data) {
 		var lineno = parseInt(data.lineno);
 		var linesCount = parseInt(Config.get("lines_count"));

@@ -21,6 +21,7 @@ $(function() {
 		}
 
 		ChangeLog.refreshButton();
+		Watches.init();
 	});
 
 	$("body").on('socket_status', function(event, data) {
@@ -229,7 +230,7 @@ $(function() {
 		e.stopPropagation();
 	});
 
-	$("#stack, #eval").on("click", function() {
+	$("#stack, #eval, #watches").on("click", function() {
 		if ($(this).hasClass("popup-is-open")) {
 			$(this).removeClass("popup-is-open");
 		} else {
@@ -242,6 +243,7 @@ $(function() {
 	$("body").on("refresh-popups", function() {
 		refreshPopup("#stack");
 		refreshPopup("#eval");
+		refreshPopup("#watches");
 	});
 
 	$(window).on("load resize", function() {
@@ -269,18 +271,12 @@ $(function() {
 
 		switch (data.command) { /* SWITCH - START */
 
+			case "watches_eval":
 			case "feature_set":
 				break;
 
 			case "eval":
-				var property = $(data.xml).find("property");
-				if (property.length) {
-					property = format(property);
-					$("#eval-content").text(property);
-				} else {
-					var error_message = $(data.xml).find("error message").text()
-					$("#eval-content").text("OOPSY DAISY... " + error_message);
-				}
+				$("#eval-content").text(Global.dbgpFormat(data.xml));
 				break;
 
 			// used when getting source from xdebug
@@ -313,6 +309,8 @@ $(function() {
 					}
 				}
 				$("#stack-filenames").html(stack_trace_html);
+
+				Watches.refresh();
 
 				break;
 
@@ -470,15 +468,24 @@ $(function() {
 	function refreshPopup(popup) {
 		var $popup = $(popup);
 		var bodyWidth = $("body").width();
-		var offset = 20;
-
+		var offset = $popup.data("offset") || 30;
 		var widthOffset = offset + $(popup).prop('scrollWidth') - $(popup).width();
 
-		if ($popup.hasClass("popup-is-open")) {
-			$popup.stop(true, false).animate({left: '0' + offset, width: bodyWidth - widthOffset}, 300);
+		if ($popup.hasClass("slidepopup-left")) {
+			var position = "right";
 		} else {
-			var padding = parseInt($popup.css("padding-left").replace("px", ""));
-			$popup.stop(true, false).animate({left: (bodyWidth - padding), width: bodyWidth - offset}, 300);
+			var position = "left";
+		}
+
+		if ($popup.hasClass("popup-is-open")) {
+			var animateTarget = {width: bodyWidth - widthOffset};
+			animateTarget[position] = '0' + offset;
+			$popup.stop(true, false).animate(animateTarget, 300);
+		} else {
+			var padding = parseInt($popup.css("padding-" + position).replace("px", ""));
+			var animateTarget = {width: bodyWidth - offset};
+			animateTarget[position] = bodyWidth - padding;
+			$popup.stop(true, false).animate(animateTarget, 300);
 		}
 	}
 
@@ -486,34 +493,6 @@ $(function() {
 	function htmlEntities(s) {
 		return $("<div/>").text(s).html();
 	}
-
-
-
-	function format(property) {
-		var output = '';
-
-		var type = property.attr("type");
-
-		switch (type) {
-			case "string":
-				output = atob(property.text());
-				break;
-
-			case "int":
-			case "float":
-				output = property.text();
-				break;
-
-			case "array":
-			case "object":
-			default:
-				output = property.attr("type");
-				break;
-		}
-
-		return output;
-	}
-
 
 
 	// active_line - native DOM element (not jQuery object)

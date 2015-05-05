@@ -140,14 +140,20 @@ div {
 			font-weight: bold;
 		}
 
+.slidepopup-left {
+	background: url('../img/open.png') #888888 right 3px top 4px no-repeat;
+	padding: 0px 20px 0px 0px;
+}
+
+.slidepopup-right {
+	background: url('../img/open.png') #888888 left 3px top 4px no-repeat;
+	padding: 0px 0px 0px 20px;
+}
 
 #stack {
-	background: #888888;
-	background: url('../img/open.png') #888888 3px 4px no-repeat;
 	border: 0px;
 	box-shadow: 3px 3px 30px 2px #888888;
 	cursor: pointer;
-	padding: 0px 0px 0px 20px;
 	position: fixed;
 	right: 0;
 	top: 50px;
@@ -165,14 +171,12 @@ div {
 	}
 
 #eval {
-	background: url('../img/open.png') #888888 3px 4px no-repeat;
 	border: 0px;
 	bottom: 30px;
 	box-shadow: 0px -10px 25px #888888;
 	color: #eeeeee;
 	cursor: pointer;
 	right: 0px;
-	padding: 0px 0px 0px 20px;
 	position: fixed;
 }
 
@@ -195,6 +199,43 @@ div {
 #eval-content {
 	max-height: 400px;
 	overflow: auto;
+}
+
+#watches {
+	border: 0px;
+	top: 50px;
+	box-shadow: 0px -10px 25px #888888;
+	color: #eeeeee;
+	cursor: pointer;
+	right: 0px;
+	position: fixed;
+}
+
+form.watches-line {
+	float: left;
+	margin: 0.5em 0;
+	width: 98%;
+}
+
+form.watches-line input {
+	float: left;
+	font-family: monospace;
+	font-weight: bold;
+	width: 33%;
+}
+
+form.watches-line pre {
+	background: #888888;
+	float: right;
+	margin: 0;
+	max-height: 20em;
+	overflow: auto;
+	width: 65%;
+}
+
+form.watches-line input.blurred {
+	background: #888888;
+	color: #eeeeee;
 }
 
 .popup {
