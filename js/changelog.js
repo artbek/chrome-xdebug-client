@@ -3,6 +3,16 @@ var ChangeLog = (function() {
 	var log = [
 
 		{
+			version: "2.2",
+			changes: [
+				[
+					"Mostly cosmetic changes",
+					"Less annoying console history. More user friendly conditional breakpoints popup. Current file name and status in the window title bar (Linux only)."
+				]
+			]
+		},
+
+		{
 			version: "2.1",
 			changes: [
 				[
