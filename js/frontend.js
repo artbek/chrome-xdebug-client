@@ -246,7 +246,13 @@ $(function() {
 		refreshPopup("#watches");
 	});
 
+	$("body").on("padout-codeview", function() {
+		var padding = $(window).height() / 2;
+		$("#codeview").css("padding", padding + "px 0");
+	});
+
 	$(window).on("load resize", function() {
+		$("body").trigger("padout-codeview");
 		$("body").trigger("refresh-popups");
 	});
 
@@ -456,6 +462,8 @@ $(function() {
 		Global.fileNameCurrentlyLoaded = filename;
 		Breakpoints.highlight();
 		scrollToView();
+
+		$("body").trigger("padout-codeview");
 		$("body").trigger("refresh-popups");
 	}
 
