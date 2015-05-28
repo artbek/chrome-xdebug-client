@@ -33,6 +33,7 @@ var Watches = (function() {
 		},
 
 		refresh: function() {
+			$(watches_line_selector + " .output").text("...");
 			$("body").trigger("xdebug-eval-watches");
 		},
 
