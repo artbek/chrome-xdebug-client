@@ -73,9 +73,14 @@ $(function() {
 	function initCommandQueue() {
 		initialCommandQueue = [
 			{ command: "feature_set", params: "-n max_depth -v 3" },
-			{ command: "feature_set", params: "-n max_data -v 50000" },
-			{ command: "step_into", params: null },
+			{ command: "feature_set", params: "-n max_data -v 50000" }
 		];
+
+		if (Config.get('break_at_first_line')) {
+			initialCommandQueue.push({ command: "step_into", params: null });
+		} else {
+			initialCommandQueue.push({ command: "run", params: null });
+		}
 	}
 
 

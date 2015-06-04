@@ -17,6 +17,7 @@
 		data.source_script || chrome.storage.local.set({"source_script": ""});
 		data.lines_count || chrome.storage.local.set({"lines_count": "50"});
 		data.keep_listening || data.keep_listening === 0 || chrome.storage.local.set({"keep_listening": 1});
+		data.break_at_first_line || data.break_at_first_line === 0 || chrome.storage.local.set({"break_at_first_line": 1});
 	});
 
 })();
