@@ -190,6 +190,8 @@ $(function() {
 	function send_command(command, options, callback) {
 		var request = "";
 
+		Alert.busy("Working...");
+
 		currentCommandOptions = options;
 		currentCommandCallback = callback;
 
@@ -210,6 +212,7 @@ $(function() {
 				if (writeInfo.resultCode == 0) { // no error
 					//chrome.sockets.tcp.setPaused(socketId, false);
 				}
+				Alert.hide();
 			});
 		}, 100);
 	}
@@ -417,6 +420,4 @@ $(function() {
 	}
 
 });
-
-
 
