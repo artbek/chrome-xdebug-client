@@ -93,6 +93,11 @@ var Global = (function() {
 			}
 
 			return formatted;
+		},
+
+		log: function(msg) {
+			var t = new Date();
+			console.debug(msg + ": " + t.getSeconds() + "." + t.getMilliseconds());
 		}
 
 	}

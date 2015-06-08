@@ -99,6 +99,7 @@ $(function() {
 		ip = Config.get("listening_ip");
 		port = parseInt(Config.get("listening_port"));
 
+		closeAllSockets();
 		initCommandQueue();
 
 		chrome.sockets.tcpServer.create(function(createInfo) {
@@ -156,6 +157,8 @@ $(function() {
 				var received_transaction_id = $(xml).find("response").attr("transaction_id");
 				if (received_transaction_id == transactionId) {
 
+					Alert.hide();
+
 					console.log("received_transaction_id: " + received_transaction_id);
 					//console.log(xml);
 
@@ -212,7 +215,6 @@ $(function() {
 				if (writeInfo.resultCode == 0) { // no error
 					//chrome.sockets.tcp.setPaused(socketId, false);
 				}
-				Alert.hide();
 			});
 		}, 100);
 	}
@@ -310,14 +312,15 @@ $(function() {
 		var watches = Watches.getAll();
 		var currentWatch;
 
-		function getNextWatch(xml) {
-			if (xml) {
-				Watches.update(currentWatch.id, Global.dbgpFormat(xml));
+		function getNextWatch(xml, previousWatch) {
+			if (xml && previousWatch) {
+				Watches.update(previousWatch.id, Global.dbgpFormat(xml));
 			}
 			currentWatch = watches.pop();
 			if (currentWatch) {
+				var previousWatch = currentWatch;
 				send_command("eval", "-- " + btoa(currentWatch.expression), function(xml) {
-					getNextWatch(xml);
+					getNextWatch(xml, previousWatch);
 				});
 			} else {
 				Watches.display();
