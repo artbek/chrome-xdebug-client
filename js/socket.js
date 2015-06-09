@@ -309,7 +309,7 @@ $(function() {
 	});
 
 	$("body").on("xdebug-eval-watches", function(event) {
-		var watches = Watches.getAll();
+		var watches = Watches.getAllValid();
 		var currentWatch;
 
 		function getNextWatch(xml, previousWatch) {

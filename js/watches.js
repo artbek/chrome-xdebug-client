@@ -51,8 +51,18 @@ var Watches = (function() {
 			}
 		},
 
-		getAll: function() {
-			return watches.slice();
+		getAllValid: function() {
+			var valid = [];
+			var temp = watches.slice();
+			for (var w in temp) {
+				if (temp[w].expression.trim()) {
+					valid.push(temp[w]);
+				} else {
+					watches[temp[w].id].value = "...";
+				}
+			}
+
+			return valid;
 		}
 
 	}
