@@ -3,7 +3,27 @@ var ChangeLog = (function() {
 	var log = [
 
 		{
+			version: "2.3",
+			date: "June 2015",
+			changes: [
+				[
+					"Break at first line",
+					"New option in settings. When disabled xdebug will break at first breakpoint, instead of first line of script as it is now."
+				],
+				[
+					"Source code padding",
+					"Just a way prevent code from getting hidden behind the popups."
+				],
+				[
+					"Watches",
+					"Crude (beta) implementation."
+				]
+			]
+		},
+
+		{
 			version: "2.2",
+			date: "May 2015",
 			changes: [
 				[
 					"Mostly cosmetic changes",
@@ -14,6 +34,7 @@ var ChangeLog = (function() {
 
 		{
 			version: "2.1",
+			date: "April 2015",
 			changes: [
 				[
 					"Conditional breakpoints",
@@ -24,6 +45,7 @@ var ChangeLog = (function() {
 
 		{
 			version: "2.0",
+			date: "",
 			changes: [
 				[
 					"Step Out (func)",
@@ -41,6 +63,7 @@ var ChangeLog = (function() {
 
 		{
 			version: "1.9",
+			date: "",
 			changes: [
 				[
 					"Persistent listening.",
@@ -85,7 +108,8 @@ var ChangeLog = (function() {
 				var log_content = $("#changelog-content").html("");
 				for (i in log) {
 					var temp_html = '<div class="version">';
-					temp_html += '<div class="version-number">' + log[i].version + '</div>';
+					var version_copy = log[i].version + ' (' + log[i].date + ')';
+					temp_html += '<div class="version-number">' + version_copy + '</div>';
 					for (c in log[i].changes) {
 						temp_html += '<div class="change-title">' + log[i].changes[c][0] + "</div>";
 						for (var d = 1; d < log[i].changes[c].length; d++) {
