@@ -43,7 +43,8 @@ nav {
 	padding: 8px 1%;
 	position: fixed;
 	top: 0px;
-	width: 98%
+	width: 98%;
+	z-index: 9999;
 }
 
 nav a {
@@ -147,6 +148,10 @@ div {
 .slidepopup-right {
 	background: url('../img/open.png') #888888 left 3px top 4px no-repeat;
 	padding: 0px 0px 0px 20px;
+}
+
+.popup-is-open {
+	background-image: url('../img/close.png');
 }
 
 #stack {
@@ -281,7 +286,7 @@ form.watches-line input.blurred {
 
 #settings {
 	display: none;
-	margin-top: 10px;
+	margin-top: 15px;
 	-webkit-user-select: text;
 }
 
@@ -388,5 +393,20 @@ label.bp-hit-operator {
 	display: block;
 	text-align: right;
 	width: 100%;
+}
+
+.accordion .tab-link {
+	border-style: dotted;
+	border-width: 0 0 1px 0;
+	cursor: pointer;
+	opacity: 0.6;
+	padding: 5px 5px 5px 20px;
+	text-transform: uppercase;
+	background: url('../img/close.png') left 0px top 5px no-repeat;
+}
+
+.accordion .tab-link.active {
+	opacity: 1.0;
+	background: url('../img/open.png') left 0px top 5px no-repeat;
 }
 

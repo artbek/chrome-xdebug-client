@@ -22,6 +22,7 @@ $(function() {
 
 		ChangeLog.refreshButton();
 		Watches.init();
+		Keyboard.init();
 	});
 
 	$("body").on('socket_status', function(event, data) {
@@ -61,6 +62,19 @@ $(function() {
 		$("#settings").hide();
 	});
 
+
+	$(".accordion .tab-link :first").addClass("active");
+	$(".accordion .tab-content").not(":first").each(function() {
+		$(this).hide();
+	});
+
+	$(".accordion .tab-link").on("click", function() {
+		$(this).closest(".accordion").find(".tab-content").slideUp(250);
+		$(this).next(".tab-content").slideDown(250);
+
+		$(this).closest(".accordion").find(".tab-link").removeClass("active");
+		$(this).addClass("active");
+	});
 
 
 	$("#changelog-button").on("click", function() {
@@ -488,12 +502,12 @@ $(function() {
 		if ($popup.hasClass("popup-is-open")) {
 			var animateTarget = {width: bodyWidth - widthOffset};
 			animateTarget[position] = '0' + offset;
-			$popup.stop(true, false).animate(animateTarget, 300);
+			$popup.stop(true, false).animate(animateTarget, 250);
 		} else {
 			var padding = parseInt($popup.css("padding-" + position).replace("px", ""));
 			var animateTarget = {width: bodyWidth - offset};
 			animateTarget[position] = bodyWidth - padding;
-			$popup.stop(true, false).animate(animateTarget, 300);
+			$popup.stop(true, false).animate(animateTarget, 250);
 		}
 	}
 

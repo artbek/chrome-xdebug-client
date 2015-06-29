@@ -15,6 +15,7 @@
 	<script type="text/javascript" src="js/changelog.js"></script>
 	<script type="text/javascript" src="js/watches.js"></script>
 	<script type="text/javascript" src="js/frontend.js"></script>
+	<script type="text/javascript" src="js/keyboard.js"></script>
 </head>
 
 <body>
@@ -32,87 +33,119 @@
 		<input type="text" id="find-in-source" class="nav-button-right" placeholder="search" />
 		<span id="changelog-button" class="nav-button-right"></span>
 
-		<form id="settings">
+
+		<form id="settings" class="accordion">
+
+			<div class="tab-link">
+				<strong>Settings</strong>
+			</div>
+
+			<div class="tab-content">
+				<br />
+
+				<label>Listening IP:</label>
+				<input type="text" name="listening_ip" style="width: 8em" />
+				(xdebug will try to establish connection with this IP)
+
+				<br />
+				<br />
+
+				<label>Listening Port:</label>
+				<input type="text" name="listening_port" style="width: 4em" />
+				(this should match <strong>xdebug.remote_port</strong> in your <strong>php.ini</strong>)
+
+				<br />
+				<br />
+
+				Number of source code lines that will be fetched - before and after current line.
+				<br />
+				Used only if no 'Source URL' was specified.
+				<br />
+				<label>Number of lines:</label>
+				<input type="text" name="lines_count" style="width: 3em" />
+
+				<br />
+				<br />
+
+				If the native xdebug source doesn't work as expected try using your own api, e.g.
+				<a href="https://github.com/artbek/chrome-xdebug-client/blob/master/php/source.php" target="_blank">source.php</a>
+				<br />
+				<label>Source URL:</label>
+				<input type="text" name="source_script" style="width: 18em" />
+
+				<br />
+				<br />
+
+				<label for="keep_listening">Keep Listening:</label>
+				<input type="checkbox" name="keep_listening" id="keep_listening" value="1" />
+
+				<br />
+				<br />
+
+				<label for="break_at_first_line">Break at first line:</label>
+				<input type="checkbox" name="break_at_first_line" id="break_at_first_line" value="1" />
+
+				<br />
+				<br />
+
+			</div>
+
+
+			<div class="tab-link">
+				<strong>How to get started</strong>
+			</div>
+
+			<div class="tab-content">
+				<br />
+
+				1. Make sure the settings above don't conflict with your setup.
+				<br />
+				2. Press <strong>Listen</strong>.
+				<br />
+				3. Run your code, e.g.:
+				<code>
+					http://artbek.co.uk?<strong>XDEBUG_SESSION_START=xxx</strong>
+					<br />
+					(should work without <strong>xxx</strong> value, but use it if you want <strong>XDEBUG_SESSION</strong> cookie to be created)
+				</code>
+
+				<code>
+					> export <strong>XDEBUG_CONFIG="remote_host=0.0.0.0"</strong> (<strong>remote_host=0.0.0.0</strong> is optional)
+					<br />
+					> php myscript_1.php
+					<br />
+					> php myscript_2.php
+				</code>
+
+				<code>
+					> <strong>XDEBUG_CONFIG=""</strong> php myscript.php
+				</code>
+			</div>
+
+			<div class="tab-link">
+				<strong>Shortcuts</strong>
+			</div>
+
+			<div class="tab-content">
+				<table>
+					<tr>
+						<td>Step Into</td>
+						<td class="key">F8</td>
+					</tr>
+					<tr>
+						<td>Step Over</td>
+						<td class="key">F9</td>
+					</tr>
+				</table>
+
+			</div>
+
 
 			<br />
-
-			<label>Listening IP:</label>
-			<input type="text" name="listening_ip" style="width: 8em" />
-			(xdebug will try to establish connection with this IP)
-
-			<br />
-			<br />
-
-			<label>Listening Port:</label>
-			<input type="text" name="listening_port" style="width: 4em" />
-			(this should match <strong>xdebug.remote_port</strong> in your <strong>php.ini</strong>)
-
-			<br />
-			<br />
-
-			Number of source code lines that will be fetched - before and after current line.
-			<br />
-			Used only if no 'Source URL' was specified.
-			<br />
-			<label>Number of lines:</label>
-			<input type="text" name="lines_count" style="width: 3em" />
-
-			<br />
-			<br />
-
-			If the native xdebug source doesn't work as expected try using your own api, e.g.
-			<a href="https://github.com/artbek/chrome-xdebug-client/blob/master/php/source.php" target="_blank">source.php</a>
-			<br />
-			<label>Source URL:</label>
-			<input type="text" name="source_script" style="width: 18em" />
-
-			<br />
-			<br />
-
-			<label for="keep_listening">Keep Listening:</label>
-			<input type="checkbox" name="keep_listening" id="keep_listening" value="1" />
-
-			<br />
-			<br />
-
-			<label for="break_at_first_line">Break at first line:</label>
-			<input type="checkbox" name="break_at_first_line" id="break_at_first_line" value="1" />
-
-			<br />
-			<br />
-
 			<button id="settings-save">Save Settings</button>
-
 			<br />
 			<br />
 
-			<strong>How to get started:</strong>
-			<br />
-
-			1. Make sure the settings above don't conflict with your setup.
-			<br />
-			2. Press <strong>Listen</strong>.
-			<br />
-			3. Run your code, e.g.:
-			<code>
-				http://artbek.co.uk?<strong>XDEBUG_SESSION_START=xxx</strong>
-				<br />
-				(should work without <strong>xxx</strong> value, but use it if you want <strong>XDEBUG_SESSION</strong> cookie to be created)
-			</code>
-
-			<code>
-				> export <strong>XDEBUG_CONFIG="remote_host=0.0.0.0"</strong> (<strong>remote_host=0.0.0.0</strong> is optional)
-				<br />
-				> php myscript_1.php
-				<br />
-				> php myscript_2.php
-			</code>
-
-			<code>
-				> <strong>XDEBUG_CONFIG=""</strong> php myscript.php
-			</code>
-
-			<br />
 			<a href="https://github.com/artbek/chrome-xdebug-client" target="_blank">GitHub</a>
 			<br />
 
