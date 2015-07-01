@@ -4,6 +4,7 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<title>Xdebug</title>
+	<link rel="stylesheet" type="text/css" href="css/reset.css">
 	<link rel="stylesheet" type="text/css" href="css/style.css">
 	<script type="text/javascript" src="js/global.js"></script>
 	<script type="text/javascript" src="js/config.js"></script>
@@ -14,6 +15,7 @@
 	<script type="text/javascript" src="js/socket.js"></script>
 	<script type="text/javascript" src="js/changelog.js"></script>
 	<script type="text/javascript" src="js/watches.js"></script>
+	<script type="text/javascript" src="js/action.js"></script>
 	<script type="text/javascript" src="js/frontend.js"></script>
 	<script type="text/javascript" src="js/keyboard.js"></script>
 </head>
@@ -41,8 +43,6 @@
 			</div>
 
 			<div class="tab-content">
-				<br />
-
 				<label>Listening IP:</label>
 				<input type="text" name="listening_ip" style="width: 8em" />
 				(xdebug will try to establish connection with this IP)
@@ -86,7 +86,6 @@
 				<input type="checkbox" name="break_at_first_line" id="break_at_first_line" value="1" />
 
 				<br />
-				<br />
 
 			</div>
 
@@ -96,8 +95,6 @@
 			</div>
 
 			<div class="tab-content">
-				<br />
-
 				1. Make sure the settings above don't conflict with your setup.
 				<br />
 				2. Press <strong>Listen</strong>.
@@ -127,17 +124,8 @@
 			</div>
 
 			<div class="tab-content">
-				<table>
-					<tr>
-						<td>Step Into</td>
-						<td class="key">F8</td>
-					</tr>
-					<tr>
-						<td>Step Over</td>
-						<td class="key">F9</td>
-					</tr>
-				</table>
-
+				<input type="hidden" name="shortcuts" />
+				<table id="settings-shortcuts"></table>
 			</div>
 
 
