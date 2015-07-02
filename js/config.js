@@ -87,6 +87,14 @@ var Config = (function() {
 				}
 			},
 			valid: true
+		},
+
+		shortcuts: {
+			value: "",
+			set: function(value) {
+				this.value = value;
+			},
+			valid: true,
 		}
 
 	};

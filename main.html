@@ -21,7 +21,9 @@
 </head>
 
 <body>
+
 	<nav>
+
 		<span id="processing-indicator">||||</span>
 		<span id="stepout" class="nav-button">Step Out</span> |
 		<span id="break-on-return" class="nav-button">Step Out (func)</span> |
@@ -35,9 +37,7 @@
 		<input type="text" id="find-in-source" class="nav-button-right" placeholder="search" />
 		<span id="changelog-button" class="nav-button-right"></span>
 
-
 		<form id="settings" class="accordion">
-
 			<div class="tab-link">
 				<strong>Settings</strong>
 			</div>
@@ -91,6 +91,16 @@
 
 
 			<div class="tab-link">
+				<strong>Shortcuts</strong>
+			</div>
+
+			<div class="tab-content">
+				<input type="hidden" name="shortcuts" />
+				<table id="settings-shortcuts"></table>
+			</div>
+
+
+			<div class="tab-link">
 				<strong>How to get started</strong>
 			</div>
 
@@ -119,15 +129,6 @@
 				</code>
 			</div>
 
-			<div class="tab-link">
-				<strong>Shortcuts</strong>
-			</div>
-
-			<div class="tab-content">
-				<input type="hidden" name="shortcuts" />
-				<table id="settings-shortcuts"></table>
-			</div>
-
 
 			<br />
 			<button id="settings-save">Save Settings</button>
@@ -136,10 +137,10 @@
 
 			<a href="https://github.com/artbek/chrome-xdebug-client" target="_blank">GitHub</a>
 			<br />
-
 		</form>
 
 	</nav>
+
 	<div id="codeview" contenteditable="true"></div>
 
 	<div id="stack" class="slidepopup-left" contenteditable="true">
@@ -225,7 +226,6 @@
 		</form>
 		<button id="breakpointRemove" data-id="" class="stop-propagation">Remove Breakpoint</button>
 	</div>
-
 
 </body>
 

@@ -1,30 +1,21 @@
 var Keyboard = (function() {
 
 	var config_mode = false;
-	var key_names = [];
-
-	key_names[0x41] = "A";
-
-	function get_key_name(key_code) {
-		return key_names[key_code] || key_code;
-	}
-
-
-	var shortcuts = {
-
-		step_into: {
-			keyCode: 65,
-			modifiers: {
-				ctrlKey: false,
-				altKey: false,
-				shiftKey: false,
-			}
-		}
-
-	};
-
+	var shortcuts = {};
 	var settings_wrapper_selector = "#settings-shortcuts";
 
+	var key_names = [];
+	key_names[0x41] = "A";
+
+
+	function get_key_name(key_code) {
+		return key_names[key_code] || "key_code:" + key_code;
+	}
+
+	function remove_mapping(action_name) {
+		delete shortcuts[action_name];
+		publicMethods.refreshShortcuts();
+	}
 
 	function process_key_event(e) {
 		if (config_mode) {
@@ -40,7 +31,6 @@ var Keyboard = (function() {
 		}
 	}
 
-
 	function get_shortcut_string(action) {
 		var s = shortcuts[action];
 		if (s) {
@@ -55,21 +45,63 @@ var Keyboard = (function() {
 	}
 
 
+	function stringify(shortcuts_obj) {
+		var minified = {};
 
+		for (var s in shortcuts) {
+			minified[s] = {
+				k: shortcuts[s].keyCode,
+				c: shortcuts[s].modifiers.ctrlKey * 1,
+				a: shortcuts[s].modifiers.altKey * 1,
+				s: shortcuts[s].modifiers.shiftKey * 1
+			};
+		}
+
+		return JSON.stringify(minified);
+	}
+
+
+	function unstringify(shortcuts_string) {
+		var unminified = {};
+
+		var minified = JSON.parse(shortcuts_string);
+		for (var i in minified) {
+			unminified[i] = {
+				keyCode: minified[i].k,
+				modifiers: {
+					ctrlKey: !!minified[i].c,
+					altKey: !!minified[i].a,
+					shiftKey: !!minified[i].s
+				}
+			};
+		}
+
+		return unminified;
+	}
+
+
+	/* PUBLIC */
 
 	var publicMethods = {
 
 		init: function() {
-			// populate shortcuts from storage
+			shortcuts = unstringify(Config.get("shortcuts"));
+			this.refreshShortcuts();
 
 			$(function() {
-				$("body").on("keyup", function(event) {
+				$("input").on("keyup", function(e) {
+					e.stopPropagation();
+				});
+				$("#codeview, #eval-content, #stack").on("keyup keydown", function(e) {
+					e.preventDefault();
+				});
+				$("body").on("keyup", function(e) {
 					var ke = {
-						keyCode: event.keyCode,
+						keyCode: e.keyCode,
 						modifiers: {
-							ctrlKey: event.ctrlKey,
-							altKey: event.altKey,
-							shiftKey: event.shiftKey
+							ctrlKey: e.ctrlKey,
+							altKey: e.altKey,
+							shiftKey: e.shiftKey
 						}
 					};
 					process_key_event(ke);
@@ -77,11 +109,14 @@ var Keyboard = (function() {
 
 				$(settings_wrapper_selector).on("click", ".key", function() {
 					config_mode = $(this).attr("ref");
-					$(this).text("Press new key...");
+					$(this).addClass("undefined").text("Press a key...");
+				});
+
+				$(settings_wrapper_selector).on("click", ".key_remove", function() {
+					var action_name = $(this).attr("ref");
+					remove_mapping(action_name);
 				});
 			});
-
-			this.refreshShortcuts();
 		},
 
 		refreshShortcuts: function() {
@@ -89,18 +124,20 @@ var Keyboard = (function() {
 				var table = $(settings_wrapper_selector);
 				table.html("");
 
-				var tr = $("<tr/>");
-				tr.append("<th>action</th>");
-				tr.append("<th>shortcut</th>");
-				table.append(tr);
-
-				$("input[name=shortcuts]").val(JSON.stringify(shortcuts));
+				$("input[name=shortcuts]").val(stringify(shortcuts));
 
 				var all_action_names = Action.getAllActionNames();
 				for (var a in all_action_names) {
 					var tr = $("<tr/>");
-					tr.append("<td>" + a + "</td>");
-					tr.append('<td ref="' + a + '" class="key">' + get_shortcut_string(a) + "</td>");
+					tr.append('<td class="action_label">' + a + "</td>");
+					var key_name = get_shortcut_string(a);
+					if (key_name) {
+						tr.append('<td ref="' + a + '" class="key">' + key_name + "</td>");
+						tr.append('<td ref="' + a + '" class="key_remove">x</td>');
+					} else {
+						tr.append('<td ref="' + a + '" class="key undefined">--- undefined ---</td>');
+						tr.append('<td ref="' + a + '" class="key_remove"></td>');
+					}
 					table.append(tr);
 				}
 			});

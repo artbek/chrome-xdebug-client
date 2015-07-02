@@ -2,15 +2,45 @@ var Action = (function() {
 
 	var actions = {
 
+		step_out: {
+			callback: function() {
+				$("#stepout").trigger("click");
+			}
+		},
+
+		step_out_func: {
+			callback: function() {
+				$("#break-on-return").trigger("click");
+			}
+		},
+
 		step_into: {
 			callback: function() {
-				console.log('step into step into');
+				$("#stepinto").trigger("click");
 			}
 		},
 
 		step_over: {
 			callback: function() {
-				console.log('step over step over');
+				$("#stepover").trigger("click");
+			}
+		},
+
+		run: {
+			callback: function() {
+				$("#run").trigger("click");
+			}
+		},
+
+		stop: {
+			callback: function() {
+				$("#stop").trigger("click");
+			}
+		},
+
+		listen: {
+			callback: function() {
+				$("#listen").trigger("click");
 			}
 		}
 

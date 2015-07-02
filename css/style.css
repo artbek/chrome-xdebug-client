@@ -412,11 +412,11 @@ label.bp-hit-operator {
 }
 
 .accordion .tab-content {
-	padding: 1em 0 2em 0;
+	padding: 1em 0 2em 0.4em;
 }
 
 #settings-shortcuts td, #settings-shortcuts th {
-	padding: 0.2em 1em;
+	padding: 0.3em 2.2em 0.3em 0;
 	text-align: left;
 }
 
@@ -424,8 +424,21 @@ label.bp-hit-operator {
 	font-weight: bold;
 }
 
+#settings-shortcuts .action_label {
+	color: #dddddd;
+}
+
 #settings-shortcuts .key {
 	cursor: pointer;
-	text-decoration: underline;
+	font-weight: bold;
+}
+
+#settings-shortcuts .key.undefined {
+	font-style: italic;
+	font-weight: normal;
+}
+
+#settings-shortcuts .key_remove {
+	cursor: pointer;
 }
 
