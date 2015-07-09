@@ -25,13 +25,13 @@
 	<nav>
 
 		<span id="processing-indicator">||||</span>
-		<span id="stepout" class="nav-button">Step Out</span> |
-		<span id="break-on-return" class="nav-button">Step Out (func)</span> |
-		<span id="stepover" class="nav-button">Step Over</span> |
-		<span id="stepinto" class="nav-button">Step Into</span> |
-		<span id="run" class="nav-button">Run</span> |
-		<span id="stop" class="nav-button">Stop</span> |
-		<span id="listen" class="nav-button"></span>
+		<span id="stepout" data-action="step_out" class="nav-button">Step Out</span> |
+		<span id="break-on-return" data-action="step_out_func" class="nav-button">Step Out (func)</span> |
+		<span id="stepover" data-action="step_over" class="nav-button">Step Over</span> |
+		<span id="stepinto" data-action="step_into" class="nav-button">Step Into</span> |
+		<span id="run" data-action="run" class="nav-button">Run</span> |
+		<span id="stop" data-action="stop" class="nav-button">Stop</span> |
+		<span id="listen" data-action="listen" class="nav-button"></span>
 
 		<span id="settings-popup-button" class="nav-button-right">Settings/Help</span>
 		<input type="text" id="find-in-source" class="nav-button-right" placeholder="search" />
@@ -226,6 +226,8 @@
 		</form>
 		<button id="breakpointRemove" data-id="" class="stop-propagation">Remove Breakpoint</button>
 	</div>
+
+	<button id="tooltip">???</button>
 
 </body>
 

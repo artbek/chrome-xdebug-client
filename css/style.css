@@ -442,3 +442,9 @@ label.bp-hit-operator {
 	cursor: pointer;
 }
 
+#tooltip {
+	background: #888888;
+	display: none;
+	position: absolute;
+	z-index: 10000;
+}
