@@ -153,10 +153,11 @@ var Keyboard = (function() {
 
 	function init_tooltips() {
 		var show_tootlip_countdown;
+		var hide_tootlip_countdown;
 
 		$(".nav-button").on("mouseover", function() {
-			var x = $(this).offset().left + $(this).width() / 2;
-			var y = $(this).offset().top + $(this).height() / 2;
+			var x = $(this).offset().left + $(this).width() / 2 + 10;
+			var y = $(this).offset().top + $(this).height() / 2 + 10;
 			var action = $(this).data("action");
 			show_tootlip_countdown = setTimeout(function() {
 				$("#tooltip").css({
@@ -170,13 +171,22 @@ var Keyboard = (function() {
 		});
 
 		$(".nav-button").on("mouseout", function() {
+			$("body").trigger("hide_tooltip");
+		});
+
+		$("body").on("hide_tooltip", function() {
 			clearTimeout(show_tootlip_countdown);
-			$("#tooltip").stop(true, true).fadeOut(200);
+			$("#tooltip").stop(true, true).fadeOut(100);
 		});
 
 		$("body").on("show_tooltip", function() {
 			clearTimeout(show_tootlip_countdown);
-			$("#tooltip").stop(true, true).fadeIn(200);
+			clearTimeout(hide_tootlip_countdown);
+			$("#tooltip").stop(true, true).fadeIn(200, function() {
+				hide_tootlip_countdown = setTimeout(function() {
+					$("body").trigger("hide_tooltip");
+				}, 2000);
+			});
 		});
 	}
 

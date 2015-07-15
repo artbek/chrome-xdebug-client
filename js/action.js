@@ -42,7 +42,31 @@ var Action = (function() {
 			callback: function() {
 				$("#listen").trigger("click");
 			}
-		}
+		},
+
+		close_popup: {
+			callback: function() {
+				$("#alert").trigger("click");
+			}
+		},
+
+		toggle_watches: {
+			callback: function() {
+				$("#watches").trigger("click");
+			}
+		},
+
+		toggle_backtrace: {
+			callback: function() {
+				$("#stack").trigger("click");
+			}
+		},
+
+		toggle_inspector: {
+			callback: function() {
+				$("#eval").trigger("click");
+			}
+		},
 
 	};
 
