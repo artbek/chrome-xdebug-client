@@ -99,9 +99,14 @@ var Keyboard = (function() {
 
 	function process_key_event(e) {
 		if (config_mode) {
+			for (var action_name in shortcuts) {
+				if (JSON.stringify(e) == JSON.stringify(shortcuts[action_name])) {
+					remove_mapping(action_name);
+				}
+			}
 			shortcuts[config_mode] = e;
-			publicMethods.refreshShortcuts();
 			config_mode = false;
+			publicMethods.refreshShortcuts();
 		} else {
 			for (var action_name in shortcuts) {
 				if (JSON.stringify(e) == JSON.stringify(shortcuts[action_name])) {
@@ -117,12 +122,12 @@ var Keyboard = (function() {
 		var minified = {};
 
 		for (var s in shortcuts) {
-			minified[s] = {
-				k: shortcuts[s].keyCode,
-				c: shortcuts[s].modifiers.ctrlKey * 1,
-				a: shortcuts[s].modifiers.altKey * 1,
-				s: shortcuts[s].modifiers.shiftKey * 1
-			};
+			var modifiers = 0b000; // cas = ctrl alt shift
+			modifiers |= shortcuts[s].modifiers.ctrlKey * 0b100;
+			modifiers |= shortcuts[s].modifiers.altKey * 0b010;
+			modifiers |= shortcuts[s].modifiers.shiftKey * 0b001;
+
+			minified[s] = [shortcuts[s].keyCode, modifiers];
 		}
 
 		return JSON.stringify(minified);
@@ -137,11 +142,11 @@ var Keyboard = (function() {
 			var minified = JSON.parse(shortcuts_string);
 			for (var i in minified) {
 				unminified[i] = {
-					keyCode: minified[i].k,
+					keyCode: minified[i][0],
 					modifiers: {
-						ctrlKey: !!minified[i].c,
-						altKey: !!minified[i].a,
-						shiftKey: !!minified[i].s
+						ctrlKey: !!(minified[i][1] & 0b100),
+						altKey: !!(minified[i][1] & 0b010),
+						shiftKey: !!(minified[i][1] & 0b001)
 					}
 				};
 			}
@@ -176,7 +181,7 @@ var Keyboard = (function() {
 
 		$("body").on("hide_tooltip", function() {
 			clearTimeout(show_tootlip_countdown);
-			$("#tooltip").stop(true, true).fadeOut(100);
+			$("#tooltip").stop(true, true).fadeOut(200);
 		});
 
 		$("body").on("show_tooltip", function() {
@@ -194,7 +199,7 @@ var Keyboard = (function() {
 		$("input").on("keyup", function(e) {
 			e.stopPropagation();
 		});
-		$("#codeview, #eval-content, #stack").on("keyup keydown", function(e) {
+		$("#codeview, #eval-content, #stack, nav").on("keyup keydown", function(e) {
 			e.preventDefault();
 		});
 		$("body").on("keyup", function(e) {
@@ -216,6 +221,8 @@ var Keyboard = (function() {
 	var publicMethods = {
 
 		init: function() {
+			var that = this;
+
 			shortcuts = unstringify(Config.get("shortcuts"));
 			this.refreshShortcuts();
 
@@ -225,7 +232,7 @@ var Keyboard = (function() {
 
 				$(settings_wrapper_selector).on("click", ".key", function() {
 					config_mode = $(this).attr("ref");
-					$(this).addClass("undefined").text("Press a key...");
+					that.refreshShortcuts();
 				});
 
 				$(settings_wrapper_selector).on("click", ".key_remove", function() {
@@ -257,6 +264,8 @@ var Keyboard = (function() {
 					}
 					table.append(tr);
 				}
+
+				$(".key[ref='" + config_mode + "']").addClass("undefined").text("Press a key...");
 			});
 		},
 

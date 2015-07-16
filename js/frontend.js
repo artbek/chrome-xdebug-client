@@ -53,7 +53,7 @@ $(function() {
 				$("#settings [name=" + prop + "]").prop("checked", configValues[prop]);
 			}
 		}
-		$("#settings").toggle();
+		$("#settings").slideToggle(200);
 	});
 
 	$("#settings-save").on("click", function() {
@@ -261,8 +261,10 @@ $(function() {
 	});
 
 	$("body").on("padout-codeview", function() {
-		var padding = $(window).height() / 2;
-		$("#codeview").css("padding", padding + "px 0");
+		if ($("#codeview").text()) {
+			var padding = $(window).height() / 2;
+			$("#codeview").css("padding", padding + "px 0");
+		}
 	});
 
 	$(window).on("load resize", function() {
