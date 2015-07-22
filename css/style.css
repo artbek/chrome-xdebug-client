@@ -94,6 +94,9 @@ div {
 	float: left;
 	font-family: monospace;
 	font-size: 1em;
+	height: 100%;
+	position: absolute;
+	width: 100%;
 }
 
 .line-wrapper {

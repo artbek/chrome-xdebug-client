@@ -62,7 +62,6 @@ $(function() {
 		$("#settings").hide();
 	});
 
-
 	$(".accordion .tab-link :first").addClass("active");
 	$(".accordion .tab-content").not(":first").each(function() {
 		$(this).hide();
@@ -76,10 +75,10 @@ $(function() {
 		$(this).addClass("active");
 	});
 
-
 	$("#changelog-button").on("click", function() {
 		ChangeLog.show();
 	});
+
 
 	/* NAV */
 
@@ -124,7 +123,6 @@ $(function() {
 			$("body").trigger("xdebug-breakpoint_set-return");
 		});
 	});
-
 
 	$("body").on("click", ".lineno", function() {
 		var self = $(this);
@@ -475,17 +473,18 @@ $(function() {
 			$("#codeview").append(html);
 		}
 
+		$("body").trigger("padout-codeview");
+
 		Global.fileNameCurrentlyLoaded = filename;
 		Breakpoints.highlight();
 		scrollToView();
 
-		$("body").trigger("padout-codeview");
 		$("body").trigger("refresh-popups");
 	}
 
 
 	function clearCodeView() {
-		$("#codeview").html("");
+		$("#codeview").css("position", "relative").html("");
 	}
 
 

@@ -121,18 +121,22 @@ var Config = (function() {
 
 	/* INIT CONFIG */
 
-	chrome.storage.local.get(null, function(values) {
-		var formLikeValues = [];
+	function init_config() {
+		chrome.storage.local.get(null, function(values) {
+			var formLikeValues = [];
 
-		for (var prop in values) {
-			formLikeValues.push({
-				"name": prop,
-				"value": values[prop]
-			});
-		}
+			for (var prop in values) {
+				formLikeValues.push({
+					"name": prop,
+					"value": values[prop]
+				});
+			}
 
-		publicMethods.saveFromForm(formLikeValues, true);
-	});
+			publicMethods.saveFromForm(formLikeValues, true);
+		});
+	}
+
+	init_config();
 
 
 	/* PUBLIC */
@@ -153,6 +157,7 @@ var Config = (function() {
 
 		get: function(key) {
 			if (! key) {
+				init_config();
 				var configValues = {};
 				for (var prop in conf) {
 					configValues[prop] = conf[prop].value;

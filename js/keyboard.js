@@ -130,7 +130,7 @@ var Keyboard = (function() {
 			minified[s] = [shortcuts[s].keyCode, modifiers];
 		}
 
-		return JSON.stringify(minified);
+		return btoa(JSON.stringify(minified));
 	}
 
 
@@ -139,7 +139,7 @@ var Keyboard = (function() {
 		var unminified = {};
 
 		try {
-			var minified = JSON.parse(shortcuts_string);
+			var minified = JSON.parse(atob(shortcuts_string));
 			for (var i in minified) {
 				unminified[i] = {
 					keyCode: minified[i][0],
@@ -196,13 +196,10 @@ var Keyboard = (function() {
 	}
 
 	function init_keypress_handler() {
-		$("input").on("keyup", function(e) {
-			e.stopPropagation();
-		});
-		$("#codeview, #eval-content, #stack, nav").on("keyup keydown", function(e) {
+		$("#codeview").on("keyup keydown", function(e) {
 			e.preventDefault();
 		});
-		$("body").on("keyup", function(e) {
+		$("#codeview").on("keyup", function(e) {
 			var ke = {
 				keyCode: e.keyCode,
 				modifiers: {
