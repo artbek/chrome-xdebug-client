@@ -107,10 +107,12 @@ var Keyboard = (function() {
 			shortcuts[config_mode] = e;
 			config_mode = false;
 			publicMethods.refreshShortcuts();
+			return true;
 		} else {
 			for (var action_name in shortcuts) {
 				if (JSON.stringify(e) == JSON.stringify(shortcuts[action_name])) {
 					Action.exec(action_name);
+					return true;
 				}
 			}
 		}
@@ -196,8 +198,10 @@ var Keyboard = (function() {
 	}
 
 	function init_keypress_handler() {
-		$("#codeview").on("keyup keydown", function(e) {
-			e.preventDefault();
+		$("#codeview").on("keydown", function(e) {
+			if (! (e.ctrlKey || e.altKey)) {
+				e.preventDefault();
+			}
 		});
 		$("#codeview").on("keyup", function(e) {
 			var ke = {
@@ -208,7 +212,9 @@ var Keyboard = (function() {
 					shiftKey: e.shiftKey
 				}
 			};
-			process_key_event(ke);
+			if (process_key_event(ke)) {
+				e.preventDefault();
+			}
 		});
 	}
 

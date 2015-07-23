@@ -15,9 +15,10 @@ var Watches = (function() {
 
 			$(watches_line_selector + " input[name=input]").on("blur", function(e) {
 				$(this).addClass("blurred");
+				$(watches_line_selector).trigger("submit", true);
 			});
 
-			$(watches_line_selector).on("submit", function(e) {
+			$(watches_line_selector).on("submit", function(e, dontBlur) {
 				e.preventDefault();
 				var $watch_line = $(this).find("[name=input]");
 				var expression = $watch_line.val();
@@ -27,7 +28,7 @@ var Watches = (function() {
 					expression: expression,
 					value: ''
 				};
-				$(this).find("[name=input]").trigger("blur");
+				if (! dontBlur) $(this).find("[name=input]").trigger("blur");
 				Watches.refresh();
 			});
 		},
