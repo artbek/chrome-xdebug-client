@@ -3,6 +3,21 @@ var ChangeLog = (function() {
 	var log = [
 
 		{
+			version: "2.4",
+			date: "July 2015",
+			changes: [
+				[
+					"Keyboard Shortcuts",
+					"User-customisable hotkeys for main actions."
+				],
+				[
+					"A bit of eye candy",
+					"New layout of settings area. More animations. Hidden scrollbars if not needed."
+				]
+			]
+		},
+
+		{
 			version: "2.3",
 			date: "June 2015",
 			changes: [
@@ -108,7 +123,8 @@ var ChangeLog = (function() {
 				var log_content = $("#changelog-content").html("");
 				for (i in log) {
 					var temp_html = '<div class="version">';
-					var version_copy = log[i].version + ' (' + log[i].date + ')';
+					var version_copy = log[i].version;
+					if (log[i].date) version_copy += ' (' + log[i].date + ')';
 					temp_html += '<div class="version-number">' + version_copy + '</div>';
 					for (c in log[i].changes) {
 						temp_html += '<div class="change-title">' + log[i].changes[c][0] + "</div>";

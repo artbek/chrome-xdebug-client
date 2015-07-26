@@ -198,12 +198,12 @@ var Keyboard = (function() {
 	}
 
 	function init_keypress_handler() {
-		$("#codeview").on("keydown", function(e) {
+		$("[contenteditable]").on("keydown", function(e) {
 			if (! (e.ctrlKey || e.altKey)) {
 				e.preventDefault();
 			}
 		});
-		$("#codeview").on("keyup", function(e) {
+		$("body").on("keyup", function(e) {
 			var ke = {
 				keyCode: e.keyCode,
 				modifiers: {

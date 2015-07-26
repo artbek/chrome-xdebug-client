@@ -572,6 +572,10 @@ $(function() {
 		e.stopPropagation();
 	});
 
+	$("input").on("keydown keyup", function(e) {
+		e.stopPropagation();
+	});
+
 	var drawAttentionRotated = false;
 	var rotateValues = [180, 359, -180];
 	setInterval(function() {
