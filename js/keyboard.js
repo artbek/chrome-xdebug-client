@@ -109,10 +109,12 @@ var Keyboard = (function() {
 			publicMethods.refreshShortcuts();
 			return true;
 		} else {
-			for (var action_name in shortcuts) {
-				if (JSON.stringify(e) == JSON.stringify(shortcuts[action_name])) {
-					Action.exec(action_name);
-					return true;
+			if (! disabled()) {
+				for (var action_name in shortcuts) {
+					if (JSON.stringify(e) == JSON.stringify(shortcuts[action_name])) {
+						Action.exec(action_name);
+						return true;
+					}
 				}
 			}
 		}
@@ -216,6 +218,10 @@ var Keyboard = (function() {
 				e.preventDefault();
 			}
 		});
+	}
+
+	function disabled() {
+		return Config.get("shortcuts_disable");
 	}
 
 

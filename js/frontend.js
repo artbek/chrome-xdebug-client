@@ -53,6 +53,7 @@ $(function() {
 				$("#settings [name=" + prop + "]").prop("checked", configValues[prop]);
 			}
 		}
+		Keyboard.init();
 		$("#settings").slideToggle(200);
 	});
 

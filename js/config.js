@@ -95,6 +95,19 @@ var Config = (function() {
 				this.value = value;
 			},
 			valid: true,
+		},
+
+		shortcuts_disable: {
+			value: 1,
+			type: "checkbox",
+			set: function(value) {
+				if (parseInt(value)) {
+					this.value = 1;
+				} else {
+					this.value = 0;
+				}
+			},
+			valid: true
 		}
 
 	};

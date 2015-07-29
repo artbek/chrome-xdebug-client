@@ -18,6 +18,8 @@
 		data.lines_count || chrome.storage.local.set({"lines_count": "50"});
 		data.keep_listening || data.keep_listening === 0 || chrome.storage.local.set({"keep_listening": 1});
 		data.break_at_first_line || data.break_at_first_line === 0 || chrome.storage.local.set({"break_at_first_line": 1});
+		data.shortcuts == btoa("{}") && chrome.storage.local.set({"shortcuts": "eyJzdGVwX291dF9mdW5jIjpbNzAsMF0sInN0ZXBfaW50byI6WzczLDBdLCJzdGVwX292ZXIiOls3OSwwXSwicnVuIjpbODIsMF0sInN0b3AiOls4MywwXSwibGlzdGVuIjpbNzYsMF0sImNsb3NlX3BvcHVwIjpbMjcsMF0sInN0ZXBfb3V0IjpbNjUsMF19"});
+		data.shortcuts_disable || chrome.storage.local.set({"shortcuts_disable": 0});
 	});
 
 })();

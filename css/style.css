@@ -19,6 +19,10 @@ input {
 	padding: 2px;
 }
 
+input[type=checkbox] {
+	vertical-align: text-bottom;
+}
+
 .input-wide {
 	width: 90%;
 }
