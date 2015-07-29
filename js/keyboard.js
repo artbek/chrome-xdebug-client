@@ -257,6 +257,12 @@ var Keyboard = (function() {
 				var table = $(settings_wrapper_selector);
 				table.html("");
 
+				if (disabled()) {
+					table.addClass("disabled");
+				} else {
+					table.removeClass("disabled");
+				}
+
 				$("input[name=shortcuts]").val(stringify(shortcuts));
 
 				var all_action_names = Action.getAllActionNames();

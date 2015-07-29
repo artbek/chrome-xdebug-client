@@ -46,7 +46,7 @@ var Action = (function() {
 
 		close_popup: {
 			callback: function() {
-				$("#alert").trigger("click");
+				$(".user-closable").trigger("click");
 			}
 		},
 

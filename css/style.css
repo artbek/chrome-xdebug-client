@@ -7,6 +7,10 @@ html, body {
 	padding: 0;
 }
 
+.disabled {
+	opacity: 0.5;
+}
+
 label {
 	color: #ffffff;
 	font-weight: bold;
@@ -456,3 +460,4 @@ label.bp-hit-operator {
 	position: absolute;
 	z-index: 10000;
 }
+
