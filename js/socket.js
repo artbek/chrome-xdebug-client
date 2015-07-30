@@ -48,8 +48,7 @@ $(function() {
 				} else if (this.expectedLen == this.partialData.length) {
 					return true;
 				} else if (this.expectedLen < this.partialData.length) {
-					console.log("Received more than expected!");
-					return false;
+					throw "RECEIVED_MORE_THAN_EXPECTED";
 				} else {
 					throw "Unexpected values!";
 				}
@@ -138,8 +137,13 @@ $(function() {
 				if (! Response.isComplete()) return;
 				var xml = Response.getXML();
 			} catch (e) {
-				console.error(e);
-				$("body").trigger('error-on-receive', { message: e });
+				if (e == 'RECEIVED_MORE_THAN_EXPECTED') {
+					console.warn(e);
+					Alert.hide();
+				} else {
+					console.error(e);
+					$("body").trigger('error-on-receive', { message: e });
+				}
 				return;
 			}
 
