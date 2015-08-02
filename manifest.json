@@ -3,7 +3,7 @@
 	"minimum_chrome_version": "33",
 	"name": "Xdebug",
 	"description": "Xdebug Client",
-	"version": "2.4",
+	"version": "2.5",
 	"offline_enabled": true,
 	"app": {
 		"background": {

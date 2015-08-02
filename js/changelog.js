@@ -3,6 +3,22 @@ var ChangeLog = (function() {
 	var log = [
 
 		{
+			version: "2.5",
+			date: "August 2015",
+			changes: [
+				[
+					"Keyboard Shortcuts",
+					"Defaults + option to disable all shortcuts."
+				],
+				[
+					"Improvements",
+					"Popups shouldn't get stuck as often.",
+					"Checkboxes and labels should align a bit better now."
+				]
+			]
+		},
+
+		{
 			version: "2.4",
 			date: "July 2015",
 			changes: [
