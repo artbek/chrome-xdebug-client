@@ -195,6 +195,12 @@ $(function() {
 
 
 	function send_command(command, options, callback) {
+
+		if (! socketId) {
+			console.warn("Socket doesn't exist yet!");
+			return;
+		}
+
 		var request = "";
 
 		Alert.busy("Working...");

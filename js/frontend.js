@@ -226,12 +226,19 @@ $(function() {
 		}
 	});
 
+	$("input[name=eval-expression-wrap]").on("change", function() {
+		$("#eval-form").trigger("submit");
+	});
+
 	$("#eval-form").on("submit", function(e) {
 		$("#eval-content").text("...");
 		e.preventDefault();
 		var expression = $("input[name=eval-expression]").val();
 		History.push(expression);
-		expression = "var_export(" + expression + ", true)";
+		var expression_wrapper = $("input[name=eval-expression-wrap]:checked").val();
+		if (expression_wrapper) {
+			expression = expression_wrapper + "(" + expression + ", true)";
+		}
 		expression = btoa(expression);
 		$("body").trigger("xdebug-eval", {
 			expression: expression

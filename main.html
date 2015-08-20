@@ -159,7 +159,17 @@
 
 	<div id="eval" class="slidepopup-right">
 		<form id="eval-form">
+			<input type="radio" name="eval-expression-wrap" id="eval-wrapper-var_export" value="var_export" checked="checked" style="margin-left: 0.3em" />
+			<label for="eval-wrapper-var_export">var_export</label>
+
+			<input type="radio" name="eval-expression-wrap" id="eval-wrapper-print_r" value="print_r" />
+			<label for="eval-wrapper-print_r">print_r</label>
+
+			<input type="radio" name="eval-expression-wrap" id="eval-wrapper-as_is" value="" />
+			<label for="eval-wrapper-as_is">as is</label>
+
 			<input type="text" name="eval-expression" />
+
 			<input type="submit" id="eval-submit" value="Submit" style="display: none" />
 		</form>
 		<pre id="eval-content" contenteditable="true"></pre>

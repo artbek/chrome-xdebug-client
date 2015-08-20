@@ -212,6 +212,12 @@ div {
 	font-family: monospace;
 }
 
+#eval input[type=radio] {
+	margin-left: 1.4em;
+	vertical-align: text-bottom;
+	width: initial;
+}
+
 #eval-content {
 	max-height: 400px;
 	overflow: auto;
