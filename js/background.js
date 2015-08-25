@@ -22,6 +22,7 @@
 		data.break_at_first_line || data.break_at_first_line === 0 || st.set({"break_at_first_line": 1});
 		(! data.shortcuts || data.shortcuts == btoa("{}")) && st.set({"shortcuts": "eyJzdGVwX291dF9mdW5jIjpbNzAsMF0sInN0ZXBfaW50byI6WzczLDBdLCJzdGVwX292ZXIiOls3OSwwXSwicnVuIjpbODIsMF0sInN0b3AiOls4MywwXSwibGlzdGVuIjpbNzYsMF0sImNsb3NlX3BvcHVwIjpbMjcsMF0sInN0ZXBfb3V0IjpbNjUsMF19"});
 		data.shortcuts_disable || st.set({"shortcuts_disable": 0});
+		data.highlight_syntax || data.highlight_syntax === 0 || st.set({"highlight_syntax": 1});
 	});
 
 })();

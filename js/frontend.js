@@ -20,9 +20,9 @@ $(function() {
 			$('body').trigger('socket_status', {status: 'dead'});
 		}
 
+		Keyboard.init();
 		ChangeLog.refreshButton();
 		Watches.init();
-		Keyboard.init();
 	});
 
 	$("body").on('socket_status', function(event, data) {
@@ -476,7 +476,7 @@ $(function() {
 			}
 			var html_lineno = currentLineNo + 1;
 			html +=	'<span class="lineno" data-lineno="' + html_lineno + '">' + html_lineno + '</span>';
-			html += '<span class="codeline"><pre>' + htmlEntities(lines[l]) + '</pre></span>';
+			html += '<span class="codeline"><pre>' + syntax_hl(htmlEntities(lines[l])) + '</pre></span>';
 			html += '</div>';
 			$("#codeview").append(html);
 		}
@@ -493,6 +493,44 @@ $(function() {
 
 	function clearCodeView() {
 		$("#codeview").css("position", "relative").html("");
+		$("#codeview").removeClass("syntax_highlighted");
+		if (Config.get('highlight_syntax')) {
+			$("#codeview").addClass("syntax_highlighted");
+		}
+	}
+
+
+	function syntax_hl(plain_string) {
+		var hl_string = plain_string;
+
+		// do before keywords (e.g. '$class' is a valid variable name, but 'class' is also a keyword)
+		var variables = "(\\$\\w*)";
+		var hl_string = hl_string.replace(new RegExp(variables, "g"), '<hl_var>$&</hl_var>')
+
+		var keywords = "\\b(__halt_compiler|abstract|and|array|as|break|callable|case|catch|class|clone|const|continue|declare|default|die|do|echo|else|elseif|empty|enddeclare|endfor|endforeach|endif|endswitch|endwhile|eval|exit|extends|final|for|foreach|function|global|goto|if|implements|include|include_once|instanceof|insteadof|interface|isset|list|namespace|new|or|print|private|protected|public|require|require_once|return|static|switch|throw|trait|try|unset|use|var|while|xor)\\b";
+		var hl_string = hl_string.replace(new RegExp(keywords, "g"), '<hl_key>$&</hl_key>')
+
+		var constants = "\\b('__CLASS__|__DIR__|__FILE__|__FUNCTION__|__LINE__|__METHOD__|__NAMESPACE__|__TRAIT__)\\b";
+		var hl_string = hl_string.replace(new RegExp(constants, "g"), '<hl_const>$&</hl_const>')
+
+		var operators = "=|!|&amp;|\\|";
+		var hl_string = hl_string.replace(new RegExp(operators, "g"), '<hl_op>$&</hl_op>')
+
+		var comments_1 = "(#|//).*$"; // '# ...' + '// ...'
+		var comments_2 = "(/\\*.*)$"; // '/* ...'
+		var comments_3 = "(^.*\\*/)"; // '... */'
+		var comments_4 = "(^\\s*\\*.*)$"; // '* ...'
+		var hl_string = hl_string.replace(new RegExp(comments_1), '<hl_comment>$&</hl_comment>')
+		var hl_string = hl_string.replace(new RegExp(comments_2), '<hl_comment>$&</hl_comment>')
+		var hl_string = hl_string.replace(new RegExp(comments_3), '<hl_comment>$&</hl_comment>')
+		var hl_string = hl_string.replace(new RegExp(comments_4), '<hl_comment>$&</hl_comment>')
+
+		var strings_1 = "'.*?'";
+		var strings_2 = "\".*?\"";
+		var hl_string = hl_string.replace(new RegExp(strings_1, "g"), '<hl_str>$&</hl_str>')
+		var hl_string = hl_string.replace(new RegExp(strings_2, "g"), '<hl_str>$&</hl_str>')
+
+		return hl_string;
 	}
 
 

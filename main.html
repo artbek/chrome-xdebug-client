@@ -86,6 +86,12 @@
 				<input type="checkbox" name="break_at_first_line" id="break_at_first_line" value="1" />
 
 				<br />
+				<br />
+
+				<label for="highlight_syntax">Highlight syntax:</label>
+				<input type="checkbox" name="highlight_syntax" id="highlight_syntax" value="1" />
+
+				<br />
 
 			</div>
 
@@ -159,14 +165,14 @@
 
 	<div id="eval" class="slidepopup-right">
 		<form id="eval-form">
-			<input type="radio" name="eval-expression-wrap" id="eval-wrapper-var_export" value="var_export" checked="checked" style="margin-left: 0.3em" />
-			<label for="eval-wrapper-var_export">var_export</label>
+			<input type="radio" name="eval-expression-wrap" id="eval-wrap-var_export" value="var_export" checked="checked" style="margin-left: 0.3em" />
+			<label for="eval-wrap-var_export">var_export</label>
 
-			<input type="radio" name="eval-expression-wrap" id="eval-wrapper-print_r" value="print_r" />
-			<label for="eval-wrapper-print_r">print_r</label>
+			<input type="radio" name="eval-expression-wrap" id="eval-wrap-print_r" value="print_r" />
+			<label for="eval-wrap-print_r">print_r</label>
 
-			<input type="radio" name="eval-expression-wrap" id="eval-wrapper-as_is" value="" />
-			<label for="eval-wrapper-as_is">as is</label>
+			<input type="radio" name="eval-expression-wrap" id="eval-wrap-as_is" value="" />
+			<label for="eval-wrap-as_is">as is</label>
 
 			<input type="text" name="eval-expression" />
 

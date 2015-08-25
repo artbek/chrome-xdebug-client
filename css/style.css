@@ -152,6 +152,35 @@ div {
 			font-weight: bold;
 		}
 
+		#codeview.syntax_highlighted pre>hl_key {
+			color: #333333;
+			font-weight: bold;
+		}
+
+		#codeview.syntax_highlighted pre>hl_const {
+			color: #994444;
+			font-weight: bold;
+		}
+
+		#codeview.syntax_highlighted pre>hl_op {
+			color: #000000;
+			font-weight: bold;
+		}
+
+		#codeview.syntax_highlighted pre>hl_var {
+			color: #333399;
+		}
+
+		#codeview.syntax_highlighted pre>hl_str {
+			color: #996699 !important;
+			font-weight: bold !important;
+		}
+
+		#codeview.syntax_highlighted pre>hl_comment {
+			color: #aaaaaa !important;
+			font-weight: normal !important;
+		}
+
 .slidepopup-left {
 	background: url('../img/open.png') #888888 right 3px top 4px no-repeat;
 	padding: 0px 20px 0px 0px;
@@ -178,6 +207,8 @@ div {
 	#stack-filenames {
 		background: #ffffff;
 		cursor: default;
+		max-height: 40em;
+		overflow-y: auto;
 		padding: 5px;
 	}
 
@@ -219,7 +250,7 @@ div {
 }
 
 #eval-content {
-	max-height: 400px;
+	max-height: 40em;
 	overflow: auto;
 }
 
