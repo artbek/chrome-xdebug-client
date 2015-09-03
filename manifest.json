@@ -13,7 +13,7 @@
 	"sockets": {
 		"tcp": {},
 		"tcpServer": {
-			"listen": "*:9000"
+			"listen": "*"
 		}
 	},
 	"permissions": [
