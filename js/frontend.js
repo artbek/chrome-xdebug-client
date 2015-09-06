@@ -58,9 +58,16 @@ $(function() {
 	});
 
 	$("#settings-save").on("click", function() {
-		Config.saveFromForm($("#settings").serializeArray());
-		chrome.runtime.reload(); // reload app
-		$("#settings").hide();
+		var $that = $(this);
+
+		$that.text("Saving...");
+		var force_reload = Config.saveFromForm($("#settings").serializeArray());
+		if (force_reload) {
+			chrome.runtime.reload(); // reload app
+		}
+		setTimeout(function() {
+			$that.text("Save Settings");
+		}, 500);
 	});
 
 	$(".accordion .tab-link :first").addClass("active");

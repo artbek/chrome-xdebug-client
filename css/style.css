@@ -321,6 +321,7 @@ form.watches-line input.blurred {
 #alert.busy {
 	background: #f3f3f3;
 	border-color: #dddddd;
+	z-index: 10000;
 }
 
 #alert.info {

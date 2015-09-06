@@ -12,7 +12,8 @@ var Config = (function() {
 					this.valid = false;
 				}
 			},
-			valid: true
+			valid: true,
+			force_reload: true
 		},
 
 		listening_port: {
@@ -25,7 +26,8 @@ var Config = (function() {
 					this.valid = false;
 				}
 			},
-			valid: true
+			valid: true,
+			force_reload: true
 		},
 
 		source_script: {
@@ -199,16 +201,24 @@ var Config = (function() {
 		},
 
 		set: function(key, value) {
-			if (conf.hasOwnProperty(key)) {
+			var updated = false;
+
+			if (conf.hasOwnProperty(key) && conf[key].value != value) {
 				conf[key].set(value);
 
 				var storageValues = {};
 				storageValues[key] = conf[key]["value"];
 				chrome.storage.local.set(storageValues);
+
+				updated = true;
 			}
+
+			return updated;
 		},
 
 		saveFromForm: function(values, isInit) {
+			var force_reload = false;
+
 			for (var prop in conf) {
 				if (! isInit && conf[prop].hidden) continue;
 				var value = null;
@@ -218,8 +228,12 @@ var Config = (function() {
 						break;
 					}
 				}
-				publicMethods.set(prop, value);
+				if (publicMethods.set(prop, value) && conf[prop].force_reload) {
+					force_reload = true;
+				}
 			}
+
+			return force_reload;
 		},
 
 		errors: function() {
