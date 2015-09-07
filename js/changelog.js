@@ -3,6 +3,25 @@ var ChangeLog = (function() {
 	var log = [
 
 		{
+			version: "2.6",
+			date: "September 2015",
+			changes: [
+				[
+					"Syntax highlighting",
+					"Source code should be easier on the eyes (can be disabled in settings)."
+				],
+				[
+					"Eval popup",
+					"Added 3 modes: 'var_export', 'print_r' & 'as is'. Before all request used 'var_export()'.",
+				],
+				[
+					"Allowed ports",
+					"So far only port 9000 was allowed. Big thanks to <a href='https://github.com/artbek/chrome-xdebug-client/issues/6' target='_blank'>Rolf/Liffon</a> for pointing out & fixing."
+				]
+			]
+		},
+
+		{
 			version: "2.5",
 			date: "August 2015",
 			changes: [
