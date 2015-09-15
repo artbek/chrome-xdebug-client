@@ -6,6 +6,19 @@ $(function() {
 
 	/* SETTINGS */
 
+	var SettingsPopup = {
+		selector: $("#settings"),
+		show: function() {
+			this.selector.slideDown(200);
+		},
+		hide: function() {
+			this.selector.slideUp(200);
+		},
+		toggle: function() {
+			this.selector.slideToggle(200);
+		}
+	}
+
 	$(window).on("load", function() {
 		$("input").removeClass("error");
 
@@ -13,7 +26,7 @@ $(function() {
 		if (configErrors.length) {
 			enableNav(false);
 			for (i in configErrors) {
-				$("#settings input[name=" + configErrors[i] + "]").addClass("error");
+				SettingsPopup.selector.find("input[name=" + configErrors[i] + "]").addClass("error");
 				$("#settings-popup-button").addClass("error");
 			}
 		} else {
@@ -43,30 +56,41 @@ $(function() {
 		}
 	});
 
-	$("#settings-popup-button").on("click", function() {
+	$("#settings-popup-button").on("click", function(e) {
+		e.stopPropagation();
 		var configValues = Config.get();
 		var configTypes = Config.getType();
 		for (var prop in configValues) {
 			if (configTypes[prop] == "text") {
-				$("#settings [name=" + prop + "]").val(configValues[prop]);
+				SettingsPopup.selector.find("[name=" + prop + "]").val(configValues[prop]);
 			} else if (configTypes[prop] == "checkbox") {
-				$("#settings [name=" + prop + "]").prop("checked", configValues[prop]);
+				SettingsPopup.selector.find("[name=" + prop + "]").prop("checked", configValues[prop]);
 			}
 		}
 		Keyboard.init();
-		$("#settings").slideToggle(200);
+		SettingsPopup.toggle();
 	});
 
-	$("#settings-save").on("click", function() {
+	$(document).on('click', function() {
+		SettingsPopup.hide();
+	});
+
+	SettingsPopup.selector.on("click", function(e) {
+		e.stopPropagation();
+	});
+
+	$("#settings-save").on("click", function(e) {
+		e.preventDefault();
 		var $that = $(this);
 
 		$that.text("Saving...");
-		var force_reload = Config.saveFromForm($("#settings").serializeArray());
+		var force_reload = Config.saveFromForm(SettingsPopup.selector.serializeArray());
 		if (force_reload) {
 			chrome.runtime.reload(); // reload app
 		}
 		setTimeout(function() {
 			$that.text("Save Settings");
+			SettingsPopup.hide();
 		}, 500);
 	});
 
