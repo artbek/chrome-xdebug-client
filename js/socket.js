@@ -75,6 +75,21 @@ $(function() {
 			{ command: "feature_set", params: "-n max_data -v 50000" }
 		];
 
+		var bps = Breakpoints.getAll();
+		for (var id in bps) {
+			var params_str = "-t line -f " + bps[id].filename + " -n " + bps[id].lineno;
+			if (bps[id].hitValue) { params_str += " -h " + bps[id].hitValue; }
+			if (bps[id].operator) {
+				params_str += " -o " + bps[id].operator;
+				if (bps[id].condition) { params_str += " -- " + btoa(bps[id].condition); }
+			}
+
+			initialCommandQueue.push({
+				command: "breakpoint_set",
+				params: params_str
+			});
+		}
+
 		if (Config.get('break_at_first_line')) {
 			initialCommandQueue.push({ command: "step_into", params: null });
 		} else {
@@ -198,6 +213,9 @@ $(function() {
 
 		if (! socketId) {
 			console.warn("Socket doesn't exist yet!");
+			$('body').trigger('parse-xml', {
+				command: 'SOCKER_ERROR'
+			});
 			return;
 		}
 
@@ -353,21 +371,12 @@ $(function() {
 		send_command("stack_get");
 	});
 
-	$('body').on("xdebug-breakpoint-list", function() {
-		send_command("breakpoint_list");
-	});
-
 	$("body").on("xdebug-breakpoint_set", function(event, data) {
 		var options = "-t line -f " + Global.fileNameCurrentlyLoaded + " -n " + data.lineno;
-		if (data.hitValue) {
-			options += " -h " + data.hitValue;
-		}
-
+		if (data.hitValue) { options += " -h " + data.hitValue; }
 		if (data.operator) {
 			options += " -o " + data.operator;
-			if (data.condition) {
-				options += " -- " + btoa(data.condition);
-			}
+			if (data.condition) { options += " -- " + btoa(data.condition); }
 			send_command("breakpoint_remove", "-d " + data.breakpointToDelete, function() {
 				Breakpoints.unset(data.breakpointToDelete);
 				send_command("breakpoint_set", options);
@@ -375,10 +384,6 @@ $(function() {
 		} else {
 			send_command("breakpoint_set", options);
 		}
-	});
-
-	$("body").on("xdebug-breakpoint_list", function(event, data) {
-		send_command("breakpoint_list");
 	});
 
 	$("body").on("xdebug-breakpoint_set-return", function(event, data) {
@@ -407,6 +412,16 @@ $(function() {
 		send_command("breakpoint_remove", "-d " + data.breakpoint_id);
 	});
 
+	$("body").on("xdebug-breakpoint_remove_all", function(event, data) {
+		send_command("breakpoint_list", "", function(xml) {
+			$(xml).find("breakpoint").each(function() {
+				send_command("breakpoint_remove", "-d " + $(this).attr("id"), function() {
+					// Only one should trigger (send_command() overwrites the previous callback).
+					$('body').trigger('parse-xml', { command: "breakpoint_remove" });
+				});
+			});
+		});
+	});
 
 
 	// HELPERS

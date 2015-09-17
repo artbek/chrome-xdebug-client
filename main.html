@@ -182,7 +182,12 @@
 	</div>
 
 	<div id="watches" class="slidepopup-right" data-offset="200">
-		<div class="stop-propagation">
+		<tabs class="stop-propagation">
+			<span id="tab-watches" class="tab">Watches</span>
+			<span id="tab-breakpoints" class="tab">Breakpoints</span>
+		</tabs>
+
+		<div class="stop-propagation tab-content" id="tab-watches-content">
 			<form class="watches-line" data-id="0">
 				<input type="text" name="input" class="blurred" placeholder="<expression to watch>" />
 				<pre contenteditable="true" class="output"></pre>
@@ -193,6 +198,10 @@
 				<pre contenteditable="true" class="output"></pre>
 				<input type="submit" style="display: none" />
 			</form>
+		</div>
+
+		<div class="stop-propagation tab-content" id="tab-breakpoints-content">
+			<div id="breakpoints_remove_all">Delete all breakpoints</div>
 		</div>
 	</div>
 
@@ -224,6 +233,7 @@
 			<label for="bp-hit-operator-3" class="bp-hit-operator" title="multiple of">multiple of</label>
 			<input
 				type="number"
+				min="1"
 				name="breakpoint-hit-count"
 				id="breakpoint-hit-count"
 				class="stop-propagation"

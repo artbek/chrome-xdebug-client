@@ -2,6 +2,13 @@ var Breakpoints = (function() {
 
 	var store = {};
 
+	$(function() {
+		$("#breakpoints_remove_all").on("click", function(e) {
+			e.preventDefault();
+			publicMethods.removeAll();
+		});
+	});
+
 	var publicMethods = {
 
 		options: {
@@ -41,7 +48,8 @@ var Breakpoints = (function() {
 			delete store["b" + breakpoint_id];
 		},
 
-		clear: function() {
+		removeAll: function() {
+			$("body").trigger("xdebug-breakpoint_remove_all");
 			store = {};
 		},
 

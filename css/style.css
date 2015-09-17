@@ -183,11 +183,13 @@ div {
 
 .slidepopup-left {
 	background: url('../img/open.png') #888888 right 3px top 4px no-repeat;
+	box-shadow: 0px 0px 30px 2px #888888;
 	padding: 0px 20px 0px 0px;
 }
 
 .slidepopup-right {
 	background: url('../img/open.png') #888888 left 3px top 4px no-repeat;
+	box-shadow: 0px 0px 30px 2px #888888;
 	padding: 0px 0px 0px 20px;
 }
 
@@ -197,7 +199,6 @@ div {
 
 #stack {
 	border: 0px;
-	box-shadow: 3px 3px 30px 2px #888888;
 	cursor: pointer;
 	position: fixed;
 	right: 0;
@@ -220,7 +221,6 @@ div {
 #eval {
 	border: 0px;
 	bottom: 30px;
-	box-shadow: 0px -10px 25px #888888;
 	color: #eeeeee;
 	cursor: pointer;
 	right: 0px;
@@ -237,10 +237,10 @@ div {
 	background: #222222;
 	color: #ffffff;
 	cursor: default;
+	font-family: monospace;
+	font-size: 1em;
 	margin: 0px;
 	padding: 1%;
-	font-size: 1em;
-	font-family: monospace;
 }
 
 #eval input[type=radio] {
@@ -257,7 +257,6 @@ div {
 #watches {
 	border: 0px;
 	top: 50px;
-	box-shadow: 0px -10px 25px #888888;
 	color: #eeeeee;
 	cursor: pointer;
 	right: 0px;
@@ -289,6 +288,29 @@ form.watches-line pre {
 form.watches-line input.blurred {
 	background: #888888;
 	color: #eeeeee;
+}
+
+tabs {
+	display: block;
+	float: left;
+	width: 18%;
+}
+
+tabs .tab {
+	display: block;
+	opacity: 0.6;
+	padding: 1em;
+}
+
+tabs .tab.active {
+	color: #ffffff;
+	opacity: 1.0;
+}
+
+#watches .tab-content {
+	display: none;
+	float: right;
+	width: 82%
 }
 
 .popup {
@@ -396,8 +418,8 @@ form.watches-line input.blurred {
 #breakpointOptions {
 	background: #664466;
 	border-color: #ffffff;
-	text-align: left;
 	padding-bottom: 4%;
+	text-align: left;
 }
 
 #breakpointOptions label {
@@ -446,18 +468,18 @@ label.bp-hit-operator {
 }
 
 .accordion .tab-link {
+	background: url('../img/close.png') left 0px top 8px no-repeat;
 	border-style: dotted;
 	border-width: 0 0 1px 0;
 	cursor: pointer;
 	opacity: 0.6;
 	padding: 8px 5px 5px 20px;
 	text-transform: uppercase;
-	background: url('../img/close.png') left 0px top 8px no-repeat;
 }
 
 .accordion .tab-link.active {
-	opacity: 1.0;
 	background: url('../img/open.png') left 0px top 8px no-repeat;
+	opacity: 1.0;
 }
 
 .accordion .tab-content {

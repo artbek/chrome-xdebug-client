@@ -50,7 +50,7 @@ $(function() {
 				enableNav(false);
 				$("#listen").removeClass("inactive");
 				$("#listen").text("LISTEN");
-				Breakpoints.clear();
+				//Breakpoints.clear();
 				Global.setWindowTitle();
 				break;
 		}
@@ -309,6 +309,18 @@ $(function() {
 		$("body").trigger("refresh-popups");
 	});
 
+	$("#watches .tab").on("click", function() {
+		var tab_name = $(this).attr("id");
+
+		$("#watches .tab").removeClass("active");
+		$(this).addClass("active");
+
+		$("#watches .tab-content").hide();
+		$("#" + tab_name + "-content").show();
+	});
+
+
+
 
 	/* XDEBUG CALLBACKS */
 
@@ -316,7 +328,7 @@ $(function() {
 		console.log("[error-on-receive]: " + data.message);
 		if (Config.get("keep_listening")) {
 			$("body").trigger("xdebug-init");
-			Breakpoints.clear();
+			//Breakpoints.clear();
 		} else {
 			$("body").trigger("xdebug-stop");
 		}
@@ -329,6 +341,10 @@ $(function() {
 		Breakpoints.hideOptions();
 
 		switch (data.command) { /* SWITCH - START */
+
+			case "SOCKER_ERROR":
+				Alert.warn("Not connected!");
+				break;
 
 			case "watches_eval":
 			case "feature_set":
@@ -404,8 +420,10 @@ $(function() {
 				break;
 
 			case "breakpoint_remove":
-				var breakpoint_id = data.options.split(" ").pop();
-				Breakpoints.unset(breakpoint_id);
+				if (data.options) {
+					var breakpoint_id = data.options.split(" ").pop();
+					Breakpoints.unset(breakpoint_id);
+				}
 				Breakpoints.highlight();
 				break;
 
@@ -413,7 +431,7 @@ $(function() {
 				if ($(data.xml).find("response").attr("status") == 'stopping') {
 					if (Config.get("keep_listening")) {
 						$("body").trigger("xdebug-init");
-						Breakpoints.clear();
+						//Breakpoints.clear();
 					} else {
 						$("body").trigger("xdebug-stop");
 					}
