@@ -92,6 +92,12 @@
 				<input type="checkbox" name="highlight_syntax" id="highlight_syntax" value="1" />
 
 				<br />
+				<br />
+
+				<label for="remember_breakpoints">Remember breakpoints:</label>
+				<input type="checkbox" name="remember_breakpoints" id="remember_breakpoints" value="1" />
+
+				<br />
 
 			</div>
 
@@ -183,8 +189,8 @@
 
 	<div id="watches" class="slidepopup-right" data-offset="200">
 		<tabs class="stop-propagation">
-			<span id="tab-watches" class="tab">Watches</span>
 			<span id="tab-breakpoints" class="tab">Breakpoints</span>
+			<span id="tab-watches" class="tab">Watches</span>
 		</tabs>
 
 		<div class="stop-propagation tab-content" id="tab-watches-content">
@@ -201,7 +207,7 @@
 		</div>
 
 		<div class="stop-propagation tab-content" id="tab-breakpoints-content">
-			<div id="breakpoints_remove_all">Delete all breakpoints</div>
+			<button id="breakpoints-remove-all">Delete all breakpoints</button>
 		</div>
 	</div>
 

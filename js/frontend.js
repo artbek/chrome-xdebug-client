@@ -321,7 +321,6 @@ $(function() {
 
 
 
-
 	/* XDEBUG CALLBACKS */
 
 	$("body").on('error-on-receive', function(event, data) {
@@ -404,11 +403,12 @@ $(function() {
 				var bpLineNo = Global.getOptFromString("n", data.options);
 				var bpHitValue = Global.getOptFromString("h", data.options);
 				var bpOperator = Global.getOptFromString("o", data.options);
+				var bpFileName = Global.getOptFromString("f", data.options);
 
 				if (parseInt(bpLineNo)) {
 					Breakpoints.set({
 						id: breakpoint_id,
-						filename: Global.fileNameCurrentlyLoaded,
+						filename: bpFileName,
 						lineno: bpLineNo,
 						condition: bpCondition,
 						hitValue: bpHitValue,
@@ -430,8 +430,7 @@ $(function() {
 			default:
 				if ($(data.xml).find("response").attr("status") == 'stopping') {
 					if (Config.get("keep_listening")) {
-						$("body").trigger("xdebug-init");
-						//Breakpoints.clear();
+						$("body").trigger("xdebug-run");
 					} else {
 						$("body").trigger("xdebug-stop");
 					}

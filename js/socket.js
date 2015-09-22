@@ -11,6 +11,7 @@ $(function() {
 	var currentCommandCallback = "";
 
 	var initialCommandQueue = [];
+	var isInitialCommandQueueInitialized = false;
 
 
 	/* RESPONSE object - BEGIN */
@@ -67,34 +68,44 @@ $(function() {
 	/* RESPONSE object - END */
 
 
-	// CONECT WITH XDEBUG SERVER
+	// CONNECT WITH XDEBUG SERVER
 
 	function initCommandQueue() {
+		if (isInitialCommandQueueInitialized) return;
+
 		initialCommandQueue = [
 			{ command: "feature_set", params: "-n max_depth -v 3" },
 			{ command: "feature_set", params: "-n max_data -v 50000" }
 		];
 
-		var bps = Breakpoints.getAll();
-		for (var id in bps) {
-			var params_str = "-t line -f " + bps[id].filename + " -n " + bps[id].lineno;
-			if (bps[id].hitValue) { params_str += " -h " + bps[id].hitValue; }
-			if (bps[id].operator) {
-				params_str += " -o " + bps[id].operator;
-				if (bps[id].condition) { params_str += " -- " + btoa(bps[id].condition); }
-			}
+		if (Config.get('remember_breakpoints')) {
+			var bps = Breakpoints.getIntrnalStorage();
+			for (var id in bps) {
+				var params_str = "-t line -f " + bps[id].filename + " -n " + bps[id].lineno;
+				if (bps[id].hitValue) { params_str += " -h " + bps[id].hitValue; }
+				if (bps[id].operator) {
+					params_str += " -o " + bps[id].operator;
+					if (bps[id].condition) { params_str += " -- " + btoa(bps[id].condition); }
+				}
 
-			initialCommandQueue.push({
-				command: "breakpoint_set",
-				params: params_str
-			});
+				initialCommandQueue.push({
+					command: "breakpoint_set",
+					params: params_str
+				});
+			}
 		}
+
+		Breakpoints.clearInternalStorage();
 
 		if (Config.get('break_at_first_line')) {
 			initialCommandQueue.push({ command: "step_into", params: null });
 		} else {
 			initialCommandQueue.push({ command: "run", params: null });
 		}
+
+		//console.log("Initial commands:");
+		//console.log(initialCommandQueue);
+		isInitialCommandQueueInitialized = true;
 	}
 
 
@@ -168,6 +179,7 @@ $(function() {
 				console.log("received init response:");
 				//console.log(xml);
 
+				isInitialCommandQueueInitialized = false;
 				var c = initialCommandQueue.shift(); // next command
 				c && send_command(c.command, c.params);
 

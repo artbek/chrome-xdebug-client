@@ -104,6 +104,19 @@ var Config = (function() {
 			valid: true
 		},
 
+		remember_breakpoints: {
+			value: 1,
+			type: "checkbox",
+			set: function(value) {
+				if (parseInt(value)) {
+					this.value = 1;
+				} else {
+					this.value = 0;
+				}
+			},
+			valid: true
+		},
+
 		shortcuts: {
 			value: "",
 			set: function(value) {

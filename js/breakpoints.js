@@ -3,7 +3,7 @@ var Breakpoints = (function() {
 	var store = {};
 
 	$(function() {
-		$("#breakpoints_remove_all").on("click", function(e) {
+		$("#breakpoints-remove-all").on("click", function(e) {
 			e.preventDefault();
 			publicMethods.removeAll();
 		});
@@ -30,7 +30,7 @@ var Breakpoints = (function() {
 			}
 		},
 
-		getAll: function() {
+		getIntrnalStorage: function() {
 			return store;
 		},
 
@@ -50,8 +50,13 @@ var Breakpoints = (function() {
 
 		removeAll: function() {
 			$("body").trigger("xdebug-breakpoint_remove_all");
+			this.clearInternalStorage();
+		},
+
+		clearInternalStorage: function() {
 			store = {};
 		},
+
 
 		highlight: function() {
 			$(".lineno.breakpoint").removeClass("breakpoint");

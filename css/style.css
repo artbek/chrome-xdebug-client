@@ -265,8 +265,8 @@ div {
 
 form.watches-line {
 	float: left;
-	margin: 0.5em 0;
-	width: 98%;
+	margin: 0 0 1em 0;
+	width: 100%;
 }
 
 form.watches-line input {
@@ -297,12 +297,14 @@ tabs {
 }
 
 tabs .tab {
+	background: url('../img/close_small.png') #888888 right 15px center no-repeat;
 	display: block;
 	opacity: 0.6;
 	padding: 1em;
 }
 
 tabs .tab.active {
+	background: url('../img/open_small.png') #888888 right 15px center no-repeat;
 	color: #ffffff;
 	opacity: 1.0;
 }
@@ -310,7 +312,8 @@ tabs .tab.active {
 #watches .tab-content {
 	display: none;
 	float: right;
-	width: 82%
+	padding: 1em 1%;
+	width: 80%
 }
 
 .popup {
@@ -368,11 +371,6 @@ tabs .tab.active {
 
 #settings-save {
 	background: #ec5b13;
-	border: 0;
-	color: #ffffff;
-	cursor: pointer;
-	font-weight: bold;
-	padding: 0.5em 1em;
 }
 
 #changelog {
@@ -519,5 +517,9 @@ label.bp-hit-operator {
 	display: none;
 	position: absolute;
 	z-index: 10000;
+}
+
+#breakpoints-remove-all {
+	background-color: #ec5b13;
 }
 
