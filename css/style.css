@@ -256,7 +256,7 @@ div {
 
 #watches {
 	border: 0px;
-	top: 50px;
+	top: 70px;
 	color: #eeeeee;
 	cursor: pointer;
 	right: 0px;
@@ -314,6 +314,10 @@ tabs .tab.active {
 	float: right;
 	padding: 1em 1%;
 	width: 80%
+}
+
+#watches .tab-content.active {
+	display: block;
 }
 
 .popup {
@@ -521,5 +525,25 @@ label.bp-hit-operator {
 
 #breakpoints-remove-all {
 	background-color: #ec5b13;
+}
+
+#tab-breakpoints-content table {
+	margin-top: 1em;
+}
+
+#tab-breakpoints-content td,
+#tab-breakpoints-content th {
+	padding: 0.3em 1em;
+	text-align: left;
+	vertical-align: middle;
+}
+
+#tab-breakpoints-content th {
+	font-weight: bold;
+}
+
+#tab-breakpoints-content thead {
+	border-bottom: 1px solid #dddddd;
+	display: none;
 }
 

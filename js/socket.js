@@ -79,7 +79,7 @@ $(function() {
 		];
 
 		if (Config.get('remember_breakpoints')) {
-			var bps = Breakpoints.getIntrnalStorage();
+			var bps = Breakpoints.getInternalStorage();
 			for (var id in bps) {
 				var params_str = "-t line -f " + bps[id].filename + " -n " + bps[id].lineno;
 				if (bps[id].hitValue) { params_str += " -h " + bps[id].hitValue; }
@@ -425,14 +425,22 @@ $(function() {
 	});
 
 	$("body").on("xdebug-breakpoint_remove_all", function(event, data) {
-		send_command("breakpoint_list", "", function(xml) {
-			$(xml).find("breakpoint").each(function() {
-				send_command("breakpoint_remove", "-d " + $(this).attr("id"), function() {
-					// Only one should trigger (send_command() overwrites the previous callback).
-					$('body').trigger('parse-xml', { command: "breakpoint_remove" });
+		if (! socketId || isInitialCommandQueueInitialized) {
+			for (var b in initialCommandQueue) {
+				if (initialCommandQueue[b].command == "breakpoint_set") {
+					initialCommandQueue[b] = undefined;
+				}
+			}
+		} else {
+			send_command("breakpoint_list", "", function(xml) {
+				$(xml).find("breakpoint").each(function() {
+					send_command("breakpoint_remove", "-d " + $(this).attr("id"), function() {
+						// Only one should trigger (send_command() overwrites the previous callback).
+						$('body').trigger('parse-xml', { command: "breakpoint_remove" });
+					});
 				});
 			});
-		});
+		}
 	});
 
 

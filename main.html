@@ -189,9 +189,26 @@
 
 	<div id="watches" class="slidepopup-right" data-offset="200">
 		<tabs class="stop-propagation">
-			<span id="tab-breakpoints" class="tab">Breakpoints</span>
+			<span id="tab-breakpoints" class="tab active">Breakpoints</span>
 			<span id="tab-watches" class="tab">Watches</span>
 		</tabs>
+
+		<div class="stop-propagation tab-content active" id="tab-breakpoints-content">
+			<button id="breakpoints-remove-all">Delete all breakpoints</button>
+			<table>
+				<thead>
+					<tr>
+						<th>Line</th>
+						<th>File</th>
+						<th>Hit</th>
+						<th>Condition</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody>
+				</tbody>
+			</table>
+		</div>
 
 		<div class="stop-propagation tab-content" id="tab-watches-content">
 			<form class="watches-line" data-id="0">
@@ -204,10 +221,6 @@
 				<pre contenteditable="true" class="output"></pre>
 				<input type="submit" style="display: none" />
 			</form>
-		</div>
-
-		<div class="stop-propagation tab-content" id="tab-breakpoints-content">
-			<button id="breakpoints-remove-all">Delete all breakpoints</button>
 		</div>
 	</div>
 
