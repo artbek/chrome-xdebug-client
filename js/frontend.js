@@ -479,8 +479,7 @@ $(function() {
 
 					error: function(data) {
 						clearCodeView();
-						$("#codeview").append("<p>Couldn't get source:</p>");
-						$("#codeview").append("<p><strong>" + filename + ":" + lineno + "</strong></p>");
+						Alert.warn("Couldn't get source: " + filename + ":" + lineno);
 						console.error("Couldn't get source!");
 					},
 

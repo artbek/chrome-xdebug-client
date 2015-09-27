@@ -40,7 +40,8 @@ var Config = (function() {
 					this.valid = false;
 				}
 			},
-			valid: true
+			valid: true,
+			force_reload: true
 		},
 
 		lines_count: {

@@ -37,12 +37,17 @@ input.error {
 
 code {
 	background: #eeeeee;
-	border: 1px solid #111111;
 	color: #333333;
 	display: block;
 	font-family: monospace;
 	margin: 0.6em;
 	padding: 0.6em;
+}
+
+code.inline {
+	display: inline;
+	margin: 0.2em 0.6em;
+	padding: 0.2em 0.6em;
 }
 
 nav {
@@ -487,6 +492,11 @@ label.bp-hit-operator {
 .accordion .tab-content {
 	padding: 1em 0 2em 0.4em;
 }
+
+.tab-content strong {
+	font-weight: bold;
+}
+
 
 #settings-shortcuts td, #settings-shortcuts th {
 	padding: 0.3em 2.2em 0.3em 0;

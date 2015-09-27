@@ -67,11 +67,13 @@
 				<br />
 				<br />
 
-				If the native xdebug source doesn't work as expected try using your own api, e.g.
+				If the native xdebug source doesn't work as expected you can try using your own api, e.g.
 				<a href="https://github.com/artbek/chrome-xdebug-client/blob/master/php/source.php" target="_blank">source.php</a>
 				<br />
+				The app will query the following url. It will be an AJAX call (e.g. http://localhost/source.php?path=&lt;filepath&gt;).
+				<br />
 				<label>Source URL:</label>
-				<input type="text" name="source_script" style="width: 18em" />
+				<input type="text" name="source_script" style="width: 18em" placeholder="http://localhost/source.php" />
 
 				<br />
 				<br />
@@ -123,7 +125,7 @@
 			</div>
 
 			<div class="tab-content">
-				1. Make sure the settings above don't conflict with your setup.
+				1. Make sure the settings don't conflict with your setup.
 				<br />
 				2. Press <strong>Listen</strong>.
 				<br />
@@ -145,6 +147,20 @@
 				<code>
 					> <strong>XDEBUG_CONFIG=""</strong> php myscript.php
 				</code>
+			</div>
+
+
+			<div class="tab-link">
+				<strong>Troubleshooting</strong>
+			</div>
+
+			<div class="tab-content">
+				1. Make sure the <strong>Settings > Listening Port</strong> matches <strong>xdebug.remote_port</strong>.
+				To check your PHP configuration try:
+				<code class="inline">phpinfo()</code> or <code class="inline">php -i</code>
+				<br />
+				<br />
+				2. Make sure your <strong>FIREWALL</strong> isn't blocking incoming traffic - this is very common on Windows machines.
 			</div>
 
 
