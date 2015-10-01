@@ -459,6 +459,9 @@ $(function() {
 				$(".line-wrapper.active-line").removeClass("active-line");
 				$(".lineno[data-lineno=" + lineno + "]").closest(".line-wrapper").addClass("active-line");
 				scrollToView();
+				Global.run(function() {
+					$("body").trigger("xdebug-stack_get");
+				});
 
 			} else {
 
