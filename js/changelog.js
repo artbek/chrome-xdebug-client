@@ -3,6 +3,21 @@ var ChangeLog = (function() {
 	var log = [
 
 		{
+			version: "2.7",
+			date: "October 2015",
+			changes: [
+				[
+					"Persistent breakpoints",
+					"With this feature enabled breakpoints are remembered between sessions."
+				],
+				[
+					"Improvements",
+					"More intuitive settings window - can be closed by click outside."
+				]
+			]
+		},
+
+		{
 			version: "2.6",
 			date: "September 2015",
 			changes: [

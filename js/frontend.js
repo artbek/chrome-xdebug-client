@@ -315,8 +315,8 @@ $(function() {
 		$("#watches .tab").removeClass("active");
 		$(this).addClass("active");
 
-		$("#watches .tab-content").hide();
-		$("#" + tab_name + "-content").show();
+		$("#watches .tab-content").removeClass("active");
+		$("#" + tab_name + "-content").addClass("active");
 	});
 
 

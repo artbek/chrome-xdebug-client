@@ -97,11 +97,7 @@ var Breakpoints = (function() {
 				}
 			}
 
-			if (! html) {
-				$("#tab-breakpoints-content thead").hide();
-			} else {
-				$("#tab-breakpoints-content thead").show();
-			}
+			if (! html) html = '<tr><td colspan="5">No breakpoints set.</td></tr>';
 			$("#tab-breakpoints-content tbody").html(html);
 		},
 
