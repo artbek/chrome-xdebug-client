@@ -1,6 +1,7 @@
 var Keyboard = (function() {
 
 	var config_mode = false;
+	var key_event_processing = false;
 	var shortcuts = {};
 	var settings_wrapper_selector = "#settings-shortcuts";
 
@@ -98,6 +99,9 @@ var Keyboard = (function() {
 	}
 
 	function process_key_event(e) {
+		key_event_processing = true;
+		setTimeout(function() { key_event_processing = false }, 100);
+
 		if (config_mode) {
 			for (var action_name in shortcuts) {
 				if (JSON.stringify(e) == JSON.stringify(shortcuts[action_name])) {
@@ -108,6 +112,7 @@ var Keyboard = (function() {
 			config_mode = false;
 			publicMethods.refreshShortcuts();
 			return true;
+
 		} else {
 			if (! disabled()) {
 				for (var action_name in shortcuts) {
@@ -206,16 +211,18 @@ var Keyboard = (function() {
 			}
 		});
 		$("body").on("keyup", function(e) {
-			var ke = {
-				keyCode: e.keyCode,
-				modifiers: {
-					ctrlKey: e.ctrlKey,
-					altKey: e.altKey,
-					shiftKey: e.shiftKey
+			if (! key_event_processing) {
+				var ke = {
+					keyCode: e.keyCode,
+					modifiers: {
+						ctrlKey: e.ctrlKey,
+						altKey: e.altKey,
+						shiftKey: e.shiftKey
+					}
+				};
+				if (process_key_event(ke)) {
+					e.preventDefault();
 				}
-			};
-			if (process_key_event(ke)) {
-				e.preventDefault();
 			}
 		});
 	}
