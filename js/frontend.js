@@ -600,11 +600,13 @@ $(function() {
 			var animateTarget = {width: bodyWidth - widthOffset};
 			animateTarget[position] = '0' + offset;
 			$popup.stop(true, false).animate(animateTarget, 250);
+			$popup.find("input.focus-on-visible").trigger("focus");
 		} else {
 			var padding = parseInt($popup.css("padding-" + position).replace("px", ""));
 			var animateTarget = {width: bodyWidth - offset};
 			animateTarget[position] = bodyWidth - padding;
 			$popup.stop(true, false).animate(animateTarget, 250);
+			$popup.find("input.focus-on-visible").trigger("blur");
 		}
 	}
 
