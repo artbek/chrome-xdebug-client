@@ -671,7 +671,9 @@ $(function() {
 	});
 
 	$("input").on("keydown keyup", function(e) {
-		e.stopPropagation();
+		if (! (e.ctrlKey || e.altKey)) {
+			e.stopPropagation();
+		}
 	});
 
 	var drawAttentionRotated = false;
