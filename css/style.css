@@ -556,3 +556,18 @@ label.bp-hit-operator {
 	border-bottom: 1px solid #dddddd;
 }
 
+.load-more-lines {
+	cursor: pointer;
+	left: 0px;
+	position: absolute;
+	text-align: center;
+	width: 100%;
+}
+
+.load-more-before {
+	top: 300px;
+}
+
+.load-more-after {
+	bottom: 300px;
+}

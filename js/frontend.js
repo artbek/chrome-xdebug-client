@@ -301,6 +301,7 @@ $(function() {
 		if ($("#codeview").text()) {
 			var padding = $(window).height() / 2;
 			$("#codeview").css("padding", padding + "px 0");
+			refreshLoadMoreButtons();
 		}
 	});
 
@@ -360,11 +361,15 @@ $(function() {
 				var sourceCode = $(data.xml).find("response").text();
 				sourceCode = atob(sourceCode);
 
-				populateCodeView(sourceCode, offset);
+				if (data.params && data.params.onlyAddLines) {
+					addLinesToCodeView(sourceCode, offset);
+				} else {
+					populateCodeView(sourceCode, offset);
+					Global.run(function() {
+						$("body").trigger("xdebug-stack_get");
+					});
+				}
 
-				Global.run(function() {
-					$("body").trigger("xdebug-stack_get");
-				});
 				break;
 
 			case "stack_get":
@@ -499,9 +504,13 @@ $(function() {
 		} else {
 
 			Global.run(function() {
+				var linesCount = parseInt(Config.get("lines_count"));
+				var begin = Math.max(1, (lineno - linesCount));
+				var end = lineno + linesCount;
 				$("body").trigger("xdebug-source", {
 					filename: filename,
-					lineno: lineno
+					begin: begin,
+					end: end
 				});
 			});
 
@@ -511,8 +520,18 @@ $(function() {
 
 
 	function populateCodeView(data, offset) {
-		var lines = data.split('\n');
 		clearCodeView();
+		addLinesToCodeView(data, offset);
+
+		Global.fileNameCurrentlyLoaded = filename;
+		scrollToView();
+
+		$("body").trigger("refresh-popups");
+	}
+
+
+	function addLinesToCodeView(data, offset) {
+		var lines = data.split('\n');
 
 		if (! offset) offset = 0;
 
@@ -532,13 +551,51 @@ $(function() {
 		}
 
 		$("body").trigger("padout-codeview");
-
-		Global.fileNameCurrentlyLoaded = filename;
 		Breakpoints.highlight();
-		scrollToView();
-
-		$("body").trigger("refresh-popups");
 	}
+
+
+	function refreshLoadMoreButtons() {
+		if (Config.get("source_script")) return;
+
+		// load-more-BEFORE
+		var firstCurrentlyLoadedLine = $(".lineno").first().data("lineno");
+		if (firstCurrentlyLoadedLine > 1) {
+			var begin = Math.max(1, firstCurrentlyLoadedLine - parseInt(Config.get("lines_count")));
+			var end = Math.max(1, (firstCurrentlyLoadedLine - 1));
+			showLoadMoreButton("before", begin, end);
+		}
+
+		// load-more-AFTER
+		var lastCurrentlyLoadedLine = $(".lineno").last().data("lineno");
+		var begin = lastCurrentlyLoadedLine + 1;
+		var end = lastCurrentlyLoadedLine + parseInt(Config.get("lines_count"));
+		showLoadMoreButton("after", begin, end);
+	}
+
+	function showLoadMoreButton(which, begin, end) {
+		$(".load-more-" + which + ":visible").remove();
+		var button = $(".load-more-" + which +":hidden")
+			.clone()
+			.data("begin", begin)
+			.data("end", end)
+			.show();
+		if (which == "after") {
+			$("#codeview").append(button);
+		} else if (which == "before") {
+			$("#codeview").prepend(button);
+		}
+	}
+
+
+	$("body").on("click", ".load-more-lines", function() {
+		$("body").trigger("xdebug-source", {
+			filename: filename,
+			begin: $(this).data("begin"),
+			end: $(this).data("end"),
+			params: { onlyAddLines: true }
+		});
+	});
 
 
 	function clearCodeView() {

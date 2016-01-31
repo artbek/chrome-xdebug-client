@@ -204,7 +204,8 @@ $(function() {
 							$('body').trigger('parse-xml', {
 								command: received_command,
 								options: currentCommandOptions,
-								xml: xml
+								xml: xml,
+								params: currentCommandParams
 							});
 						}
 
@@ -221,7 +222,7 @@ $(function() {
 	}
 
 
-	function send_command(command, options, callback) {
+	function send_command(command, options, callback, params) {
 
 		if (! socketId) {
 			console.warn("Socket doesn't exist yet!");
@@ -237,6 +238,7 @@ $(function() {
 
 		currentCommandOptions = options;
 		currentCommandCallback = callback;
+		currentCommandParams = params;
 
 		request += addTransactionId(command);
 		if (options) {
@@ -371,12 +373,9 @@ $(function() {
 	});
 
 	$("body").on("xdebug-source", function(event, data) {
-		var lineno = parseInt(data.lineno);
-		var linesCount = parseInt(Config.get("lines_count"));
-
-		var begin = Math.max((lineno - linesCount), 1);
-		var end = lineno + linesCount;
-		send_command("source", "-b " + begin + " -e " + end + " -f " + data.filename);
+		var begin = parseInt(data.begin);
+		var end = parseInt(data.end);
+		send_command("source", "-b " + begin + " -e " + end + " -f " + data.filename, null, data.params);
 	});
 
 	$("body").on("xdebug-stack_get", function() {
