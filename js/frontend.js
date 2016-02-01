@@ -340,6 +340,12 @@ $(function() {
 		Alert.hide();
 		Breakpoints.hideOptions();
 
+		var $error = $(data.xml).find("error");
+		if ($error.attr("code") == "100") {
+			Alert.warn("No more lines to load!");
+			return;
+		}
+
 		switch (data.command) { /* SWITCH - START */
 
 			case "SOCKER_ERROR":
@@ -361,8 +367,12 @@ $(function() {
 				var sourceCode = $(data.xml).find("response").text();
 				sourceCode = atob(sourceCode);
 
-				if (data.params && data.params.onlyAddLines) {
-					addLinesToCodeView(sourceCode, offset);
+				if (data.params) {
+					if (data.params.appendLines) {
+						addLinesToCodeView(sourceCode, offset, true);
+					} else if (data.params.prependLines) {
+						addLinesToCodeView(sourceCode, offset, false);
+					}
 				} else {
 					populateCodeView(sourceCode, offset);
 					Global.run(function() {
@@ -521,7 +531,7 @@ $(function() {
 
 	function populateCodeView(data, offset) {
 		clearCodeView();
-		addLinesToCodeView(data, offset);
+		addLinesToCodeView(data, offset, true);
 
 		Global.fileNameCurrentlyLoaded = filename;
 		scrollToView();
@@ -530,13 +540,13 @@ $(function() {
 	}
 
 
-	function addLinesToCodeView(data, offset) {
+	function addLinesToCodeView(data, offset, append) {
 		var lines = data.split('\n');
 
 		if (! offset) offset = 0;
 
+		var html = "";
 		for (var l = 0; l < lines.length; l++) {
-			var html = "";
 			var currentLineNo = l + offset;
 			if (currentLineNo == (lineno - 1)) {
 				html += '<div class="line-wrapper active-line">';
@@ -547,7 +557,12 @@ $(function() {
 			html +=	'<span class="lineno" data-lineno="' + html_lineno + '">' + html_lineno + '</span>';
 			html += '<span class="codeline"><pre>' + syntax_hl(htmlEntities(lines[l])) + '</pre></span>';
 			html += '</div>';
+		}
+
+		if (append) {
 			$("#codeview").append(html);
+		} else {
+			$("#codeview").prepend(html);
 		}
 
 		$("body").trigger("padout-codeview");
@@ -593,7 +608,10 @@ $(function() {
 			filename: filename,
 			begin: $(this).data("begin"),
 			end: $(this).data("end"),
-			params: { onlyAddLines: true }
+			params: {
+				prependLines: $(this).hasClass('load-more-before'),
+				appendLines: $(this).hasClass('load-more-after'),
+			}
 		});
 	});
 
