@@ -557,7 +557,10 @@ label.bp-hit-operator {
 }
 
 .load-more-lines {
+	color: #664466;
 	cursor: pointer;
+	font-size: 1.2em;
+	font-weight: bold;
 	left: 0px;
 	position: absolute;
 	text-align: center;

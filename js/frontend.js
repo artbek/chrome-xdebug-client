@@ -362,23 +362,24 @@ $(function() {
 
 			// used when getting source from xdebug
 			case "source":
-				var offset = parseInt(data.options.split(" ")[1]) - 1;
-
-				var sourceCode = $(data.xml).find("response").text();
-				sourceCode = atob(sourceCode);
-
-				if (data.params) {
-					if (data.params.appendLines) {
-						addLinesToCodeView(sourceCode, offset, true);
-					} else if (data.params.prependLines) {
-						addLinesToCodeView(sourceCode, offset, false);
-					}
-				} else {
-					populateCodeView(sourceCode, offset);
-					Global.run(function() {
-						$("body").trigger("xdebug-stack_get");
-					});
+				if (Global.fileNameCurrentlyLoaded != filename) {
+					Global.clearSourceCodeMap();
 				}
+
+				var sourceCodeData = atob($(data.xml).find("response").text());
+				var offset = parseInt(data.options.split(" ")[1]);
+				updateSourceCodeMap(sourceCodeData, offset);
+
+				refreshCodeView();
+				if (data.params && data.params.dontScrollToView) {
+					// e.g. after 'load-more-lines' triggered.
+				} else {
+					scrollToView();
+				}
+
+				Global.run(function() {
+					$("body").trigger("xdebug-stack_get");
+				});
 
 				break;
 
@@ -442,7 +443,7 @@ $(function() {
 				Breakpoints.highlight();
 				break;
 
-			default:
+			default: // entered a new line
 				if ($(data.xml).find("response").attr("status") == 'stopping') {
 					if (Config.get("keep_listening")) {
 						$("body").trigger("xdebug-run");
@@ -471,8 +472,7 @@ $(function() {
 
 			if (Global.fileNameCurrentlyLoaded == filename) {
 
-				$(".line-wrapper.active-line").removeClass("active-line");
-				$(".lineno[data-lineno=" + lineno + "]").closest(".line-wrapper").addClass("active-line");
+				highlightCurrentLine();
 				scrollToView();
 				Global.run(function() {
 					$("body").trigger("xdebug-stack_get");
@@ -492,7 +492,8 @@ $(function() {
 					},
 
 					success: function(data) {
-						populateCodeView(data);
+						updateSourceCodeMap(sourceCodeData, offset);
+						refreshCodeView();
 					},
 
 					error: function(data) {
@@ -529,42 +530,37 @@ $(function() {
 	}
 
 
-	function populateCodeView(data, offset) {
-		clearCodeView();
-		addLinesToCodeView(data, offset, true);
-
-		Global.fileNameCurrentlyLoaded = filename;
-		scrollToView();
-
-		$("body").trigger("refresh-popups");
+	function highlightCurrentLine() {
+		$(".line-wrapper.active-line").removeClass("active-line");
+		$(".lineno[data-lineno=" + lineno + "]").closest(".line-wrapper").addClass("active-line");
 	}
 
 
-	function addLinesToCodeView(data, offset, append) {
-		var lines = data.split('\n');
+	function updateSourceCodeMap(sourceCodeData, offset) {
+		if (! offset) offset = 1; // first line
+		var lines = sourceCodeData.split('\n');
+		for (var i = 0; i < lines.length; i++) {
+			Global.sourceCodeMap[i + offset] = lines[i];
+		}
+	}
 
-		if (! offset) offset = 0;
 
+	function refreshCodeView() {
 		var html = "";
-		for (var l = 0; l < lines.length; l++) {
-			var currentLineNo = l + offset;
-			if (currentLineNo == (lineno - 1)) {
-				html += '<div class="line-wrapper active-line">';
-			} else {
-				html += '<div class="line-wrapper">';
-			}
-			var html_lineno = currentLineNo + 1;
-			html +=	'<span class="lineno" data-lineno="' + html_lineno + '">' + html_lineno + '</span>';
-			html += '<span class="codeline"><pre>' + syntax_hl(htmlEntities(lines[l])) + '</pre></span>';
+
+		for (var i = 0; i < Global.sourceCodeMap.length; i++) {
+			if (Global.sourceCodeMap[i] === undefined) continue;
+
+			html += '<div class="line-wrapper">';
+			html +=	'<span class="lineno" data-lineno="' + i + '">' + i + '</span>';
+			html += '<span class="codeline"><pre>' + syntax_hl(htmlEntities(Global.sourceCodeMap[i])) + '</pre></span>';
 			html += '</div>';
 		}
 
-		if (append) {
-			$("#codeview").append(html);
-		} else {
-			$("#codeview").prepend(html);
-		}
-
+		Global.fileNameCurrentlyLoaded = filename;
+		clearCodeView();
+		$("#codeview").append(html);
+		highlightCurrentLine();
 		$("body").trigger("padout-codeview");
 		Breakpoints.highlight();
 	}
@@ -609,8 +605,7 @@ $(function() {
 			begin: $(this).data("begin"),
 			end: $(this).data("end"),
 			params: {
-				prependLines: $(this).hasClass('load-more-before'),
-				appendLines: $(this).hasClass('load-more-after'),
+				dontScrollToView: true
 			}
 		});
 	});

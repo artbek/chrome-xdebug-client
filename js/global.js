@@ -54,6 +54,11 @@ var Global = (function() {
 		},
 
 		fileNameCurrentlyLoaded: '',
+		sourceCodeMap: null,
+
+		clearSourceCodeMap: function() {
+			this.sourceCodeMap = [];
+		},
 
 		getOptFromString: function(option, string) {
 			var value = '';
