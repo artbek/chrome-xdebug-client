@@ -371,8 +371,23 @@ $(function() {
 				updateSourceCodeMap(sourceCodeData, offset);
 
 				refreshCodeView();
-				if (data.params && data.params.dontScrollToView) {
-					// e.g. after 'load-more-lines' triggered.
+
+				if (data.params) {
+					$lineWrapper = $("[data-lineno=" + data.params.scrollToLine + "]").closest(".line-wrapper");
+
+					if (data.params.loadMoreBefore) {
+						$lineWrapper.css("border-bottom", "1px solid #cccccc");
+						var $newLines = $lineWrapper.prevAll().addBack();
+					} else {
+						$lineWrapper.css("border-top", "1px solid #cccccc");
+						var $newLines = $lineWrapper.nextAll().addBack();
+					}
+
+					$newLines.css({"opacity": 0.0});
+					$newLines.animate({"opacity": 1.0}, 1000);
+
+					scrollToView($lineWrapper.get(0));
+
 				} else {
 					scrollToView();
 				}
@@ -452,7 +467,7 @@ $(function() {
 					}
 				} else {
 					filename = $(data.xml).find('response').children().attr("filename");
-					lineno = $(data.xml).find('response').children().attr("lineno");
+					lineno = parseInt($(data.xml).find('response').children().attr("lineno"));
 					console.log("File: " + filename + ":" + lineno);
 					if (filename) refreshSourceView();
 				}
@@ -563,6 +578,7 @@ $(function() {
 		highlightCurrentLine();
 		$("body").trigger("padout-codeview");
 		Breakpoints.highlight();
+		$("body").trigger("refresh-popups");
 	}
 
 
@@ -605,7 +621,8 @@ $(function() {
 			begin: $(this).data("begin"),
 			end: $(this).data("end"),
 			params: {
-				dontScrollToView: true
+				scrollToLine: $(this).hasClass('load-more-before') ? $(this).data("end") : $(this).data("begin"),
+				loadMoreBefore: $(this).hasClass('load-more-before') ? true : false
 			}
 		});
 	});
