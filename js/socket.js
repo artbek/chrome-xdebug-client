@@ -49,7 +49,12 @@ $(function() {
 				} else if (this.expectedLen == this.partialData.length) {
 					return true;
 				} else if (this.expectedLen < this.partialData.length) {
-					throw "RECEIVED_MORE_THAN_EXPECTED";
+					// Just in case, examine the response - length is not 100% reliable.
+					if (this.partialData.match(/command="source"/) && this.partialData.match(/<\/response>$/)) {
+						return true;
+					} else {
+						throw "RECEIVED_MORE_THAN_EXPECTED";
+					}
 				} else {
 					throw "Unexpected values!";
 				}
