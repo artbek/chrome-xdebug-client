@@ -68,6 +68,12 @@ var Action = (function() {
 			}
 		},
 
+		scroll_to_active_line: {
+			callback: function() {
+				$("#scroll-to-active-line").trigger("click");
+			}
+		},
+
 	};
 
 

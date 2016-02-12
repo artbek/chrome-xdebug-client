@@ -704,7 +704,7 @@ $(function() {
 
 
 	// active_line - native DOM element (not jQuery object)
-	function scrollToView(active_line) {
+	function scrollToView(active_line, duration, force) {
 		var margin = 100;
 		var scrollTop = $(window).scrollTop();
 
@@ -719,17 +719,17 @@ $(function() {
 		if (! active_line) return;
 
 		if (
-				// hidden 'above' the screen
-				$(active_line).offset().top < (scrollTop + margin) ||
-				// hidden 'below' the screen
-				$(active_line).offset().top > (scrollTop + $(window).height() - margin)
+			force ||
+			// hidden 'above' the screen
+			$(active_line).offset().top < (scrollTop + margin) ||
+			// hidden 'below' the screen
+			$(active_line).offset().top > (scrollTop + $(window).height() - margin)
 		) {
-			active_line.scrollIntoView(false);
-			var currentScroll = $("body").scrollTop();
-
-			var scroll_to_point = currentScroll + $(window).height() / 2;
-			if ($(active_line).offset().top > scroll_to_point) {
-				$("body").scrollTop(scroll_to_point);
+			var newScrollTop = $(active_line).offset().top - ($(window).height() / 2);
+			if (! duration) {
+				$("body").scrollTop(newScrollTop);
+			} else {
+				$("body").animate({"scrollTop" : newScrollTop}, duration);
 			}
 		}
 	}
@@ -776,5 +776,9 @@ $(function() {
 		}
 	}, 5000);
 
+
+	$("#scroll-to-active-line").on("click", function() {
+		scrollToView(false, 300, true);
+	});
 
 });
