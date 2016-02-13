@@ -88,11 +88,27 @@ nav a {
 
 #processing-indicator {
 	color: #7aff00;
-	margin-right: 0.8em;
+	margin-right: 0.7em;
+	vertical-align: text-top;
 }
 
-#processing-indicator.busy {
-	color: #ff0000;
+#processing-indicator img {
+	width: 1.4em;
+}
+
+#processing-indicator img.busy { display: none; }
+#processing-indicator img.waiting { display: inline; }
+
+#processing-indicator.busy img.busy { display: inline; }
+#processing-indicator.busy img.waiting { display: none; }
+
+#scroll-to-active-line {
+	margin-right: 0.7em;
+	vertical-align: text-top;
+}
+
+#scroll-to-active-line img {
+	width: 1.4em;
 }
 
 

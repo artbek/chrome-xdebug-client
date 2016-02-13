@@ -178,7 +178,7 @@ var Keyboard = (function() {
 					"left": x,
 					"top": y,
 				});
-				var shortcut = Keyboard.getShortcutString(action) || '???';
+				var shortcut = Keyboard.getShortcutString(action) || action;
 				$("#tooltip").text(shortcut);
 				$("body").trigger("show_tooltip");
 			}, 800);

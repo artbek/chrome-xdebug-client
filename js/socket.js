@@ -50,7 +50,7 @@ $(function() {
 					return true;
 				} else if (this.expectedLen < this.partialData.length) {
 					// Just in case, examine the response - length is not 100% reliable.
-					if (this.partialData.match(/command="source"/) && this.partialData.match(/<\/response>$/)) {
+					if (this.partialData.match(/transaction_id=/) && this.partialData.match(/<\/response>$/)) {
 						return true;
 					} else {
 						throw "RECEIVED_MORE_THAN_EXPECTED";

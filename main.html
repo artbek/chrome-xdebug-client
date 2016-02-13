@@ -24,10 +24,15 @@
 
 	<nav>
 
-		<span id="processing-indicator">||||</span>
-		<span id="scroll-to-active-line" data-action="scroll_to_active_line" class="nav-button">
-			<img src="img/scroll_to_active_line.png" />
+		<span id="processing-indicator">
+			<img src="img/processing_busy.svg" class="busy" />
+			<img src="img/processing_waiting.svg" class="waiting" />
 		</span>
+
+		<span id="scroll-to-active-line" data-action="scroll_to_active_line" class="nav-button">
+			<img src="img/scroll_to_active_line.svg" />
+		</span>
+
 		<span id="stepout" data-action="step_out" class="nav-button">Step Out</span> |
 		<span id="break-on-return" data-action="step_out_func" class="nav-button">Step Out (func)</span> |
 		<span id="stepover" data-action="step_over" class="nav-button">Step Over</span> |
