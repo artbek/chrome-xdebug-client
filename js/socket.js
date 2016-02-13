@@ -30,14 +30,14 @@ $(function() {
 				if (split_data[0] * 1 == split_data[0]) { // check if numeric
 					// begining of new reponse
 					this.expectedLen = parseInt(split_data[0]);
-					this.partialData = split_data[1];
+					this.partialData = split_data[1].replace("\n", " ");
 
 					if (! this.expectedLen) {
 						throw "Expected numeric length.";
 					}
 				} else {
 					// remainder of previous reponse
-					this.partialData += split_data[0];
+					this.partialData += split_data[0].replace("\n", " ");
 				}
 			},
 
@@ -50,10 +50,14 @@ $(function() {
 					return true;
 				} else if (this.expectedLen < this.partialData.length) {
 					// Just in case, examine the response - length is not 100% reliable.
-					if (this.partialData.match(/transaction_id=/) && this.partialData.match(/<\/response>$/)) {
-						return true;
+					if (this.partialData.match(/transaction_id=/)) {
+						if (this.partialData.match(/<\/response>$/) || this.partialData.match(/<\/init>$/)) {
+							return true;
+						} else {
+							throw "RECEIVED_MORE_THAN_EXPECTED";
+						}
 					} else {
-						throw "RECEIVED_MORE_THAN_EXPECTED";
+						// some error we don't care about
 					}
 				} else {
 					throw "Unexpected values!";
@@ -61,7 +65,11 @@ $(function() {
 			},
 
 			getXML: function() {
-				return $.parseXML(this.partialData);
+				// Make sure there's no duplicate nodes:
+				var validXML = this.partialData.match(/^.*?<\/response>/);
+				if (! validXML) { var validXML = this.partialData.match(/^.*?<\/init>/); }
+
+				return $.parseXML(validXML[0]);
 			}
 
 		}
