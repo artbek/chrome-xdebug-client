@@ -3,6 +3,27 @@ var ChangeLog = (function() {
 	var log = [
 
 		{
+			version: "2.8",
+			date: "February 2016",
+			changes: [
+				[
+					"Load more lines on demand",
+					"Can be handy if a function was loaded only partially."
+				],
+				[
+					"Scroll to active line",
+					"When working with long files, scrolling to find the current line can be a pain."
+				],
+				[
+					"Stability and UX improvements",
+					"Auto-focus when inspection popup opens.",
+					"Working shorcuts within input boxes (with modifier keys - 'Ctrl' and 'Alt').",
+					"Better parsing of incoming packages in attempt to avoid situations like: source code fails to refresh."
+				]
+			]
+		},
+
+		{
 			version: "2.7",
 			date: "October 2015",
 			changes: [
