@@ -146,7 +146,13 @@ $(function() {
 
 			chrome.sockets.tcpServer.listen(serverSocketId, ip, port, function(result) {
 				//console.log("Listen result: "); console.log(result);
-				showListeningAlert();
+				if (chrome.runtime.lastError) {
+					$("body").trigger("xdebug-stop");
+					var message = "Trying to open a listening socket on " + ip + ":" + port + " failed! ";
+					Alert.warn(message + "[" + chrome.runtime.lastError.message + "]");
+				} else {
+					showListeningAlert();
+				}
 			});
 
 			chrome.sockets.tcpServer.onAccept.addListener(function(acceptInfo) {
