@@ -727,9 +727,9 @@ $(function() {
 		) {
 			var newScrollTop = $(active_line).offset().top - ($(window).height() / 2);
 			if (! duration) {
-				$("body").scrollTop(newScrollTop);
+				$(window).scrollTop(newScrollTop);
 			} else {
-				$("body").animate({"scrollTop" : newScrollTop}, duration);
+				$(window).animate({"scrollTop" : newScrollTop}, duration);
 			}
 		}
 	}
